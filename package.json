@@ -1,0 +1,8 @@
+{
+  "name": "savings-hub-assets",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.js -i hub/static/hub/css/tailwind.input.css -o hub/static/hub/css/tailwind.css --minify"
+  },
+  "devDependencies": { "tailwindcss": "3.4.17" }
+}

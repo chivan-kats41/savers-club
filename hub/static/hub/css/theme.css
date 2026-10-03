@@ -1,0 +1,215 @@
+/* 1K Saver Club — design tokens ported from the original Lovable/React
+   build (src/styles.css). Same palette, radii and shadow.
+
+   Every color is declared TWICE: a plain hex value first, then the
+   oklch() version. Browsers that support oklch() use it (nicer color
+   science); browsers that don't simply ignore the invalid declaration
+   and keep the hex value above it. This avoids buttons/colors silently
+   disappearing on older or locked-down browsers. */
+
+:root {
+  --radius: 0.875rem;
+
+  --background: #fcfcfa;
+  --background: oklch(0.99 0.005 120);
+  --foreground: #1f2733;
+  --foreground: oklch(0.18 0.02 230);
+
+  --card: #ffffff;
+  --card-foreground: #1f2733;
+  --card-foreground: oklch(0.18 0.02 230);
+  --popover: #ffffff;
+  --popover-foreground: #1f2733;
+  --popover-foreground: oklch(0.18 0.02 230);
+
+  /* Green — savings / money grown */
+  --primary: #16a34a;
+  --primary: oklch(0.55 0.16 155);
+  --primary-foreground: #f7fdf9;
+  --primary-foreground: oklch(0.99 0.005 150);
+  --primary-soft: #dcfce7;
+  --primary-soft: oklch(0.95 0.05 155);
+
+  /* Blue — trust / fintech */
+  --secondary: #2f6fed;
+  --secondary: oklch(0.55 0.17 245);
+  --secondary-foreground: #f7f9ff;
+  --secondary-foreground: oklch(0.99 0.005 245);
+  --secondary-soft: #dde8fe;
+  --secondary-soft: oklch(0.95 0.04 245);
+
+  /* Orange — boda / energy / accent */
+  --accent: #f0993a;
+  --accent: oklch(0.72 0.17 55);
+  --accent-foreground: #2a1d0f;
+  --accent-foreground: oklch(0.18 0.02 60);
+  --accent-soft: #fdf0dd;
+  --accent-soft: oklch(0.96 0.05 65);
+
+  --muted: #f2f3f5;
+  --muted: oklch(0.96 0.005 240);
+  --muted-foreground: #6b7280;
+  --muted-foreground: oklch(0.45 0.02 240);
+
+  --destructive: #dc2626;
+  --destructive: oklch(0.6 0.22 25);
+  --destructive-foreground: #fef7f7;
+  --destructive-foreground: oklch(0.99 0.005 25);
+  --success: #22a35d;
+  --success: oklch(0.6 0.15 155);
+  --success-foreground: #f7fdf9;
+  --success-foreground: oklch(0.99 0.005 150);
+  --warning: #f0c454;
+  --warning: oklch(0.78 0.15 80);
+  --warning-foreground: #3a2c08;
+  --warning-foreground: oklch(0.2 0.04 80);
+
+  --border: #e7e8ea;
+  --border: oklch(0.92 0.008 240);
+  --input: #e7e8ea;
+  --input: oklch(0.92 0.008 240);
+  --ring: #16a34a;
+  --ring: oklch(0.55 0.16 155);
+
+  --chart-1: #16a34a;
+  --chart-1: oklch(0.55 0.16 155);
+  --chart-2: #2f6fed;
+  --chart-2: oklch(0.55 0.17 245);
+  --chart-3: #f0993a;
+  --chart-3: oklch(0.72 0.17 55);
+  --chart-4: #9d5fe0;
+  --chart-4: oklch(0.65 0.18 300);
+  --chart-5: #35b4c9;
+  --chart-5: oklch(0.7 0.15 195);
+
+  --sidebar: #1b2531;
+  --sidebar: oklch(0.18 0.03 230);
+  --sidebar-foreground: #f2f4f7;
+  --sidebar-foreground: oklch(0.96 0.01 240);
+  --sidebar-primary: #16a34a;
+  --sidebar-primary: oklch(0.55 0.16 155);
+  --sidebar-primary-foreground: #f7fdf9;
+  --sidebar-primary-foreground: oklch(0.99 0.005 150);
+  --sidebar-accent: #26313f;
+  --sidebar-accent: oklch(0.25 0.03 230);
+  --sidebar-accent-foreground: #fafbfc;
+  --sidebar-accent-foreground: oklch(0.99 0.005 240);
+  --sidebar-border: #313f4e;
+  --sidebar-border: oklch(0.28 0.03 230);
+  --sidebar-ring: #16a34a;
+  --sidebar-ring: oklch(0.55 0.16 155);
+
+  --shadow-card: 0 1px 2px rgba(31, 39, 51, 0.04), 0 4px 16px rgba(31, 39, 51, 0.04);
+  --shadow-card: 0 1px 2px oklch(0.18 0.02 230 / 0.04), 0 4px 16px oklch(0.18 0.02 230 / 0.04);
+}
+
+.dark {
+  --background: #262c36;
+  --background: oklch(0.16 0.02 230);
+  --foreground: #f5f6f8;
+  --foreground: oklch(0.97 0.01 240);
+  --card: #343c48;
+  --card: oklch(0.21 0.025 230);
+  --card-foreground: #f5f6f8;
+  --card-foreground: oklch(0.97 0.01 240);
+  --popover: #343c48;
+  --popover: oklch(0.21 0.025 230);
+  --popover-foreground: #f5f6f8;
+  --popover-foreground: oklch(0.97 0.01 240);
+  --primary: #4ade80;
+  --primary: oklch(0.7 0.17 155);
+  --primary-foreground: #0b2e1b;
+  --primary-foreground: oklch(0.15 0.03 155);
+  --primary-soft: #274b34;
+  --primary-soft: oklch(0.3 0.07 155);
+  --secondary: #6d9bfa;
+  --secondary: oklch(0.7 0.17 245);
+  --secondary-foreground: #0c1c3d;
+  --secondary-foreground: oklch(0.15 0.03 245);
+  --secondary-soft: #253758;
+  --secondary-soft: oklch(0.3 0.07 245);
+  --accent: #f5ac5e;
+  --accent: oklch(0.78 0.17 55);
+  --accent-foreground: #2c1f10;
+  --accent-foreground: oklch(0.18 0.04 60);
+  --accent-soft: #4a3820;
+  --accent-soft: oklch(0.32 0.08 60);
+  --muted: #333c48;
+  --muted: oklch(0.25 0.02 230);
+  --muted-foreground: #a7b0bd;
+  --muted-foreground: oklch(0.7 0.02 240);
+  --border: rgba(255, 255, 255, 0.08);
+  --border: oklch(1 0 0 / 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --input: oklch(1 0 0 / 0.12);
+}
+
+* { border-color: var(--border); }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shadow-card { box-shadow: var(--shadow-card); }
+
+/* ---------- Animations (fulfils "animations must be inclusive") ---------- */
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .55; }
+}
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.animate-fade-in       { animation: fade-in .5s ease-out both; }
+.animate-fade-in-up     { animation: fade-in-up .6s cubic-bezier(.22,1,.36,1) both; }
+.animate-scale-in       { animation: scale-in .35s ease-out both; }
+.animate-slide-in-right { animation: slide-in-right .4s ease-out both; }
+.animate-pulse-soft     { animation: pulse-soft 2.2s ease-in-out infinite; }
+
+.stagger-1 { animation-delay: .05s; }
+.stagger-2 { animation-delay: .1s; }
+.stagger-3 { animation-delay: .15s; }
+.stagger-4 { animation-delay: .2s; }
+.stagger-5 { animation-delay: .25s; }
+.stagger-6 { animation-delay: .3s; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--muted) 25%, #ffffff 37%, var(--muted) 63%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+/* Reveal-on-scroll: JS toggles .is-visible when the element enters the viewport */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,1,.36,1); }
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* Smooth hover/press affordance used across buttons, cards, links */
+.press-scale { transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease, border-color .15s ease; }
+.press-scale:active { transform: scale(0.97); }
+
+::-webkit-scrollbar { height: 8px; width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }

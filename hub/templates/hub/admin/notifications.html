@@ -1,0 +1,35 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Notifications · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Notifications" description="What the platform has sent to users (in-app notifications)." %}
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card mb-5">
+  <h2 class="font-semibold">Send an announcement</h2><p class="text-xs text-muted-foreground mt-0.5 mb-3">Appears in each person's notification inbox (and by SMS where they've enabled it). Max 5,000 recipients per send.</p>
+  <form data-api="{% url 'hub_api:admin_broadcast' %}" data-confirm="Send this announcement now?" data-success="Announcement sent." class="grid sm:grid-cols-4 gap-2">
+    <select name="audience" class="h-10 rounded-lg border bg-background px-3 text-sm"><option value="all">Everyone</option><option value="member">Members</option><option value="merchant">Merchants</option><option value="rider">Riders</option><option value="agent">Agents</option></select>
+    <select name="area" data-number class="h-10 rounded-lg border bg-background px-3 text-sm"><option value="">All areas</option>{% for a in areas %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}</select>
+    <input name="title" required minlength="3" maxlength="150" placeholder="Title" class="sm:col-span-2 h-10 rounded-lg border bg-background px-3 text-sm" />
+    <textarea name="message" required minlength="3" maxlength="500" placeholder="Message (max 500 characters)" class="sm:col-span-4 min-h-[70px] rounded-lg border bg-background px-3 py-2 text-sm"></textarea>
+    <div class="sm:col-span-4 text-right"><button class="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium">Send</button></div>
+  </form>
+</section>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Sent today" value=stats.today icon="megaphone" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Last 30 days (by category below)" value=stats.month icon="megaphone" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Unread" value=stats.unread icon="bell" tone="warning" %}
+</div>
+<div class="grid lg:grid-cols-3 gap-4"><div><section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+<div class="mb-4"><h2 class="font-semibold">By category (30 days)</h2></div>
+<div class="overflow-x-auto -mx-1"><table id="notCat" class="w-full text-sm">
+<thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Name</th><th class="px-2 py-2 font-medium">Sent</th></tr></thead>
+<tbody>{% for r in by_category %}<tr class="border-t hover:bg-muted/40"><td class="px-2 py-2.5">{{ r.name }}</td><td class="px-2 py-2.5">{{ r.value }}</td></tr>
+{% empty %}<tr><td colspan="2" class="px-2 py-8 text-center text-sm text-muted-foreground">No data yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+</div><div class="lg:col-span-2"><section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+<div class="mb-4"><h2 class="font-semibold">Recent</h2><p class="text-xs text-muted-foreground mt-0.5">Latest 50</p></div>
+<div class="overflow-x-auto -mx-1"><table id="notT" class="w-full text-sm">
+<thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">To</th><th class="px-2 py-2 font-medium">Title</th><th class="px-2 py-2 font-medium">Category</th><th class="px-2 py-2 font-medium">Read</th><th class="px-2 py-2 font-medium">When</th></tr></thead>
+<tbody>{% for r in recent %}<tr class="border-t hover:bg-muted/40"><td class="px-2 py-2.5">{{ r.who }}</td><td class="px-2 py-2.5">{{ r.title }}</td><td class="px-2 py-2.5">{{ r.category }}</td><td class="px-2 py-2.5">{% if r.read %}Yes{% else %}No{% endif %}</td><td class="px-2 py-2.5"><span class="text-muted-foreground">{{ r.when }}</span></td></tr>
+{% empty %}<tr><td colspan="5" class="px-2 py-8 text-center text-sm text-muted-foreground">Nothing sent yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+</div></div>{% endblock %}

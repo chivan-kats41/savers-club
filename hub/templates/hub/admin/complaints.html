@@ -1,0 +1,35 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Complaints · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Complaints" description="Member complaints, ownership and SLA." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Open / investigating" value=stats.open icon="alert-circle" tone="warning" %}
+  {% include "hub/partials/stat_card.html" with label="Overdue (72h+)" value=stats.overdue icon="alert-circle" tone="destructive" %}
+  {% include "hub/partials/stat_card.html" with label="Resolved this week" value=stats.resolved_week icon="check-circle-2" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Escalated" value=stats.escalated icon="shield-alert" tone="destructive" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="mb-4"><h2 class="font-semibold">All complaints</h2></div>
+<form method="get" class="flex flex-col sm:flex-row gap-2 mb-3">
+  <input name="q" value="{{ filters.q }}" maxlength="80" class="flex-1 h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Search subject, description, area…" />
+  <select name="status" class="h-10 rounded-lg border bg-background px-3 text-sm"><option value="">All statuses</option><option value="open" {% if filters.status == "open" %}selected{% endif %}>Open</option><option value="investigating" {% if filters.status == "investigating" %}selected{% endif %}>Investigating</option><option value="escalated" {% if filters.status == "escalated" %}selected{% endif %}>Escalated</option><option value="resolved" {% if filters.status == "resolved" %}selected{% endif %}>Resolved</option><option value="rejected" {% if filters.status == "rejected" %}selected{% endif %}>Rejected</option></select>
+  <button class="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium">Filter</button>
+</form>
+<div class="overflow-x-auto -mx-1">
+  <table id="complaintsTable" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Ref</th><th class="px-2 py-2 font-medium">Member</th><th class="px-2 py-2 font-medium">Subject</th><th class="px-2 py-2 font-medium">Area</th><th class="px-2 py-2 font-medium">Assigned to</th><th class="px-2 py-2 font-medium">Age</th><th class="px-2 py-2 font-medium">Status</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="border-t hover:bg-muted/40">
+        <td class="px-2 py-2.5"><span class="font-mono text-xs">{{ r.ref }}</span></td><td class="px-2 py-2.5">{{ r.member }}</td><td class="px-2 py-2.5">{{ r.subject }}</td><td class="px-2 py-2.5">{{ r.area }}</td><td class="px-2 py-2.5">{{ r.agent }}</td><td class="px-2 py-2.5">{{ r.age }}{% if r.overdue %} <span class="text-[10px] text-destructive font-semibold">OVERDUE</span>{% endif %}</td><td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status|badge_class }}">{{ r.status }}</span></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="px-2 py-8 text-center text-sm text-muted-foreground">No complaints match.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "hub/partials/pagination.html" %}
+</section>
+{% endblock %}

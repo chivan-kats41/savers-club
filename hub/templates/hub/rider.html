@@ -1,0 +1,152 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Rider Dashboard · 1K Saver Club{% endblock %}
+{% block body_attrs %}data-autorefresh="30"{% endblock %}
+{% block content %}
+
+{% include "hub/partials/page_header.html" with title="Habari, "|add:rider.user.first_name description=rider.area.name|add:" · "|add:rider.get_vehicle_type_display %}
+
+{% if not verified %}
+<div class="rounded-2xl border border-warning/40 bg-warning/10 p-4 mb-5 text-sm">Your rider account is <strong>{{ rider.get_status_display|lower }}</strong>. An area agent must verify you before you can take jobs.</div>
+{% endif %}
+
+<!-- Profile -->
+<div id="profile" class="rounded-2xl border bg-card p-5 mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 scroll-mt-20">
+  <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-accent to-primary text-white flex items-center justify-center font-bold text-lg">{{ initials }}</div>
+  <div class="flex-1">
+    <div class="flex items-center gap-2">
+      <div class="font-semibold">{{ rider.user.get_full_name }}</div>
+      <span class="text-[11px] px-2 py-0.5 rounded-full font-medium {{ rider.get_status_display|badge_class }}">{{ rider.get_status_display }}</span>
+    </div>
+    <div class="text-sm text-muted-foreground mt-0.5 flex flex-wrap gap-x-3 gap-y-1">
+      <span class="inline-flex items-center gap-1"><i data-lucide="map-pin" class="h-3.5 w-3.5"></i> {{ rider.area.name }}</span>
+      {% if rider.plate_number %}<span>Plate {{ rider.plate_number }}</span>{% endif %}
+      <span>{{ lifetime_jobs }} completed trip{{ lifetime_jobs|pluralize }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Today's jobs" value=stats.today_jobs hint=stats.pending_pickup|stringformat:"s"|add:" pending pickup" icon="package" tone="accent" %}
+  {% include "hub/partials/stat_card.html" with label="Completed today" value=stats.completed_today hint="Delivered" icon="check-circle-2" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Today's earnings" value=stats.gross_today|ugx hint="Gross before commission" icon="wallet" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Available to withdraw" value=balance|ugx hint="Net of commission & withdrawals" icon="wallet" tone="primary" %}
+</div>
+
+<!-- Routes -->
+<section id="route" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <div class="mb-4"><h2 class="font-semibold">Shared routes</h2><p class="text-xs text-muted-foreground mt-0.5">Shared-route deliveries pay a platform commission on route earnings. Normal nearby delivery is not commissioned.</p></div>
+
+  {% if route_today %}
+  <div class="rounded-2xl bg-gradient-to-br from-secondary to-primary text-white p-5 mb-4">
+    <div class="flex items-center justify-between gap-3">
+      <div>
+        <div class="text-xs uppercase tracking-wider opacity-80 flex items-center gap-1.5"><i data-lucide="route" class="h-3.5 w-3.5"></i> Next route</div>
+        <div class="text-xl font-semibold mt-0.5">{{ route_today.name }}</div>
+        <div class="text-sm opacity-90 mt-0.5">{{ route_today.packages }} package{{ route_today.packages|pluralize }} · departs {{ route_today.departs }}</div>
+      </div>
+      <div class="text-right"><div class="text-xs uppercase tracking-wider opacity-80">Net payout</div><div class="text-2xl font-semibold">{{ route_today.net|ugx }}</div></div>
+    </div>
+    <div class="mt-4 grid grid-cols-3 gap-3 text-sm">
+      <div class="rounded-xl bg-white/15 p-3"><div class="text-[11px] opacity-80">Total earnings</div><div class="font-semibold">{{ route_today.gross|ugx }}</div></div>
+      <div class="rounded-xl bg-white/15 p-3"><div class="text-[11px] opacity-80">Platform commission</div><div class="font-semibold">- {{ route_today.commission|ugx }}</div></div>
+      <div class="rounded-xl bg-white/15 p-3"><div class="text-[11px] opacity-80">You receive</div><div class="font-semibold">{{ route_today.net|ugx }}</div></div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if routes %}
+  <ul class="space-y-2 mb-4">
+    {% for r in routes %}
+    <li class="rounded-xl border p-3 flex flex-wrap items-center justify-between gap-2">
+      <div><div class="font-medium text-sm">{{ r.name }}</div><div class="text-xs text-muted-foreground">{{ r.departs }} · {{ r.packages }}/{{ r.max }} packages</div></div>
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status_label|badge_class }}">{{ r.status_label }}</span>
+        {% if r.can_publish %}<button type="button" data-api="{% url 'deliveries:publish_route' r.id %}" class="text-xs px-2.5 py-1 rounded-md bg-primary text-primary-foreground">Publish</button>{% endif %}
+        {% if r.can_complete %}<button type="button" data-api="{% url 'deliveries:complete_route' r.id %}" data-confirm="Mark this route complete?" class="text-xs px-2.5 py-1 rounded-md border">Complete</button>{% endif %}
+        {% if r.can_cancel %}<button type="button" data-api="{% url 'deliveries:cancel_route' r.id %}" data-confirm="Cancel this route?" class="text-xs text-destructive">Cancel</button>{% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <div id="return" class="rounded-2xl border p-4 scroll-mt-20">
+    <div class="font-medium flex items-center gap-1.5"><i data-lucide="truck" class="h-4 w-4 text-accent"></i> Plan a trip</div>
+    <p class="text-xs text-muted-foreground mt-1">Create a route (including a return trip) so members' shared-route parcels can be attached to it.</p>
+    <form data-api="{% url 'deliveries:rider_routes' %}" data-success="Route created as a draft.">
+      <fieldset {% if not verified %}disabled class="opacity-60"{% endif %}>
+      <div class="grid sm:grid-cols-4 gap-3 mt-3">
+        <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">From</label><select name="origin_area_id" data-number required class="w-full h-10 rounded-lg border bg-background px-2 text-sm">{% for a in areas %}<option value="{{ a.pk }}" {% if a.pk == rider.area_id %}selected{% endif %}>{{ a.name }}</option>{% endfor %}</select></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">To</label><select name="destination_area_id" data-number required class="w-full h-10 rounded-lg border bg-background px-2 text-sm">{% for a in areas %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}</select></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Departs</label><input name="departure_time" type="datetime-local" required class="w-full h-10 rounded-lg border bg-background px-2 text-sm" /></div>
+        <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Max packages</label><input name="max_packages" data-number type="number" min="1" max="30" value="5" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" /></div>
+      </div>
+      <div class="mt-3 text-right"><button type="submit" class="h-9 px-4 text-sm rounded-lg bg-accent text-accent-foreground font-medium press-scale">Create route</button></div>
+      </fieldset>
+    </form>
+  </div>
+</section>
+
+<!-- Jobs -->
+<div class="mt-5">
+  <section id="jobs" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Jobs</h2><p class="text-xs text-muted-foreground mt-0.5">Open jobs you can accept, plus your active and recent ones. Update each step as you go.</p></div>
+    {% if jobs %}
+    <div class="overflow-x-auto -mx-1">
+      <table class="w-full text-sm">
+        <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Job</th><th class="px-2 py-2 font-medium">From → To</th><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Fare</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium text-right">Update</th></tr></thead>
+        <tbody>
+          {% for j in jobs %}
+          <tr class="border-t">
+            <td class="px-2 py-2.5 font-mono text-xs">{{ j.ref }}{% if not j.mine %}<div class="text-[10px] text-muted-foreground">open</div>{% endif %}</td>
+            <td class="px-2 py-2.5"><div class="text-sm">{{ j.from }}</div><div class="text-xs text-muted-foreground">→ {{ j.to }}</div></td>
+            <td class="px-2 py-2.5">{{ j.item }}<div class="text-[10px] text-muted-foreground">{{ j.type }}</div></td>
+            <td class="px-2 py-2.5 font-medium">{{ j.fare|ugx }}</td>
+            <td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ j.status|badge_class }}">{{ j.status }}</span></td>
+            <td class="px-2 py-2.5 text-right">
+              <div class="inline-flex gap-1.5 items-center">
+                {% if j.action_url and verified %}
+                <button type="button" data-api="{{ j.action_url }}"
+                        {% if j.needs_otp %}data-prompt="otp" data-prompt-label="Enter the customer's delivery code"{% endif %}
+                        class="text-[11px] px-2 py-1 rounded-md bg-primary text-primary-foreground press-scale">{{ j.action_label }}</button>
+                {% endif %}
+                {% if j.can_fail %}<button type="button" data-api="{{ j.fail_url }}" data-prompt="reason" data-prompt-label="Why could this delivery not be completed?" class="text-[11px] px-2 py-1 rounded-md border text-destructive press-scale">Failed</button>{% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No jobs right now. New requests appear here automatically when you refresh.</div>{% endif %}
+  </section>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-4 mt-5">
+  <section id="earnings" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Earnings · last 7 days</h2></div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ week.gross|ugx }}</div><div class="text-xs text-muted-foreground">Gross earnings</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ week.commission|ugx }}</div><div class="text-xs text-muted-foreground">Platform commission (routes)</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ week.net|ugx }}</div><div class="text-xs text-muted-foreground">Net</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ week.delivered }}</div><div class="text-xs text-muted-foreground">Deliveries completed</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ week.failed }}</div><div class="text-xs text-muted-foreground">Failed deliveries</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ balance|ugx }}</div><div class="text-xs text-muted-foreground">Withdrawable now</div></div>
+    </div>
+  </section>
+
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-4"><h2 class="font-semibold">Withdraw to mobile money</h2></div>
+    <form data-api="{% url 'payments:request_withdrawal' %}" data-success="Withdrawal requested." class="space-y-2">
+      <input name="amount" data-number required type="number" min="1" step="100" max="{{ balance|floatformat:0 }}" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Amount (UGX)" />
+      <input name="phone" required value="{{ rider.user.phone }}" inputmode="tel" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Mobile money number" />
+      <button type="submit" class="w-full h-10 rounded-lg border text-sm font-medium inline-flex items-center justify-center gap-1.5 press-scale"><i data-lucide="wallet" class="h-4 w-4"></i> Withdraw</button>
+    </form>
+    {% if withdrawals %}
+    <ul class="mt-4 space-y-1.5">{% for w in withdrawals %}<li class="text-xs flex justify-between gap-2 border-t pt-1.5"><span>{{ w.amount|ugx }} → {{ w.phone }} · {{ w.when }}</span><span class="px-1.5 rounded font-semibold {{ w.status|badge_class }}">{{ w.status }}</span></li>{% endfor %}</ul>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

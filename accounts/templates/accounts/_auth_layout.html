@@ -1,0 +1,35 @@
+{% extends "hub/base.html" %}
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-background px-4 py-12">
+  <div class="w-full max-w-sm bg-card border border-border rounded-2xl shadow-sm p-8">
+    <h1 class="text-xl font-bold text-card-foreground mb-1">{% block heading %}{% endblock %}</h1>
+    <p class="text-sm text-muted-foreground mb-6">{% block subheading %}{% endblock %}</p>
+
+    {% if messages %}
+      <div class="mb-4 space-y-2">
+        {% for message in messages %}
+          <div class="text-sm rounded-lg px-3 py-2 {% if message.tags == 'error' %}bg-destructive/10 text-destructive{% else %}bg-primary-soft text-primary{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      <div class="mb-4 text-sm rounded-lg px-3 py-2 bg-destructive/10 text-destructive">
+        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      {% block fields %}{% endblock %}
+      <button type="submit" class="w-full rounded-lg bg-primary text-primary-foreground font-semibold py-2.5 hover:opacity-90 transition">
+        {% block submit_label %}Continue{% endblock %}
+      </button>
+    </form>
+
+    {% block footer %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

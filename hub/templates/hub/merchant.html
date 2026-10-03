@@ -1,0 +1,204 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Merchant Dashboard · 1K Saver Club{% endblock %}
+{% block content %}
+
+{% include "hub/partials/page_header.html" with title=merchant.business_name description=merchant.category.label|add:" · "|add:merchant.area.name action_url="#create" action_icon="plus" action_label="New offer" %}
+
+<!-- Profile / verification -->
+<div id="profile" class="rounded-2xl border bg-card p-5 mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 scroll-mt-20">
+  <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-bold text-lg">{{ initials }}</div>
+  <div class="flex-1">
+    <div class="flex items-center gap-2">
+      <div class="font-semibold">{{ merchant.business_name }}</div>
+      <span class="text-[11px] px-2 py-0.5 rounded-full inline-flex items-center gap-1 font-medium {{ merchant.get_status_display|badge_class }}">{{ merchant.get_status_display }}</span>
+    </div>
+    <div class="text-sm text-muted-foreground mt-0.5 flex flex-wrap gap-x-3 gap-y-1">
+      {% if merchant.address %}<span class="inline-flex items-center gap-1"><i data-lucide="map-pin" class="h-3.5 w-3.5"></i> {{ merchant.address }}</span>{% endif %}
+      {% if merchant.phone %}<span class="inline-flex items-center gap-1"><i data-lucide="phone" class="h-3.5 w-3.5"></i> {{ merchant.phone }}</span>{% endif %}
+      {% if verified_by %}<span>Verified by {{ verified_by }}{% if verified_on %} · {{ verified_on }}{% endif %}</span>{% endif %}
+    </div>
+  </div>
+</div>
+
+{% if not can_post %}
+<div class="rounded-2xl border border-warning/40 bg-warning/10 p-4 mb-5 text-sm">
+  Your account is <strong>{{ merchant.get_status_display|lower }}</strong>. You can post offers once an agent has verified your business.
+</div>
+{% endif %}
+
+<!-- Summary cards -->
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Offer views" value=stats.views hint="All offers, lifetime" icon="eye" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Claim codes" value=stats.claims_month hint="This month" icon="ticket" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Redemptions" value=stats.redeemed_month hint="Confirmed this month" icon="check-circle-2" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Member sales" value=stats.sales_month|ugx hint="Redeemed this month" icon="trending-up" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Active offers" value=stats.active_offers hint="Live right now" icon="tag" tone="accent" %}
+</div>
+
+<!-- Redeem a code -->
+<section id="redeem" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20 mb-5">
+  <div class="mb-3"><h2 class="font-semibold">Redeem a member's code</h2><p class="text-xs text-muted-foreground mt-0.5">Ask the member to show their code, type it here, then hand over the item at the member price.</p></div>
+  <form data-api="{% url 'claims:redeem_claim' %}" data-success="Code redeemed ✓" class="flex gap-2 max-w-md">
+    <input name="code" required maxlength="20" autocomplete="off" autocapitalize="characters" class="flex-1 h-10 rounded-lg border bg-background px-3 text-sm font-mono uppercase tracking-wider" placeholder="1K-XXXX" />
+    <button type="submit" class="h-10 px-4 text-sm rounded-lg bg-primary text-primary-foreground font-medium press-scale">Redeem</button>
+  </form>
+</section>
+
+<!-- Post today's deal -->
+<section id="create" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <div class="flex items-start justify-between gap-3 mb-4">
+    <div><h2 class="font-semibold">Post today's deal</h2><p class="text-xs text-muted-foreground mt-0.5">Be truthful — the listed price must be honoured. New offers are reviewed by an area agent before going live.</p></div>
+    <span class="text-[11px] px-2 py-1 rounded bg-accent-soft text-accent font-medium inline-flex items-center gap-1 shrink-0"><i data-lucide="shield-alert" class="h-3 w-3"></i> Offer responsibility</span>
+  </div>
+  <form data-api="{% url 'offers:merchant_offers' %}" data-success="Offer submitted for approval." data-upload-url="/api/v1/merchant/offers/{id}/image/">
+    <fieldset {% if not can_post %}disabled class="opacity-60"{% endif %}>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Item name</label><input name="item_name" required maxlength="150" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="e.g. Rice 5kg" /></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Category</label>
+        <select name="category" data-number required class="w-full h-10 rounded-lg border bg-background px-3 text-sm">{% for c in categories %}<option value="{{ c.pk }}" {% if c.pk == merchant.category_id %}selected{% endif %}>{{ c.label }}</option>{% endfor %}</select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Area</label>
+        <select name="area" data-number required class="w-full h-10 rounded-lg border bg-background px-3 text-sm">{% for a in areas %}<option value="{{ a.pk }}" {% if a.pk == merchant.area_id %}selected{% endif %}>{{ a.name }}</option>{% endfor %}</select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Normal price (UGX)</label><input name="normal_price" data-number required type="number" min="1" step="1" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="22000" /></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Member price (UGX)</label><input name="member_price" data-number required type="number" min="1" step="1" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="19000" /></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Quantity available</label><input name="quantity" data-number required type="number" min="1" step="1" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="18" /></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Expires</label><input name="expires_at" required type="datetime-local" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" /></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Pickup location</label><input name="pickup_location" maxlength="200" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="{{ merchant.address|default:'Market, Stall 14' }}" /></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Packaging</label>
+        <select name="packaging_status" class="w-full h-10 rounded-lg border bg-background px-3 text-sm">{% for v, l in packaging_choices %}<option value="{{ v }}">{{ l }}</option>{% endfor %}</select>
+      </div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Offer radius (km, optional)</label><input name="offer_radius_km" data-number type="number" min="0" max="50" step="0.5" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="2" /></div>
+      <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Photo (optional)</label><input type="file" name="photo" data-upload-field="image" accept="image/jpeg,image/png,image/webp" class="w-full text-sm" /></div>
+      <label class="flex items-center gap-2 text-sm pt-6"><input type="checkbox" name="delivery_available" class="h-4 w-4" /> Delivery available</label>
+    </div>
+    <div class="mt-4 flex flex-col sm:flex-row justify-between gap-2">
+      <p class="text-[11px] text-muted-foreground max-w-md">By posting, you confirm the item is in stock, the member price will be honoured, and your area agent may verify this offer.</p>
+      <button type="submit" class="h-9 px-4 text-sm rounded-lg bg-primary text-primary-foreground font-medium press-scale shrink-0">Submit for approval</button>
+    </div>
+    </fieldset>
+  </form>
+</section>
+
+<!-- Local visibility -->
+<div class="mt-5">
+  <section id="visibility" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Local visibility</h2><p class="text-xs text-muted-foreground mt-0.5">How nearby buyers interacted with your offers in the last 7 days.</p></div>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div class="rounded-xl border p-3 bg-muted/40"><div class="font-semibold text-sm">{{ stats.calls }}</div><div class="text-[11px] text-muted-foreground">Calls</div></div>
+      <div class="rounded-xl border p-3 bg-muted/40"><div class="font-semibold text-sm">{{ stats.whatsapp }}</div><div class="text-[11px] text-muted-foreground">WhatsApp</div></div>
+      <div class="rounded-xl border p-3 bg-muted/40"><div class="font-semibold text-sm">{{ stats.delivery_clicks }}</div><div class="text-[11px] text-muted-foreground">Delivery requests</div></div>
+      <div class="rounded-xl border p-3 bg-muted/40"><div class="font-semibold text-sm">{{ stats.deliveries_month }}</div><div class="text-[11px] text-muted-foreground">Deliveries this month</div></div>
+      <div class="rounded-xl border p-3 bg-muted/40"><div class="font-semibold text-sm">{% if stats.conversion is not None %}{{ stats.conversion }}%{% else %}—{% endif %}</div><div class="text-[11px] text-muted-foreground">Claim → redeem</div></div>
+    </div>
+  </section>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-4 mt-5">
+  <!-- Offers -->
+  <section id="offers" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Your offers</h2><p class="text-xs text-muted-foreground mt-0.5">Latest 50</p></div>
+    {% if offers %}
+    <div class="overflow-x-auto -mx-1">
+      <table class="w-full text-sm">
+        <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Price</th><th class="px-2 py-2 font-medium">Qty</th><th class="px-2 py-2 font-medium">Views / Claims</th><th class="px-2 py-2 font-medium">Status</th><th></th></tr></thead>
+        <tbody>
+          {% for o in offers %}
+          <tr class="border-t">
+            <td class="px-2 py-2.5"><div class="font-medium">{{ o.item }}</div><div class="text-xs text-muted-foreground">expires {{ o.expires }}</div></td>
+            <td class="px-2 py-2.5"><div class="font-semibold text-primary">{{ o.member|ugx }}</div><div class="text-xs line-through text-muted-foreground">{{ o.normal|ugx }}</div></td>
+            <td class="px-2 py-2.5">{{ o.qty }}</td>
+            <td class="px-2 py-2.5 text-xs">{{ o.views }} / <span class="px-1.5 py-0.5 rounded bg-primary-soft text-primary font-semibold">{{ o.claims }}</span></td>
+            <td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ o.status_label|badge_class }}">{{ o.status_label }}</span></td>
+            <td class="px-2 py-2.5 text-right whitespace-nowrap">
+              {% if o.can_pause %}<button type="button" data-api="{% url 'offers:pause_offer' o.id %}" class="text-xs text-muted-foreground hover:text-foreground">Pause</button>{% endif %}
+              {% if o.can_delete %}<button type="button" data-api="{% url 'offers:merchant_offer_detail' o.id %}" data-method="DELETE" data-confirm="Delete this offer?" class="text-xs text-destructive ml-2">Delete</button>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">You haven't posted any offers yet.</div>{% endif %}
+  </section>
+
+  <!-- Claims -->
+  <section id="claims" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Claims &amp; redemptions</h2><p class="text-xs text-muted-foreground mt-0.5">Codes are hidden until redeemed — use the box above to confirm one.</p></div>
+    {% if claims %}
+    <div class="overflow-x-auto -mx-1">
+      <table class="w-full text-sm">
+        <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Code</th><th class="px-2 py-2 font-medium">Member</th><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium">When</th></tr></thead>
+        <tbody>
+          {% for c in claims %}
+          <tr class="border-t">
+            <td class="px-2 py-2.5"><span class="font-mono font-semibold">{{ c.code }}</span></td>
+            <td class="px-2 py-2.5">{{ c.member }}</td>
+            <td class="px-2 py-2.5">{{ c.item }}</td>
+            <td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ c.status_label|badge_class }}">{{ c.status_label }}</span></td>
+            <td class="px-2 py-2.5 text-xs text-muted-foreground">{{ c.time }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No claims yet.</div>{% endif %}
+  </section>
+</div>
+
+<!-- Delivery + requests + promotions -->
+<div class="grid lg:grid-cols-3 gap-4 mt-5">
+  <section id="delivery" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Delivery requests</h2><p class="text-xs text-muted-foreground mt-0.5">Members ask for delivery on their claimed items; riders pick them up from you.</p></div>
+    {% if delivery_jobs %}
+    <ul class="space-y-2">
+      {% for j in delivery_jobs %}
+      <li class="rounded-xl border p-3"><div class="flex justify-between gap-2"><div class="text-sm font-medium truncate">To {{ j.to }}</div><span class="text-[10px] px-1.5 py-0.5 rounded font-semibold shrink-0 {{ j.status|badge_class }}">{{ j.status }}</span></div><div class="text-xs text-muted-foreground mt-0.5">{{ j.type }} · {{ j.fare|ugx }}</div></li>
+      {% endfor %}
+    </ul>
+    {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No delivery requests yet.</div>{% endif %}
+  </section>
+
+  <section id="quality" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Requests from members</h2><p class="text-xs text-muted-foreground mt-0.5">People in {{ merchant.area.name }} asking for items.</p></div>
+    {% if area_requests %}
+    <ul class="space-y-3">
+      {% for r in area_requests %}
+      <li class="rounded-xl border p-3">
+        <div class="flex justify-between gap-2"><div class="font-medium text-sm">{{ r.item }}</div><span class="text-[11px] text-muted-foreground shrink-0">{{ r.when }}</span></div>
+        {% if r.description %}<p class="text-xs text-muted-foreground mt-0.5">{{ r.description }}</p>{% endif %}
+        {% if r.budget %}<div class="text-xs text-muted-foreground">Budget up to {{ r.budget|ugx }}</div>{% endif %}
+        {% if r.responded %}<div class="mt-2 text-xs text-primary font-medium">You responded ✓</div>
+        {% elif can_post %}
+        <form data-api="{% url 'item_requests:respond_to_request' r.id %}" data-success="Response sent." class="mt-2 flex gap-1.5">
+          <input name="message" required maxlength="300" placeholder="Message" class="flex-1 min-w-0 h-8 rounded-md border bg-background px-2 text-xs" />
+          <input name="price" data-number type="number" min="0" step="100" placeholder="Price" class="w-20 h-8 rounded-md border bg-background px-2 text-xs" />
+          <button class="h-8 px-2.5 rounded-md bg-primary text-primary-foreground text-xs">Send</button>
+        </form>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No open requests in your area.</div>{% endif %}
+  </section>
+
+  <section id="promo" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Promotion packages</h2><p class="text-xs text-muted-foreground mt-0.5">Get an offer featured to more members.</p></div>
+    {% if packages and promo_offers %}
+    <form data-api="{% url 'promotions:purchase_promotion' %}" data-after="payment" class="space-y-2">
+      <select name="offer_id" data-number required class="w-full h-10 rounded-lg border bg-background px-2 text-sm">{% for o in promo_offers %}<option value="{{ o.id }}">{{ o.item }}</option>{% endfor %}</select>
+      <select name="package_id" data-number required class="w-full h-10 rounded-lg border bg-background px-2 text-sm">{% for p in packages %}<option value="{{ p.pk }}">{{ p.label }} — {{ p.price|ugx }} · {{ p.duration_days }} day{{ p.duration_days|pluralize }}</option>{% endfor %}</select>
+      <select name="method" data-method-switch class="w-full h-10 rounded-lg border bg-background px-2 text-sm">
+        <option value="mobile_money">Mobile money (MTN / Airtel)</option>
+        <option value="card">Visa / Mastercard</option>
+      </select>
+      <div data-show-for="mobile_money"><input name="phone" value="{{ merchant.user.phone }}" inputmode="tel" required class="w-full h-10 rounded-lg border bg-background px-3 text-sm" /></div>
+      <div data-show-for="card" class="hidden"><input name="email" type="email" value="{{ merchant.user.email }}" required disabled placeholder="Email for your receipt" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" /></div>
+      <p data-method-hint class="text-[11px] text-muted-foreground"></p>
+      <button type="submit" class="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium press-scale">Pay</button>
+    </form>
+    {% elif not packages %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No promotion packages are available right now.</div>
+    {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">You need an active offer to promote.</div>{% endif %}
+  </section>
+</div>
+{% endblock %}

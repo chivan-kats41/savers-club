@@ -1,0 +1,39 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Offers · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Offers" description="Every offer on the platform and its state." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Live" value=stats.active icon="tag" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Pending review" value=stats.pending icon="tag" tone="warning" %}
+  {% include "hub/partials/stat_card.html" with label="Paused" value=stats.paused icon="tag" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Reported" value=stats.reported icon="flag" tone="destructive" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="mb-4"><h2 class="font-semibold">All offers</h2></div>
+<form method="get" class="flex flex-col sm:flex-row gap-2 mb-3">
+  <input name="q" value="{{ filters.q }}" maxlength="80" class="flex-1 h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Search item, merchant, area…" />
+  <select name="status" class="h-10 rounded-lg border bg-background px-3 text-sm"><option value="">All statuses</option><option value="pending" {% if filters.status == "pending" %}selected{% endif %}>Pending</option><option value="active" {% if filters.status == "active" %}selected{% endif %}>Active</option><option value="paused" {% if filters.status == "paused" %}selected{% endif %}>Paused</option><option value="reported" {% if filters.status == "reported" %}selected{% endif %}>Reported</option><option value="expired" {% if filters.status == "expired" %}selected{% endif %}>Expired</option><option value="rejected" {% if filters.status == "rejected" %}selected{% endif %}>Rejected</option></select>
+  <button class="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium">Filter</button>
+</form>
+<div class="overflow-x-auto -mx-1">
+  <table id="offersTable" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Merchant</th><th class="px-2 py-2 font-medium">Category</th><th class="px-2 py-2 font-medium">Area</th><th class="px-2 py-2 font-medium">Normal</th><th class="px-2 py-2 font-medium">Member</th><th class="px-2 py-2 font-medium">Stock</th><th class="px-2 py-2 font-medium">Expires</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium text-right">Actions</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="border-t hover:bg-muted/40">
+        <td class="px-2 py-2.5"><span class="font-medium">{{ r.item }}</span></td><td class="px-2 py-2.5">{{ r.merchant }}</td><td class="px-2 py-2.5">{{ r.category }}</td><td class="px-2 py-2.5">{{ r.area }}</td><td class="px-2 py-2.5"><span class="line-through text-muted-foreground">{{ r.normal|ugx }}</span></td><td class="px-2 py-2.5"><span class="text-primary font-semibold">{{ r.member|ugx }}</span></td><td class="px-2 py-2.5">{{ r.stock }}</td><td class="px-2 py-2.5">{{ r.expires }}</td><td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status|badge_class }}">{{ r.status }}</span></td><td class="px-2 py-2.5 text-right whitespace-nowrap">
+          {% if r.status_key == "pending" or r.status_key == "reported" or r.status_key == "paused" %}<button type="button" data-api="{% url 'hub_api:admin_offer_action' r.id 'approve' %}" class="text-xs px-2 py-1 rounded-md bg-primary text-primary-foreground">Approve</button>{% endif %}
+          {% if r.status_key == "pending" or r.status_key == "reported" %}<button type="button" data-api="{% url 'hub_api:admin_offer_action' r.id 'reject' %}" data-prompt="reason" data-prompt-label="Reason for rejecting" class="text-xs px-2 py-1 rounded-md border text-destructive ml-1">Reject</button>{% endif %}
+          {% if r.status_key == "active" or r.status_key == "reported" %}<button type="button" data-api="{% url 'hub_api:admin_offer_action' r.id 'pause' %}" class="text-xs px-2 py-1 rounded-md border ml-1">Pause</button>{% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="10" class="px-2 py-8 text-center text-sm text-muted-foreground">No offers match.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "hub/partials/pagination.html" %}
+</section>
+{% endblock %}

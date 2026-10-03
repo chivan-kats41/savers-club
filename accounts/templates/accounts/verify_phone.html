@@ -1,0 +1,20 @@
+{% extends "accounts/_auth_layout.html" %}
+{% block title %}Verify your phone — 1K Saver Club{% endblock %}
+{% block heading %}Verify your phone{% endblock %}
+{% block subheading %}Enter the 4-digit code we sent you.{% endblock %}
+{% block fields %}
+  {% for field in form %}
+    <div>
+      <label class="block text-sm font-medium text-foreground mb-1">{{ field.label }}</label>
+      {{ field }}
+      {% for error in field.errors %}<p class="text-xs text-destructive mt-1">{{ error }}</p>{% endfor %}
+    </div>
+  {% endfor %}
+{% endblock %}
+{% block submit_label %}Verify{% endblock %}
+{% block footer %}
+  <form method="post" action="{% url 'accounts:resend_phone_otp' %}" class="mt-4 text-center">
+    {% csrf_token %}
+    <button type="submit" class="text-sm text-primary font-medium">Resend code</button>
+  </form>
+{% endblock %}

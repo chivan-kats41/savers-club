@@ -1,0 +1,52 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Payments · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Payments" description="Collections and withdrawals, from the payment provider records." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Today's collections" value=stats.today|ugx icon="credit-card" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="This month" value=stats.month|ugx icon="trending-up" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Failed (all time)" value=stats.failed icon="x" tone="destructive" %}
+  {% include "hub/partials/stat_card.html" with label="Needs review" value=stats.review icon="shield-alert" tone="warning" %}
+</div>
+<section id="wallet" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card mb-5">
+<div class="flex items-center justify-between gap-3"><div><h2 class="font-semibold">ioTec Pay wallet</h2><p class="text-xs text-muted-foreground mt-0.5">Money available to pay riders. Withdrawals fail if this runs out.</p></div>
+{% if wallet.state == "ok" %}<div class="text-right"><div class="text-xl font-semibold text-primary">{{ wallet.balance|money:wallet.currency }}</div><div class="text-[11px] text-muted-foreground">{{ wallet.name }}</div></div>
+{% elif wallet.state == "not_configured" %}<span class="text-sm text-muted-foreground">Not configured. Set the IOTEC_* values in .env.</span>
+{% else %}<span class="text-sm text-destructive">Couldn't reach ioTec. Try again shortly.</span>{% endif %}</div>
+</section>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="mb-4"><h2 class="font-semibold">Collections</h2><p class="text-xs text-muted-foreground mt-0.5">Latest 100</p></div>
+<div class="overflow-x-auto -mx-1">
+  <table id="payTable" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Ref</th><th class="px-2 py-2 font-medium">Who</th><th class="px-2 py-2 font-medium">Type</th><th class="px-2 py-2 font-medium">Amount</th><th class="px-2 py-2 font-medium">Method</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium">Time</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="border-t hover:bg-muted/40">
+        <td class="px-2 py-2.5"><span class="font-mono text-xs">{{ r.ref }}</span></td><td class="px-2 py-2.5">{{ r.who }}</td><td class="px-2 py-2.5">{{ r.type }}</td><td class="px-2 py-2.5">{{ r.amount|ugx }}</td><td class="px-2 py-2.5">{{ r.method }}</td><td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status|badge_class }}">{{ r.status }}</span></td><td class="px-2 py-2.5"><span class="text-muted-foreground">{{ r.time }}</span></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="px-2 py-8 text-center text-sm text-muted-foreground">No payments yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</section>
+<div class="mt-5"></div><section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="mb-4"><h2 class="font-semibold">Withdrawals</h2><p class="text-xs text-muted-foreground mt-0.5">Latest 50</p></div>
+<div class="overflow-x-auto -mx-1">
+  <table id="wdTable" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Ref</th><th class="px-2 py-2 font-medium">Rider</th><th class="px-2 py-2 font-medium">Amount</th><th class="px-2 py-2 font-medium">Fee</th><th class="px-2 py-2 font-medium">Net</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium">Time</th></tr></thead>
+    <tbody>
+      {% for r in withdrawals %}
+      <tr class="border-t hover:bg-muted/40">
+        <td class="px-2 py-2.5"><span class="font-mono text-xs">{{ r.ref }}</span></td><td class="px-2 py-2.5">{{ r.who }}</td><td class="px-2 py-2.5">{{ r.amount|ugx }}</td><td class="px-2 py-2.5">{{ r.fee|ugx }}</td><td class="px-2 py-2.5">{{ r.net|ugx }}</td><td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status|badge_class }}">{{ r.status }}</span></td><td class="px-2 py-2.5"><span class="text-muted-foreground">{{ r.time }}</span></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="px-2 py-8 text-center text-sm text-muted-foreground">No withdrawals yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</section>
+{% endblock %}

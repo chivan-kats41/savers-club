@@ -1,0 +1,40 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Redemptions · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Redemptions" description="Confirmed code redemptions (last 30 days unless stated)." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Confirmed today" value=stats.confirmed_today icon="check-circle-2" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Refused today" value=stats.refused_today icon="x" tone="destructive" %}
+  {% include "hub/partials/stat_card.html" with label="Top area" value=stats.top_area icon="map-pin" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Top category" value=stats.top_category icon="tag" tone="accent" %}
+</div>
+<div class="grid lg:grid-cols-3 gap-4 mb-5"><section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+<div class="mb-4"><h2 class="font-semibold">By category</h2></div>
+<div class="overflow-x-auto -mx-1"><table id="catT" class="w-full text-sm">
+<thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Name</th><th class="px-2 py-2 font-medium">Redemptions</th></tr></thead>
+<tbody>{% for r in by_category %}<tr class="border-t hover:bg-muted/40"><td class="px-2 py-2.5">{{ r.name }}</td><td class="px-2 py-2.5">{{ r.value }}</td></tr>
+{% empty %}<tr><td colspan="2" class="px-2 py-8 text-center text-sm text-muted-foreground">No data yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+<div class="mb-4"><h2 class="font-semibold">By area</h2></div>
+<div class="overflow-x-auto -mx-1"><table id="areaT" class="w-full text-sm">
+<thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Name</th><th class="px-2 py-2 font-medium">Redemptions</th></tr></thead>
+<tbody>{% for r in by_area %}<tr class="border-t hover:bg-muted/40"><td class="px-2 py-2.5">{{ r.name }}</td><td class="px-2 py-2.5">{{ r.value }}</td></tr>
+{% empty %}<tr><td colspan="2" class="px-2 py-8 text-center text-sm text-muted-foreground">No data yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+<div class="mb-4"><h2 class="font-semibold">Why codes were refused</h2></div>
+<div class="overflow-x-auto -mx-1"><table id="reasonT" class="w-full text-sm">
+<thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Reason</th><th class="px-2 py-2 font-medium">Count</th></tr></thead>
+<tbody>{% for r in reasons %}<tr class="border-t hover:bg-muted/40"><td class="px-2 py-2.5">{{ r.name }}</td><td class="px-2 py-2.5">{{ r.value }}</td></tr>
+{% empty %}<tr><td colspan="2" class="px-2 py-8 text-center text-sm text-muted-foreground">No refusals.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+</div><section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+<div class="mb-4"><h2 class="font-semibold">Recent redemptions</h2><p class="text-xs text-muted-foreground mt-0.5">Latest 100</p></div>
+<div class="overflow-x-auto -mx-1"><table id="recT" class="w-full text-sm">
+<thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Code</th><th class="px-2 py-2 font-medium">Member</th><th class="px-2 py-2 font-medium">Merchant</th><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Saving</th></tr></thead>
+<tbody>{% for r in recent %}<tr class="border-t hover:bg-muted/40"><td class="px-2 py-2.5"><span class="font-mono">{{ r.code }}</span></td><td class="px-2 py-2.5">{{ r.member }}</td><td class="px-2 py-2.5">{{ r.merchant }}</td><td class="px-2 py-2.5">{{ r.item }}</td><td class="px-2 py-2.5"><span class="text-primary font-medium">{{ r.saving|ugx }}</span></td></tr>
+{% empty %}<tr><td colspan="5" class="px-2 py-8 text-center text-sm text-muted-foreground">No redemptions yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endblock %}

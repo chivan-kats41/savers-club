@@ -1,0 +1,46 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Subscriptions · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Subscriptions" description="Plans and recent subscription payments." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Active subscriptions" value=stats.active icon="badge-check" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Due today" value=stats.due_today icon="calendar" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Failed (30d)" value=stats.failed icon="x" tone="destructive" %}
+  {% include "hub/partials/stat_card.html" with label="Pending payments" value=stats.pending icon="alert-circle" tone="warning" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="mb-4"><h2 class="font-semibold">Plans</h2><p class="text-xs text-muted-foreground mt-0.5">Edit plans in Django admin.</p></div>
+<div class="overflow-x-auto -mx-1">
+  <table id="plansTable" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Code</th><th class="px-2 py-2 font-medium">Plan</th><th class="px-2 py-2 font-medium">Price</th><th class="px-2 py-2 font-medium">Period</th><th class="px-2 py-2 font-medium">Active</th></tr></thead>
+    <tbody>
+      {% for r in plans %}
+      <tr class="border-t hover:bg-muted/40">
+        <td class="px-2 py-2.5"><span class="font-mono text-xs">{{ r.code }}</span></td><td class="px-2 py-2.5">{{ r.label }}{% if r.popular %} <span class="text-[10px] px-1.5 rounded bg-accent-soft text-accent">popular</span>{% endif %}</td><td class="px-2 py-2.5">{{ r.price|ugx }}</td><td class="px-2 py-2.5">{{ r.period }}</td><td class="px-2 py-2.5">{% if r.active %}Yes{% else %}No{% endif %}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="px-2 py-8 text-center text-sm text-muted-foreground">No plans configured.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</section>
+<div class="mt-5"></div><section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="mb-4"><h2 class="font-semibold">Recent subscription payments</h2><p class="text-xs text-muted-foreground mt-0.5">Latest 100</p></div>
+<div class="overflow-x-auto -mx-1">
+  <table id="subsTable" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Member</th><th class="px-2 py-2 font-medium">Plan</th><th class="px-2 py-2 font-medium">Paid</th><th class="px-2 py-2 font-medium">Method</th><th class="px-2 py-2 font-medium">Reference</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium">Renews</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="border-t hover:bg-muted/40">
+        <td class="px-2 py-2.5"><span class="font-medium">{{ r.member }}</span></td><td class="px-2 py-2.5">{{ r.plan }}</td><td class="px-2 py-2.5">{{ r.paid|ugx }}</td><td class="px-2 py-2.5">{{ r.method }}</td><td class="px-2 py-2.5"><span class="font-mono text-xs">{{ r.reference }}</span></td><td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status|badge_class }}">{{ r.status }}</span></td><td class="px-2 py-2.5">{{ r.renewal }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="px-2 py-8 text-center text-sm text-muted-foreground">No subscription payments yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</section>
+{% endblock %}

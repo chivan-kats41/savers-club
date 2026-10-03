@@ -1,0 +1,12 @@
+{% extends "hub/dashboard.html" %}
+{% block title %}Profile not set up · 1K Saver Club{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Your profile isn't set up yet" description="You can sign in as this role, but there is no profile attached to your account." %}
+<div class="rounded-2xl bg-card border p-6 shadow-card max-w-xl">
+  <p class="text-sm text-muted-foreground">
+    Your account has the <strong>{{ missing_label }}</strong> role but no {{ missing_label }} profile record exists for it,
+    so there is nothing to show here yet. Please contact support or an admin to finish setting up your profile.
+  </p>
+  <a href="{% url 'landing' %}" class="mt-4 inline-flex h-9 px-3 items-center rounded-lg border text-sm hover:bg-muted">Back to home</a>
+</div>
+{% endblock %}

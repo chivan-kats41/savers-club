@@ -1,0 +1,35 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Riders / Bodas · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Riders / Bodas" description="Verified riders, availability and delivery performance." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Verified" value=stats.verified icon="badge-check" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Pending" value=stats.pending icon="bike" tone="warning" %}
+  {% include "hub/partials/stat_card.html" with label="Available now" value=stats.available icon="bike" tone="accent" %}
+  {% include "hub/partials/stat_card.html" with label="Suspended" value=stats.suspended icon="ban" tone="destructive" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="mb-4"><h2 class="font-semibold">All riders</h2></div>
+<form method="get" class="flex flex-col sm:flex-row gap-2 mb-3">
+  <input name="q" value="{{ filters.q }}" maxlength="80" class="flex-1 h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Search name, phone, area, plate…" />
+  <select name="status" class="h-10 rounded-lg border bg-background px-3 text-sm"><option value="">All statuses</option><option value="pending" {% if filters.status == "pending" %}selected{% endif %}>Pending</option><option value="verified" {% if filters.status == "verified" %}selected{% endif %}>Verified</option><option value="suspended" {% if filters.status == "suspended" %}selected{% endif %}>Suspended</option><option value="rejected" {% if filters.status == "rejected" %}selected{% endif %}>Rejected</option></select>
+  <button class="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium">Filter</button>
+</form>
+<div class="overflow-x-auto -mx-1">
+  <table id="ridersTable" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Rider</th><th class="px-2 py-2 font-medium">Phone</th><th class="px-2 py-2 font-medium">Area</th><th class="px-2 py-2 font-medium">Vehicle</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium">Delivered</th><th class="px-2 py-2 font-medium">Failed</th><th class="px-2 py-2 font-medium">Gross earnings</th><th class="px-2 py-2 font-medium">Commission</th><th class="px-2 py-2 font-medium text-right">Actions</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="border-t hover:bg-muted/40">
+        <td class="px-2 py-2.5"><span class="font-medium">{{ r.name }}</span></td><td class="px-2 py-2.5">{{ r.phone }}</td><td class="px-2 py-2.5">{{ r.area }}</td><td class="px-2 py-2.5">{{ r.vehicle }} {{ r.plate }}</td><td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status|badge_class }}">{{ r.status }}</span>{% if r.available %}<span class="ml-1 text-[10px] text-primary">● online</span>{% endif %}</td><td class="px-2 py-2.5">{{ r.jobs }}</td><td class="px-2 py-2.5">{{ r.failed }}</td><td class="px-2 py-2.5">{{ r.gross|ugx }}</td><td class="px-2 py-2.5">{{ r.commission|ugx }}</td><td class="px-2 py-2.5"><div class="text-right">{% if r.status_key == "pending" %}<button type="button" data-api="{% url 'hub_api:admin_verify_rider' r.id %}" data-body='{"outcome":"verified"}' data-confirm="Verify this rider without an agent visit?" class="text-xs px-2 py-1 rounded-md bg-primary text-primary-foreground">Verify</button> <button type="button" data-api="{% url 'hub_api:admin_verify_rider' r.id %}" data-body='{"outcome":"rejected"}' data-confirm="Reject this application?" class="text-xs px-2 py-1 rounded-md border text-destructive">Reject</button>{% endif %}{% if r.suspended %}<button type="button" data-api="{% url 'accounts_api:reactivate_user' r.user_id %}" data-confirm="Reactivate this account?" class="text-xs px-2 py-1 rounded-md border">Reactivate</button>{% else %}<button type="button" data-api="{% url 'accounts_api:suspend_user' r.user_id %}" data-confirm="Suspend this account? They will be signed out and blocked." class="text-xs px-2 py-1 rounded-md border text-destructive">Suspend</button>{% endif %}</div></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="10" class="px-2 py-8 text-center text-sm text-muted-foreground">No riders match.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "hub/partials/pagination.html" %}
+</section>
+{% endblock %}

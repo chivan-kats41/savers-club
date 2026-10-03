@@ -1,0 +1,31 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Pickup Points · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Pickup Points" description="Staffed spots where members can collect parcels instead of door delivery." %}
+<div class="grid grid-cols-3 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Points" value=stats.total icon="map-pin" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Active" value=stats.active icon="check-circle-2" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Areas covered" value=stats.areas icon="map-pin" tone="secondary" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card mb-5">
+  <h2 class="font-semibold mb-3">Add a pickup point</h2>
+  <form data-api="{% url 'hub_api:admin_pickup_points' %}" data-success="Pickup point added." class="grid sm:grid-cols-6 gap-2">
+    <input name="name" required maxlength="150" placeholder="Name" class="h-10 rounded-lg border bg-background px-3 text-sm" />
+    <select name="area" data-number required class="h-10 rounded-lg border bg-background px-3 text-sm">{% for a in areas %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}</select>
+    <input name="address" required maxlength="255" placeholder="Address / landmark" class="sm:col-span-2 h-10 rounded-lg border bg-background px-3 text-sm" />
+    <input name="contact_phone" maxlength="20" placeholder="Phone" class="h-10 rounded-lg border bg-background px-3 text-sm" />
+    <input name="opening_hours" maxlength="120" placeholder="Hours" class="h-10 rounded-lg border bg-background px-3 text-sm" />
+    <div class="sm:col-span-6 text-right"><button class="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium">Add</button></div>
+  </form>
+</section>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="overflow-x-auto -mx-1"><table id="pickupT" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Name</th><th class="px-2 py-2 font-medium">Area</th><th class="px-2 py-2 font-medium">Address</th><th class="px-2 py-2 font-medium">Contact</th><th class="px-2 py-2 font-medium">Hours</th><th class="px-2 py-2 font-medium">Active</th><th class="px-2 py-2"></th></tr></thead>
+    <tbody>
+    {% for p in points %}<tr class="border-t"><td class="px-2 py-2.5 font-medium">{{ p.name }}</td><td class="px-2 py-2.5">{{ p.area.name }}</td><td class="px-2 py-2.5">{{ p.address }}</td><td class="px-2 py-2.5">{{ p.contact_phone|default:"—" }}</td><td class="px-2 py-2.5">{{ p.opening_hours|default:"—" }}</td><td class="px-2 py-2.5">{% if p.is_active %}Yes{% else %}No{% endif %}</td>
+      <td class="px-2 py-2.5 text-right"><button type="button" data-api="{% url 'hub_api:admin_pickup_toggle' p.pk %}" class="text-xs px-2 py-1 rounded-md border">{% if p.is_active %}Disable{% else %}Enable{% endif %}</button></td></tr>
+    {% empty %}<tr><td colspan="7" class="px-2 py-8 text-center text-sm text-muted-foreground">No pickup points yet.</td></tr>{% endfor %}
+    </tbody></table></div>
+</section>
+{% endblock %}

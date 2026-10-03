@@ -1,0 +1,36 @@
+{% extends "hub/dashboard.html" %}
+{% block title %}Become a rider · 1K Saver Club{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Become a boda rider" description="Earn from deliveries on your normal routes. An area agent verifies your ID, permit and vehicle." %}
+<section class="rounded-2xl bg-card border p-5 shadow-card max-w-2xl">
+  {% if existing %}
+    <div class="rounded-xl bg-primary-soft text-primary p-4 text-sm mb-5">
+      Application status: <strong>{{ existing.get_status_display }}</strong>.
+      {% if existing.status == "verified" %}<a class="underline font-medium" href="{% url 'rider' %}">Open your rider dashboard</a>.{% else %}Upload your documents below so the agent can check them.{% endif %}
+    </div>
+    <h2 class="font-semibold mb-2">Your documents</h2>
+    {% if existing.documents.all %}
+    <ul class="mb-4 space-y-1.5">{% for d in existing.documents.all %}<li class="text-sm flex justify-between border rounded-lg px-3 py-2"><span>{{ d.get_doc_type_display }}</span><a class="text-primary text-xs" href="{% url 'rider_document' d.pk %}">View</a></li>{% endfor %}</ul>
+    {% endif %}
+    {% if existing.status != "verified" %}
+    <form data-api="{% url 'hub_api:rider_documents' %}" data-success="Document uploaded." class="grid sm:grid-cols-3 gap-2 items-end rounded-xl border p-3 bg-muted/40">
+      <label class="block text-xs text-muted-foreground">Type
+        <select name="doc_type" class="mt-1 w-full h-10 rounded-lg border bg-background px-2 text-sm text-foreground">{% for v, l in doc_types %}<option value="{{ v }}">{{ l }}</option>{% endfor %}</select></label>
+      <label class="block text-xs text-muted-foreground sm:col-span-1">File (JPG, PNG or PDF, up to 8MB)
+        <input type="file" name="file" required accept="image/jpeg,image/png,application/pdf" class="mt-1 w-full text-sm" /></label>
+      <button type="submit" class="h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium press-scale">Upload</button>
+    </form>
+    {% endif %}
+  {% else %}
+  <form data-api="{% url 'hub_api:rider_apply' %}" data-success="Application sent. Next, upload your documents." class="grid sm:grid-cols-3 gap-3">
+    <label class="block text-xs text-muted-foreground">Area
+      <select name="area" data-number required class="mt-1 w-full h-10 rounded-lg border bg-background px-2 text-sm text-foreground">{% for a in areas %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}</select></label>
+    <label class="block text-xs text-muted-foreground">Vehicle
+      <select name="vehicle_type" class="mt-1 w-full h-10 rounded-lg border bg-background px-2 text-sm text-foreground">{% for v, l in vehicle_types %}<option value="{{ v }}">{{ l }}</option>{% endfor %}</select></label>
+    <label class="block text-xs text-muted-foreground">Plate number
+      <input name="plate_number" maxlength="30" class="mt-1 w-full h-10 rounded-lg border bg-background px-3 text-sm text-foreground" /></label>
+    <div class="sm:col-span-3"><button type="submit" class="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium press-scale">Submit application</button></div>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}

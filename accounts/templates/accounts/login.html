@@ -1,0 +1,20 @@
+{% extends "accounts/_auth_layout.html" %}
+{% block title %}Log in — 1K Saver Club{% endblock %}
+{% block heading %}Welcome back{% endblock %}
+{% block subheading %}Log in with your phone or email.{% endblock %}
+{% block fields %}
+  {% for field in form %}
+    <div>
+      <label class="block text-sm font-medium text-foreground mb-1">{{ field.label }}</label>
+      {{ field }}
+      {% for error in field.errors %}<p class="text-xs text-destructive mt-1">{{ error }}</p>{% endfor %}
+    </div>
+  {% endfor %}
+{% endblock %}
+{% block submit_label %}Log in{% endblock %}
+{% block footer %}
+  <div class="mt-4 flex items-center justify-between text-sm">
+    <a href="{% url 'accounts:password_reset_request' %}" class="text-primary font-medium">Forgot password?</a>
+    <a href="{% url 'accounts:register' %}" class="text-primary font-medium">Create account</a>
+  </div>
+{% endblock %}

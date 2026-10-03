@@ -1,0 +1,34 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="csrf-token" content="{{ csrf_token }}" />
+  <title>{% block title %}1K Saver Club{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}1K Saver Club is a Ugandan savings and local commerce platform connecting members to deals and delivery.{% endblock %}" />
+
+  <link rel="stylesheet" href="{% static 'hub/css/fonts.css' %}" />
+
+  <!-- Tailwind is compiled at build time (see tailwind.config.js / README) and served from our own origin. -->
+  <link rel="stylesheet" href="{% static 'hub/css/tailwind.css' %}" />
+  <link rel="stylesheet" href="{% static 'hub/css/theme.css' %}" />
+  <!-- Inlined as a fallback: if the static file above fails to load for any
+       reason (misconfigured static serving, offline dev server, etc.) the
+       page still gets its colors, radii and animations from here. -->
+  <style nonce="{{ csp_nonce }}">{% autoescape off %}{% include "hub/partials/inline_theme.txt" %}{% endautoescape %}</style>
+
+  <!-- Icons -->
+  <script src="{% static 'hub/vendor/lucide-0.468.0.min.js' %}"></script>
+  <!-- Charts -->
+  <script src="{% static 'hub/vendor/chart-4.4.7.umd.js' %}"></script>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-background text-foreground font-sans antialiased" {% block body_attrs %}{% endblock %}>
+  {% block body %}{% endblock %}
+
+  <script src="{% static 'hub/js/app.js' %}"></script>
+  <script src="{% static 'hub/js/api.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

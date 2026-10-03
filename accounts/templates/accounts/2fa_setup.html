@@ -1,0 +1,25 @@
+{% extends "hub/base.html" %}
+{% block title %}Set up two-factor — 1K Saver Club{% endblock %}
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-background px-4 py-12">
+  <div class="w-full max-w-sm bg-card border border-border rounded-2xl shadow-sm p-8">
+    <h1 class="text-xl font-bold mb-1">Set up two-factor</h1>
+    <p class="text-sm text-muted-foreground mb-5">Admin accounts must use an authenticator app (Google Authenticator, Authy, 1Password…).</p>
+    <ol class="text-sm space-y-2 mb-4 list-decimal pl-5">
+      <li>Open your authenticator app and add an account <strong>manually</strong> (time-based).</li>
+      <li>Enter this key: <code class="block mt-1 break-all rounded bg-muted px-2 py-1.5 font-mono text-xs select-all">{{ secret }}</code></li>
+      <li>Type the 6-digit code it shows below.</li>
+    </ol>
+    <p class="text-[11px] text-muted-foreground mb-4 break-all">Or open on your phone: <a class="underline" href="{{ uri }}">{{ uri }}</a></p>
+    {% if error %}<div class="mb-4 text-sm rounded-lg px-3 py-2 bg-destructive/10 text-destructive">{{ error }}</div>{% endif %}
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}" />
+      <input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]{6,7}" maxlength="7" required autofocus
+             class="w-full h-12 text-center text-2xl tracking-widest font-mono rounded-xl border bg-background" placeholder="000000" />
+      <button type="submit" class="w-full rounded-lg bg-primary text-primary-foreground font-semibold py-2.5 hover:opacity-90">Enable two-factor</button>
+    </form>
+    <form method="post" action="{% url 'accounts:logout' %}" class="mt-4 text-center">{% csrf_token %}<button class="text-xs text-muted-foreground underline">Sign out</button></form>
+  </div>
+</div>
+{% endblock %}

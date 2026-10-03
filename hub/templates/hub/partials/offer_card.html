@@ -1,0 +1,30 @@
+{# One live offer. Expects `o` (a dict from selectors._offer_card). #}
+{% load hub_extras %}
+<div class="rounded-xl border p-4 flex flex-col reveal">
+  {% if o.photo %}<img src="{{ o.photo }}" alt="{{ o.item }}" loading="lazy" class="h-32 w-full object-cover rounded-lg mb-3" />{% endif %}
+  <div class="flex items-start gap-3">
+    <div class="h-11 w-11 rounded-xl bg-muted flex items-center justify-center text-xl shrink-0" aria-hidden="true">{{ o.emoji }}</div>
+    <div class="flex-1 min-w-0">
+      <div class="font-medium truncate">{{ o.item }}</div>
+      <div class="text-xs text-muted-foreground truncate">{{ o.seller }} · {{ o.vendorType }}</div>
+      <div class="text-xs text-muted-foreground"><i data-lucide="map-pin" class="h-3 w-3 inline mr-0.5"></i>{{ o.area }} · {{ o.distance }}</div>
+    </div>
+    <span class="text-[10px] px-1.5 py-0.5 rounded bg-secondary-soft text-secondary font-semibold shrink-0">{{ o.category }}</span>
+  </div>
+  <div class="mt-2 flex flex-wrap gap-1">
+    {% for b in o.badges|slice:":3" %}<span class="text-[10px] px-1.5 py-0.5 rounded bg-accent-soft text-accent font-semibold">{{ b }}</span>{% endfor %}
+    {% if o.delivery %}<span class="text-[10px] px-1.5 py-0.5 rounded bg-secondary-soft text-secondary font-semibold">Delivery</span>{% endif %}
+  </div>
+  <div class="mt-3">
+    <div class="text-base font-semibold text-primary">{{ o.member|ugx }} <span class="text-xs line-through text-muted-foreground font-normal">{{ o.normal|ugx }}</span></div>
+    <div class="text-[11px] text-primary font-medium">You save {{ o.saving|ugx }} · Stock: {{ o.stock }}</div>
+    <div class="text-[11px] text-muted-foreground">Expires {{ o.expires }}</div>
+  </div>
+  <div class="mt-3 grid grid-cols-3 gap-1.5">
+    <button type="button" data-api="{% url 'claims:claim_offer' o.id %}"
+            {% if not sub.active %}disabled title="You need an active subscription to claim"{% endif %}
+            class="h-9 text-xs rounded-lg bg-primary text-primary-foreground font-medium press-scale disabled:opacity-50 disabled:cursor-not-allowed">Claim</button>
+    {% if o.phone %}<a href="tel:{{ o.phone }}" data-track="call" data-offer="{{ o.id }}" class="h-9 text-xs rounded-lg border inline-flex items-center justify-center gap-1 press-scale"><i data-lucide="phone" class="h-3 w-3"></i> Call</a>{% else %}<span></span>{% endif %}
+    {% if o.whatsapp %}<a href="https://wa.me/{{ o.whatsapp }}" data-track="whatsapp" data-offer="{{ o.id }}" target="_blank" rel="noopener noreferrer" class="h-9 text-xs rounded-lg border inline-flex items-center justify-center gap-1 press-scale"><i data-lucide="message-circle" class="h-3 w-3"></i> WhatsApp</a>{% else %}<span></span>{% endif %}
+  </div>
+</div>

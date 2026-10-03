@@ -1,0 +1,19 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Price Database · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Price Database" description="Latest agent-collected price per item and area." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Items tracked" value=stats.items icon="database" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Areas updated today" value=stats.areas_today icon="map-pin" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Areas total" value=stats.areas_total icon="map-pin" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Price drops (7d)" value=stats.drops icon="trending-up" tone="accent" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+<div class="mb-4"><h2 class="font-semibold">Prices</h2><p class="text-xs text-muted-foreground mt-0.5">Low/high are over the last 20 records.</p></div>
+<div class="overflow-x-auto -mx-1"><table id="pricesT" class="w-full text-sm">
+<thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Area</th><th class="px-2 py-2 font-medium">Current</th><th class="px-2 py-2 font-medium">Previous</th><th class="px-2 py-2 font-medium">Change</th><th class="px-2 py-2 font-medium">Low</th><th class="px-2 py-2 font-medium">High</th><th class="px-2 py-2 font-medium">Collected by</th><th class="px-2 py-2 font-medium">When</th></tr></thead>
+<tbody>{% for r in rows %}<tr class="border-t hover:bg-muted/40"><td class="px-2 py-2.5"><span class="font-medium">{{ r.item }}</span></td><td class="px-2 py-2.5">{{ r.area }}</td><td class="px-2 py-2.5">{{ r.current|ugx }}</td><td class="px-2 py-2.5">{{ r.previous|ugx }}</td><td class="px-2 py-2.5">{% if r.diff > 0 %}<span class="text-destructive">▲ {{ r.diff|ugx }}</span>{% elif r.diff < 0 %}<span class="text-primary">▼ {{ r.diff|ugx }}</span>{% else %}—{% endif %}</td><td class="px-2 py-2.5">{{ r.low|ugx }}</td><td class="px-2 py-2.5">{{ r.high|ugx }}</td><td class="px-2 py-2.5">{{ r.agent }}</td><td class="px-2 py-2.5">{{ r.date }}</td></tr>
+{% empty %}<tr><td colspan="9" class="px-2 py-8 text-center text-sm text-muted-foreground">No prices collected yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endblock %}
