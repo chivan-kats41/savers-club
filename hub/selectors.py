@@ -247,7 +247,8 @@ def _primary_photo(offer: Offer) -> str:
 def landing_context() -> dict:
     now = timezone.now()
     offers = list(live_offers_qs().order_by("-visibility_score", "-created_at")[:6])
-    verified = Merchant.objects.filter(status=Merchant.Status.VERIFIED).count()
+    # (the platform owner's own auto-created merchant profile is not a real seller: keep it out of the public number)
+    verified = Merchant.objects.filter(status=Merchant.Status.VERIFIED, user__is_superuser=False).count()
     area_rows = []
     for area in Area.objects.filter(is_active=True, is_launch_area=True).order_by("name"):
         area_rows.append(area.name)

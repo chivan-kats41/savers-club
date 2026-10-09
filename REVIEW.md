@@ -61,3 +61,12 @@ was a string and `category` was missing; card payments now send `redirectUrl` + 
 in `SentToVendor`; a "Success" for the wrong amount could activate a subscription. Added: one callback URL
 (`/api/iotec/callback`), `PAYMENT_PROVIDERS` + `IOTEC_API_KEY/IOTEC_SECRET_KEY` names, card/mobile-money switch in the pay forms,
 on-demand status verification, `iotec_check`, admin wallet balance. See PAYMENTS.md. Tests: 291 passing.
+
+
+## Update: super admins get every profile
+`accounts/admin_profiles.py` + signals: a super admin (is_superuser or role super_admin) automatically gets member, merchant, rider and
+agent profiles, the four role-switcher rows, and an agent area list covering every active area. Triggers: user creation / promotion,
+every login, and the first visit to a role page; plus `manage.py ensure_admin_profiles`. Idempotent, never overwrites existing profiles,
+never raises into signup/login, never depends on seed data (creates a General Shop category / Default Area if none exist), creates each profile independently so one failure cannot block the others. Verification audit rows record that profiles were
+auto-created. The internal admin merchant is excluded from the public landing "verified sellers" number. 20 new tests; 318 total pass on
+SQLite and on MySQL 8.0.

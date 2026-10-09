@@ -6,7 +6,7 @@ done by the JSON API under /api/v1/ (see static/hub/js/api.js).
 """
 from copy import deepcopy
 
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from accounts.decorators import admin_required, role_required
 from . import selectors as s
@@ -49,7 +49,17 @@ def dashboard_context(request, role_key, current_url_name, extra=None, meta=""):
 
 
 def _no_profile(request, role_key, url_name, label):
-    ctx = dashboard_context(request, role_key, url_name, {"missing_label": label}, meta="Profile not set up")
+    reason = ""
+    from accounts.admin_profiles import ensure_admin_profiles, is_super_admin
+
+    if is_super_admin(request.user):
+        # A super admin should never be stuck here: create the missing profile(s) right now.
+        report = ensure_admin_profiles(request.user)
+        if label in report.created:
+            return redirect(request.get_full_path())          # profile exists now; show the real page
+        reason = report.skipped.get(label, "")
+    ctx = dashboard_context(request, role_key, url_name, {"missing_label": label, "reason": reason},
+                            meta="Profile not set up")
     return render(request, "hub/no_profile.html", ctx, status=200)
 
 

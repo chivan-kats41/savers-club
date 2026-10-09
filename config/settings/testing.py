@@ -22,3 +22,6 @@ CELERY_TASK_EAGER_PROPAGATES = True
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 SECURE_SSL_REDIRECT = False
+
+# Off by default in tests so existing fixtures/counts are unaffected; the feature has its own tests that turn it on.
+AUTO_CREATE_ADMIN_PROFILES = False

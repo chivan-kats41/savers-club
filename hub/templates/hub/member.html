@@ -3,6 +3,140 @@
 {% block title %}Member Dashboard · 1K Saver Club{% endblock %}
 {% block content %}
 
+<style>
+/* =====================================================================
+   Member dashboard — mobile responsiveness + compact footer
+   Everything is prefixed with .mb-page / .mb-footer so it can't leak.
+   NOTE: nothing here sets `display` on .mb-modal — the existing `hidden`
+   class must keep working to open/close the payment modal.
+   ===================================================================== */
+.mb-page { overflow-x: clip; }
+.mb-page input, .mb-page select, .mb-page textarea { min-width: 0; max-width: 100%; }
+.mb-page select { text-overflow: ellipsis; }
+.mb-page canvas { max-width: 100%; }
+.mb-page a:focus-visible, .mb-page button:focus-visible,
+.mb-footer a:focus-visible { outline: 2px solid #22c55e; outline-offset: 2px; }
+.mb-page .mb-stats > * { min-width: 0; overflow-wrap: anywhere; }
+
+/* Payment modal: scrolls instead of getting cut off by the on-screen keyboard */
+.mb-page .mb-modal { overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.mb-page .mb-modal > form { max-height: calc(100vh - 2rem); max-height: calc(100dvh - 2rem); overflow-y: auto; }
+
+/* ---------- Phones ---------- */
+@media (max-width: 639.98px) {
+
+  /* Stop iOS zooming into fields (needs >= 16px) + comfortable height */
+  .mb-page input, .mb-page select, .mb-page textarea { font-size: 16px; }
+  .mb-page input:not([type="hidden"]):not([type="checkbox"]):not([type="file"]),
+  .mb-page select { min-height: 2.75rem; }
+
+  /* Thumb-friendly buttons */
+  .mb-page button[data-api], .mb-page button[data-copy] { min-height: 2.5rem; padding-left: .75rem; padding-right: .75rem; }
+  .mb-page form button[type="submit"] { min-height: 2.75rem; }
+  .mb-page [data-modal-close] { min-width: 2.75rem; min-height: 2.75rem; display: inline-flex; align-items: center; justify-content: center; }
+
+  /* Subscription banner */
+  .mb-page .mb-sub-title { flex-wrap: wrap; }
+  .mb-page .mb-sub-actions { width: 100%; }
+  .mb-page .mb-sub-actions > button { flex: 1 1 0; min-height: 2.75rem; }
+
+  /* Search bar */
+  .mb-page .mb-searchbar button { min-height: 2.5rem; }
+
+  /* Category chips + filters: smooth one-row swipe lists */
+  .mb-page .mb-chips, .mb-page .mb-filters {
+    flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; padding-bottom: .25rem;
+  }
+  .mb-page .mb-chips::-webkit-scrollbar, .mb-page .mb-filters::-webkit-scrollbar { display: none; }
+  .mb-page .mb-chips > a { min-height: 2.5rem; }
+  .mb-page .mb-filters > a { flex-shrink: 0; white-space: nowrap; display: inline-flex; align-items: center; min-height: 2.25rem; padding: 0 .75rem; }
+
+  /* Compare picker spans the width */
+  .mb-page .mb-compare-form { width: 100%; }
+  .mb-page .mb-compare-form select { width: 100%; height: 2.75rem; }
+
+  /* ---- Compare table → stacked cards ---- */
+  .mb-page .mb-table-wrap { margin-left: 0; margin-right: 0; overflow: visible; }
+  .mb-page .mb-table,
+  .mb-page .mb-table tbody,
+  .mb-page .mb-table tr,
+  .mb-page .mb-table td { display: block; width: 100%; }
+  .mb-page .mb-table thead {            /* hidden visually, still read by screen readers */
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .mb-page .mb-table tr {
+    margin-bottom: .75rem; padding: .375rem .875rem;
+    border: 1px solid rgba(128,128,128,.28); border-radius: .875rem;
+  }
+  .mb-page .mb-table td {
+    display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    padding: .5rem 0; text-align: right;
+  }
+  .mb-page .mb-table td + td { border-top: 1px dashed rgba(128,128,128,.22); }
+  .mb-page .mb-table td::before {
+    content: attr(data-label); flex-shrink: 0; text-align: left;
+    font-size: .75rem; font-weight: 500; opacity: .65;
+  }
+  .mb-page .mb-table .mb-cell { min-width: 0; overflow-wrap: anywhere; }
+  .mb-page .mb-table .mb-cell .flex { justify-content: flex-end; }   /* badges sit on the right */
+  .mb-page .mb-table td.mb-act { padding-top: .75rem; }
+  .mb-page .mb-table td.mb-act::before { content: none; }
+  .mb-page .mb-table td.mb-act button { width: 100%; min-height: 2.75rem; font-size: .875rem; }
+
+  /* Requests list + routes list wrap cleanly */
+  .mb-page .mb-req li, .mb-page .mb-routes li { flex-wrap: wrap; gap: .5rem; }
+}
+
+/* Extra-small phones */
+@media (max-width: 479.98px) {
+  /* Claim code cards: details on top, code + actions in a row below */
+  .mb-page .mb-claim { flex-direction: column; align-items: stretch; }
+  .mb-page .mb-claim-right {
+    display: flex; align-items: center; justify-content: space-between; gap: .75rem; text-align: left; width: 100%;
+  }
+  .mb-page .mb-claim-right > div:last-child { margin-top: 0; }
+}
+@media (max-width: 359.98px) {
+  .mb-page .mb-drop-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Footer (compact, dashboard-style) ---------- */
+.mb-footer {
+  margin-top: 2rem; border-top: 1px solid rgba(128,128,128,.25);
+  padding: 1.5rem 0 calc(1.25rem + env(safe-area-inset-bottom));
+  font-size: .875rem;
+}
+.mb-footer a { color: inherit; text-decoration: none; }
+.mb-footer-inner { display: flex; flex-direction: column; gap: 1.25rem; }
+.mb-brand { display: flex; align-items: center; gap: .75rem; }
+.mb-logo {
+  height: 2.5rem; width: 2.5rem; flex-shrink: 0; border-radius: .75rem;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #22c55e, #0ea5a4); color: #04210f; font-weight: 700;
+}
+.mb-fname { font-weight: 600; line-height: 1.2; }
+.mb-sub { font-size: .75rem; opacity: .65; }
+.mb-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem; }
+.mb-links a {
+  display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 .75rem;
+  border-radius: .5rem; transition: background .15s;
+}
+.mb-links a:hover { background: rgba(128,128,128,.14); }
+.mb-bottom {
+  display: flex; flex-direction: column; gap: .5rem; margin-top: 1.25rem; padding-top: 1rem;
+  border-top: 1px solid rgba(128,128,128,.18); font-size: .75rem; opacity: .75;
+}
+.mb-top { display: inline-flex; align-items: center; gap: .35rem; min-height: 2.25rem; align-self: flex-start; }
+@media (min-width: 640px) {
+  .mb-footer-inner { flex-direction: row; align-items: center; justify-content: space-between; }
+  .mb-links { display: flex; flex-wrap: wrap; gap: .25rem; }
+  .mb-bottom { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+</style>
+
+<div id="mb-top" class="mb-page">
+
 {% include "hub/partials/page_header.html" with title="Karibu, "|add:member.user.first_name description="Here's how your 1K membership is saving you money." %}
 
 <!-- Welcome / status -->
@@ -10,7 +144,7 @@
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
       <div class="text-xs uppercase tracking-wider opacity-80">Subscription</div>
-      <div class="mt-1 text-lg font-semibold flex items-center gap-2">
+      <div class="mb-sub-title mt-1 text-lg font-semibold flex items-center gap-2">
         {{ sub.status_label }}{% if sub.price %} · {{ sub.price|ugx }}{% if sub.period_days %} / {{ sub.period_days }} days{% endif %}{% endif %}
         {% if sub.active %}<i data-lucide="check" class="h-4 w-4"></i>{% endif %}
       </div>
@@ -21,7 +155,7 @@
         {% else %}Subscribe to start claiming member prices.{% endif %}
       </div>
     </div>
-    <div class="flex gap-2">
+    <div class="mb-sub-actions flex gap-2">
       <button type="button" data-modal-open="pay-modal" class="h-9 px-3 text-sm rounded-lg bg-white text-primary font-medium press-scale">{% if sub.active %}Renew now{% else %}Subscribe{% endif %}</button>
       {% if sub.active %}<button type="button" data-api="{% url 'subscriptions:pause' %}" data-confirm="Pause your subscription? You won't be able to claim offers while paused." class="h-9 px-3 text-sm rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur press-scale">Pause</button>{% endif %}
     </div>
@@ -29,7 +163,7 @@
 </div>
 
 <!-- Pay / renew modal -->
-<div id="pay-modal" class="modal-backdrop hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+<div id="pay-modal" class="mb-modal modal-backdrop hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
   <form data-api="{% url 'payments:initiate' %}" data-after="payment" class="w-full max-w-sm rounded-2xl bg-card border p-5 shadow-card space-y-3">
     <div class="flex items-center justify-between"><h3 class="font-semibold">{% if sub.active %}Renew{% else %}Subscribe{% endif %} · {{ sub.price|ugx }}</h3><button type="button" data-modal-close class="text-muted-foreground" aria-label="Close">✕</button></div>
     <input type="hidden" name="purpose" value="subscription" />
@@ -53,7 +187,7 @@
 <!-- Search + categories + filters -->
 <section id="search" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
   <div class="mb-4"><h2 class="font-semibold">What are you looking for near you?</h2><p class="text-xs text-muted-foreground mt-0.5">Search verified sellers around {{ member.area.name }}{% if areas %} and {{ areas|length }} active area{{ areas|length|pluralize }}{% endif %}.</p></div>
-  <form method="get" action="#results" class="flex items-center gap-2 h-12 rounded-xl border bg-background px-3">
+  <form method="get" action="#results" class="mb-searchbar flex items-center gap-2 h-12 rounded-xl border bg-background px-3">
     <i data-lucide="search" class="h-4 w-4 text-muted-foreground"></i>
     <input name="q" value="{{ search.q }}" maxlength="80" class="flex-1 bg-transparent outline-none text-sm" placeholder="e.g. soap, posho, tomatoes, panadol, lunch…" />
     {% if search.cat %}<input type="hidden" name="cat" value="{{ search.cat }}" />{% endif %}
@@ -62,12 +196,12 @@
     <input type="hidden" name="sort" value="{{ search.sort }}" />
     <button type="submit" class="h-9 px-3 text-sm rounded-lg bg-primary text-primary-foreground font-medium press-scale">Search</button>
   </form>
-  <div class="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+  <div class="mb-chips mt-3 flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
     {% for c in search_categories %}
     <a href="?cat={{ c.key }}&sort={{ search.sort }}#results" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm hover:bg-muted press-scale {% if search.cat == c.key %}bg-foreground text-background border-foreground{% else %}bg-card{% endif %}"><span>{{ c.emoji }}</span> {{ c.label }}</a>
     {% endfor %}
   </div>
-  <div class="mt-3 flex flex-wrap gap-1.5 items-center">
+  <div class="mb-filters mt-3 flex flex-wrap gap-1.5 items-center">
     {% for key, label in sorts.items %}
     <a href="?q={{ search.q|urlencode }}&cat={{ search.cat|urlencode }}&sort={{ key }}{% if search.delivery %}&delivery=1{% endif %}{% if search.here %}&here=1{% endif %}#results" class="text-xs px-2.5 py-1 rounded-md border {% if search.sort == key %}bg-foreground text-background border-foreground{% else %}bg-card{% endif %}">{{ label }}</a>
     {% endfor %}
@@ -91,7 +225,7 @@
 <div class="h-5"></div>
 
 <!-- Monthly summary -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+<div class="mb-stats grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
   {% include "hub/partials/stat_card.html" with label="Subscription paid" value=savings.paid_this_month|ugx hint="This month" icon="ticket" %}
   {% include "hub/partials/stat_card.html" with label="Confirmed savings" value=savings.confirmed_month|ugx hint="Codes redeemed this month" icon="check" tone="primary" %}
   {% include "hub/partials/stat_card.html" with label="Possible savings" value=savings.possible|ugx hint="Active offers in your area" icon="tag" tone="accent" %}
@@ -145,7 +279,7 @@
     <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
       <div><h2 class="font-semibold">Compare nearby prices{% if compare_item %} · {{ compare_item }}{% endif %}</h2><p class="text-xs text-muted-foreground mt-0.5">Same item, different sellers. Pick the best fit.</p></div>
       {% if compare_options %}
-      <form method="get" action="#compare" class="flex items-center gap-2">
+      <form method="get" action="#compare" class="mb-compare-form flex items-center gap-2">
         <select name="compare" data-autosubmit class="h-9 rounded-lg border bg-background px-2 text-sm" aria-label="Item to compare">
           {% for opt in compare_options %}<option value="{{ opt.item_name }}" {% if opt.item_name == compare_item %}selected{% endif %}>{{ opt.item_name }} ({{ opt.sellers }} seller{{ opt.sellers|pluralize }})</option>{% endfor %}
         </select>
@@ -154,8 +288,8 @@
       {% endif %}
     </div>
     {% if compare_rows %}
-    <div class="overflow-x-auto -mx-1">
-      <table class="w-full text-sm">
+    <div class="mb-table-wrap overflow-x-auto -mx-1">
+      <table class="mb-table w-full text-sm">
         <thead class="text-xs text-muted-foreground">
           <tr class="text-left">
             <th class="px-2 py-2 font-medium">Seller</th><th class="px-2 py-2 font-medium">Area · Distance</th>
@@ -167,13 +301,13 @@
         <tbody>
           {% for c in compare_rows %}
           <tr class="border-t {% if forloop.first %}bg-primary-soft/40{% endif %}">
-            <td class="px-2 py-2.5 font-medium">{{ c.seller }}</td>
-            <td class="px-2 py-2.5 text-muted-foreground">{{ c.area }} · {{ c.distance }}</td>
-            <td class="px-2 py-2.5"><div class="font-semibold text-primary">{{ c.member|ugx }}</div><div class="text-xs line-through text-muted-foreground">{{ c.normal|ugx }}</div></td>
-            <td class="px-2 py-2.5">{{ c.stock }}</td>
-            <td class="px-2 py-2.5 text-muted-foreground">{{ c.expires }}</td>
-            <td class="px-2 py-2.5"><div class="flex flex-wrap gap-1">{% for b in c.badges %}<span class="text-[10px] px-1.5 py-0.5 rounded bg-muted font-medium">{{ b }}</span>{% endfor %}</div></td>
-            <td class="px-2 py-2.5 text-right"><button type="button" data-api="{% url 'claims:claim_offer' c.id %}" {% if not sub.active %}disabled{% endif %} class="text-xs px-2.5 py-1 rounded-md bg-primary text-primary-foreground press-scale disabled:opacity-50">Claim</button></td>
+            <td data-label="Seller" class="px-2 py-2.5 font-medium"><div class="mb-cell">{{ c.seller }}</div></td>
+            <td data-label="Area · Distance" class="px-2 py-2.5 text-muted-foreground"><div class="mb-cell">{{ c.area }} · {{ c.distance }}</div></td>
+            <td data-label="Member price" class="px-2 py-2.5"><div class="mb-cell"><div class="font-semibold text-primary">{{ c.member|ugx }}</div><div class="text-xs line-through text-muted-foreground">{{ c.normal|ugx }}</div></div></td>
+            <td data-label="Stock" class="px-2 py-2.5"><div class="mb-cell">{{ c.stock }}</div></td>
+            <td data-label="Expires" class="px-2 py-2.5 text-muted-foreground"><div class="mb-cell">{{ c.expires }}</div></td>
+            <td data-label="Badges" class="px-2 py-2.5"><div class="mb-cell"><div class="flex flex-wrap gap-1">{% for b in c.badges %}<span class="text-[10px] px-1.5 py-0.5 rounded bg-muted font-medium">{{ b }}</span>{% endfor %}</div></div></td>
+            <td class="mb-act px-2 py-2.5 text-right"><button type="button" data-api="{% url 'claims:claim_offer' c.id %}" {% if not sub.active %}disabled{% endif %} class="text-xs px-2.5 py-1 rounded-md bg-primary text-primary-foreground press-scale disabled:opacity-50">Claim</button></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -200,7 +334,7 @@
       <div class="lg:col-span-2">
         <div class="text-xs text-muted-foreground mb-2">Recent requests in your area</div>
         {% if member_requests %}
-        <ul class="space-y-2">
+        <ul class="mb-req space-y-2">
           {% for r in member_requests %}
           <li class="rounded-xl border p-3 flex items-center justify-between gap-3">
             <div class="min-w-0"><div class="font-medium text-sm">{{ r.item }}</div><div class="text-xs text-muted-foreground">{{ r.who }} · {{ r.area }} · {{ r.when }}</div></div>
@@ -224,14 +358,14 @@
     {% if claimed_offers %}
     <div class="space-y-3">
       {% for c in claimed_offers %}
-      <div class="rounded-xl border p-4 flex items-center justify-between gap-3 {% if c.status != 'claimed' %}opacity-70{% endif %}">
+      <div class="mb-claim rounded-xl border p-4 flex items-center justify-between gap-3 {% if c.status != 'claimed' %}opacity-70{% endif %}">
         <div class="min-w-0">
           <div class="font-medium">{{ c.item }}</div>
           <div class="text-xs text-muted-foreground">{{ c.seller }} · {% if c.status == 'claimed' %}expires {% endif %}{{ c.expires }}</div>
           <div class="text-xs text-primary mt-0.5">Saving {{ c.saving|ugx }}</div>
           <span class="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded font-semibold {{ c.status_label|badge_class }}">{{ c.status_label }}</span>
         </div>
-        <div class="text-right shrink-0">
+        <div class="mb-claim-right text-right shrink-0">
           <div class="font-mono font-bold text-lg tracking-wider px-3 py-1.5 rounded-lg bg-accent-soft text-accent">{{ c.code }}</div>
           <div class="mt-1 flex justify-end gap-3">
             <button type="button" data-copy="{{ c.code }}" class="text-[11px] text-muted-foreground inline-flex items-center gap-1 hover:text-foreground"><i data-lucide="copy" class="h-3 w-3"></i> Copy</button>
@@ -252,7 +386,7 @@
       <select name="claim_code" required class="w-full h-10 rounded-lg border bg-background px-2 text-sm">
         {% for c in deliverable_claims %}<option value="{{ c.code }}">{{ c.item }} · {{ c.seller }}</option>{% endfor %}
       </select>
-      <div class="grid grid-cols-2 gap-2">
+      <div class="mb-drop-grid grid grid-cols-2 gap-2">
         <select name="dropoff_area" required class="h-10 rounded-lg border bg-background px-2 text-sm">
           {% for a in areas %}<option value="{{ a.name }}" {% if a.pk == member.area_id %}selected{% endif %}>{{ a.name }}</option>{% endfor %}
         </select>
@@ -278,7 +412,7 @@
     {% endif %}
     {% if open_routes %}
     <div class="mt-4 text-xs text-muted-foreground mb-2">Upcoming shared routes</div>
-    <ul class="space-y-1.5">{% for r in open_routes %}<li class="rounded-lg border px-3 py-2 text-sm flex justify-between"><span>{{ r.label }}</span><span class="text-xs text-muted-foreground">{{ r.departs }} · {{ r.free }} slot{{ r.free|pluralize }} free</span></li>{% endfor %}</ul>
+    <ul class="mb-routes space-y-1.5">{% for r in open_routes %}<li class="rounded-lg border px-3 py-2 text-sm flex justify-between"><span>{{ r.label }}</span><span class="text-xs text-muted-foreground">{{ r.departs }} · {{ r.free }} slot{{ r.free|pluralize }} free</span></li>{% endfor %}</ul>
     {% endif %}
   </section>
 </div>
@@ -315,6 +449,32 @@
   </section>
 </div>
 
+<!-- Footer (remove this block if hub/dashboard.html already renders its own footer) -->
+<footer class="mb-footer text-muted-foreground">
+  <div class="mb-footer-inner">
+    <div class="mb-brand">
+      <div class="mb-logo">1K</div>
+      <div>
+        <div class="mb-fname text-foreground">1K Saver Club</div>
+        <div class="mb-sub">Member workspace · {{ member.area.name }}</div>
+      </div>
+    </div>
+    <nav class="mb-links" aria-label="Jump to section">
+      <a href="#search">Search deals</a>
+      <a href="#deals">Nearby deals</a>
+      <a href="#claims">Claim codes</a>
+      <a href="#delivery">Delivery</a>
+      <a href="#refer">Refer &amp; earn</a>
+      <a href="#report">Report a problem</a>
+    </nav>
+  </div>
+  <div class="mb-bottom">
+    <div>© {% now "Y" %} 1K Saver Club · Pay 1K. Save more every month.</div>
+    <a class="mb-top" href="#mb-top">Back to top <i data-lucide="arrow-up" class="h-4 w-4"></i></a>
+  </div>
+</footer>
+
+</div>
 {% endblock %}
 
 {% block extra_scripts %}

@@ -1,0 +1,22 @@
+# Recommended MySQL / MariaDB server settings for 1K Saver Club.
+# Linux: /etc/mysql/conf.d/savings_hub.cnf     Windows: add under [mysqld] in my.ini
+# Only options valid on MySQL 8.4 AND MariaDB 10.11 are used. Restart the server after editing.
+[mysqld]
+character-set-server  = utf8mb4
+collation-server      = utf8mb4_unicode_ci
+sql_mode              = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+
+# Network: only the app server may connect. Use the private IP, or 127.0.0.1 if the app runs on this machine.
+bind-address          = 127.0.0.1
+
+# Memory: set to ~50-60% of RAM on a dedicated database server (e.g. 2G on a 4 GB box). Default is tiny.
+innodb_buffer_pool_size = 1G
+innodb_flush_log_at_trx_commit = 1        # keep 1: payments must never be lost on a crash
+max_connections       = 200               # gunicorn workers x Celery workers x CONN_MAX_AGE (60s) need headroom
+
+# Find slow queries before users do.
+slow_query_log        = 1
+long_query_time       = 1
+
+[client]
+default-character-set = utf8mb4

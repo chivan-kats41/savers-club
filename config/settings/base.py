@@ -10,11 +10,6 @@ from datetime import timedelta
 from pathlib import Path
 
 import environ
-import mimetypes
-
-mimetypes.add_type('text/css', '.css', True)
-mimetypes.add_type('application/javascript', '.js', True)
-
 
 # ---------------------------------------------------------------------------
 # Paths / env loading
@@ -332,3 +327,7 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 14  # 14 days
 # --- Admin two-factor ---------------------------------------------------------
 ADMIN_REQUIRE_2FA = env.bool("ADMIN_REQUIRE_2FA", default=False)  # forced True in production.py
 ADMIN_2FA_MAX_AGE_SECONDS = 12 * 60 * 60
+
+# Super admins automatically get a member, merchant, rider and agent profile (see accounts/admin_profiles.py),
+# so one login can operate every part of the site. Set to False to disable.
+AUTO_CREATE_ADMIN_PROFILES = env.bool("AUTO_CREATE_ADMIN_PROFILES", default=True)

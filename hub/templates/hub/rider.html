@@ -4,6 +4,113 @@
 {% block body_attrs %}data-autorefresh="30"{% endblock %}
 {% block content %}
 
+<style>
+/* =====================================================================
+   Rider dashboard — mobile responsiveness + compact footer
+   Everything is prefixed with .rd-page / .rd-footer so it can't leak.
+   ===================================================================== */
+.rd-page { overflow-x: clip; }
+.rd-page fieldset { min-width: 0; border: 0; padding: 0; margin: 0; }
+.rd-page input, .rd-page select { min-width: 0; max-width: 100%; }
+.rd-page a:focus-visible, .rd-page button:focus-visible,
+.rd-footer a:focus-visible { outline: 2px solid #22c55e; outline-offset: 2px; }
+.rd-page .rd-avatar { flex-shrink: 0; }
+.rd-page .rd-stats > * { min-width: 0; overflow-wrap: anywhere; }
+
+/* ---------- Phones ---------- */
+@media (max-width: 639.98px) {
+
+  /* Stop iOS zooming into fields (needs >= 16px) */
+  .rd-page input, .rd-page select, .rd-page textarea { font-size: 16px; }
+  .rd-page input, .rd-page select { min-height: 2.75rem; }
+
+  /* Bigger, thumb-friendly buttons */
+  .rd-page button[data-api] { min-height: 2.5rem; padding: .5rem .875rem; font-size: .8125rem; }
+  .rd-page form button[type="submit"] { min-height: 2.75rem; }
+  .rd-page .rd-submit button { width: 100%; }
+
+  /* Next-route banner stacks instead of squeezing */
+  .rd-page .rd-route-head { flex-direction: column; align-items: flex-start; }
+  .rd-page .rd-route-head > div:last-child { text-align: left; }
+
+  /* Routes list: buttons wrap under the name */
+  .rd-page .rd-route-actions { width: 100%; flex-wrap: wrap; }
+
+  /* ---- Jobs table → stacked cards ---- */
+  .rd-page .rd-table-wrap { margin-left: 0; margin-right: 0; overflow: visible; }
+  .rd-page .rd-table,
+  .rd-page .rd-table tbody,
+  .rd-page .rd-table tr,
+  .rd-page .rd-table td { display: block; width: 100%; }
+  .rd-page .rd-table thead {            /* hidden visually, still read by screen readers */
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .rd-page .rd-table tr {
+    margin-bottom: .75rem; padding: .375rem .875rem;
+    border: 1px solid rgba(128,128,128,.28); border-radius: .875rem;
+  }
+  .rd-page .rd-table td {
+    display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    padding: .5rem 0; text-align: right;
+  }
+  .rd-page .rd-table td + td { border-top: 1px dashed rgba(128,128,128,.22); }
+  .rd-page .rd-table td::before {
+    content: attr(data-label); flex-shrink: 0; text-align: left;
+    font-size: .75rem; font-weight: 500; opacity: .65;
+  }
+  .rd-page .rd-table .rd-cell { min-width: 0; overflow-wrap: anywhere; }
+  .rd-page .rd-table td.rd-act:not(:has(button)) { display: none; }   /* no actions → no empty row */
+  .rd-page .rd-table td.rd-act .inline-flex { flex-wrap: wrap; justify-content: flex-end; }
+
+  /* Withdrawals list wraps cleanly */
+  .rd-page .rd-wd li { flex-wrap: wrap; }
+}
+
+/* Extra-small phones */
+@media (max-width: 479.98px) {
+  .rd-page .rd-route-tiles { grid-template-columns: 1fr; gap: .5rem; }
+  .rd-page .rd-route-tiles > div { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+}
+@media (max-width: 359.98px) {
+  .rd-page .rd-week { grid-template-columns: 1fr; }
+}
+
+/* ---------- Footer (compact, dashboard-style) ---------- */
+.rd-footer {
+  margin-top: 2rem; border-top: 1px solid rgba(128,128,128,.25);
+  padding: 1.5rem 0 calc(1.25rem + env(safe-area-inset-bottom));
+  font-size: .875rem;
+}
+.rd-footer a { color: inherit; text-decoration: none; }
+.rd-footer-inner { display: flex; flex-direction: column; gap: 1.25rem; }
+.rd-brand { display: flex; align-items: center; gap: .75rem; }
+.rd-logo {
+  height: 2.5rem; width: 2.5rem; flex-shrink: 0; border-radius: .75rem;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #22c55e, #0ea5a4); color: #04210f; font-weight: 700;
+}
+.rd-name { font-weight: 600; line-height: 1.2; }
+.rd-sub { font-size: .75rem; opacity: .65; }
+.rd-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem; }
+.rd-links a {
+  display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 .75rem;
+  border-radius: .5rem; transition: background .15s;
+}
+.rd-links a:hover { background: rgba(128,128,128,.14); }
+.rd-bottom {
+  display: flex; flex-direction: column; gap: .5rem; margin-top: 1.25rem; padding-top: 1rem;
+  border-top: 1px solid rgba(128,128,128,.18); font-size: .75rem; opacity: .75;
+}
+.rd-top { display: inline-flex; align-items: center; gap: .35rem; min-height: 2.25rem; align-self: flex-start; }
+@media (min-width: 640px) {
+  .rd-footer-inner { flex-direction: row; align-items: center; justify-content: space-between; }
+  .rd-links { display: flex; flex-wrap: wrap; gap: .25rem; }
+  .rd-bottom { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+</style>
+
+<div id="rd-top" class="rd-page">
+
 {% include "hub/partials/page_header.html" with title="Habari, "|add:rider.user.first_name description=rider.area.name|add:" · "|add:rider.get_vehicle_type_display %}
 
 {% if not verified %}
@@ -12,9 +119,9 @@
 
 <!-- Profile -->
 <div id="profile" class="rounded-2xl border bg-card p-5 mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 scroll-mt-20">
-  <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-accent to-primary text-white flex items-center justify-center font-bold text-lg">{{ initials }}</div>
+  <div class="rd-avatar h-14 w-14 rounded-2xl bg-gradient-to-br from-accent to-primary text-white flex items-center justify-center font-bold text-lg">{{ initials }}</div>
   <div class="flex-1">
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2">
       <div class="font-semibold">{{ rider.user.get_full_name }}</div>
       <span class="text-[11px] px-2 py-0.5 rounded-full font-medium {{ rider.get_status_display|badge_class }}">{{ rider.get_status_display }}</span>
     </div>
@@ -27,7 +134,7 @@
 </div>
 
 <!-- Stats -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+<div class="rd-stats grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
   {% include "hub/partials/stat_card.html" with label="Today's jobs" value=stats.today_jobs hint=stats.pending_pickup|stringformat:"s"|add:" pending pickup" icon="package" tone="accent" %}
   {% include "hub/partials/stat_card.html" with label="Completed today" value=stats.completed_today hint="Delivered" icon="check-circle-2" tone="primary" %}
   {% include "hub/partials/stat_card.html" with label="Today's earnings" value=stats.gross_today|ugx hint="Gross before commission" icon="wallet" tone="primary" %}
@@ -40,7 +147,7 @@
 
   {% if route_today %}
   <div class="rounded-2xl bg-gradient-to-br from-secondary to-primary text-white p-5 mb-4">
-    <div class="flex items-center justify-between gap-3">
+    <div class="rd-route-head flex items-center justify-between gap-3">
       <div>
         <div class="text-xs uppercase tracking-wider opacity-80 flex items-center gap-1.5"><i data-lucide="route" class="h-3.5 w-3.5"></i> Next route</div>
         <div class="text-xl font-semibold mt-0.5">{{ route_today.name }}</div>
@@ -48,7 +155,7 @@
       </div>
       <div class="text-right"><div class="text-xs uppercase tracking-wider opacity-80">Net payout</div><div class="text-2xl font-semibold">{{ route_today.net|ugx }}</div></div>
     </div>
-    <div class="mt-4 grid grid-cols-3 gap-3 text-sm">
+    <div class="rd-route-tiles mt-4 grid grid-cols-3 gap-3 text-sm">
       <div class="rounded-xl bg-white/15 p-3"><div class="text-[11px] opacity-80">Total earnings</div><div class="font-semibold">{{ route_today.gross|ugx }}</div></div>
       <div class="rounded-xl bg-white/15 p-3"><div class="text-[11px] opacity-80">Platform commission</div><div class="font-semibold">- {{ route_today.commission|ugx }}</div></div>
       <div class="rounded-xl bg-white/15 p-3"><div class="text-[11px] opacity-80">You receive</div><div class="font-semibold">{{ route_today.net|ugx }}</div></div>
@@ -61,7 +168,7 @@
     {% for r in routes %}
     <li class="rounded-xl border p-3 flex flex-wrap items-center justify-between gap-2">
       <div><div class="font-medium text-sm">{{ r.name }}</div><div class="text-xs text-muted-foreground">{{ r.departs }} · {{ r.packages }}/{{ r.max }} packages</div></div>
-      <div class="flex items-center gap-2">
+      <div class="rd-route-actions flex items-center gap-2">
         <span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status_label|badge_class }}">{{ r.status_label }}</span>
         {% if r.can_publish %}<button type="button" data-api="{% url 'deliveries:publish_route' r.id %}" class="text-xs px-2.5 py-1 rounded-md bg-primary text-primary-foreground">Publish</button>{% endif %}
         {% if r.can_complete %}<button type="button" data-api="{% url 'deliveries:complete_route' r.id %}" data-confirm="Mark this route complete?" class="text-xs px-2.5 py-1 rounded-md border">Complete</button>{% endif %}
@@ -83,7 +190,7 @@
         <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Departs</label><input name="departure_time" type="datetime-local" required class="w-full h-10 rounded-lg border bg-background px-2 text-sm" /></div>
         <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Max packages</label><input name="max_packages" data-number type="number" min="1" max="30" value="5" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" /></div>
       </div>
-      <div class="mt-3 text-right"><button type="submit" class="h-9 px-4 text-sm rounded-lg bg-accent text-accent-foreground font-medium press-scale">Create route</button></div>
+      <div class="rd-submit mt-3 text-right"><button type="submit" class="h-9 px-4 text-sm rounded-lg bg-accent text-accent-foreground font-medium press-scale">Create route</button></div>
       </fieldset>
     </form>
   </div>
@@ -94,18 +201,18 @@
   <section id="jobs" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
     <div class="mb-4"><h2 class="font-semibold">Jobs</h2><p class="text-xs text-muted-foreground mt-0.5">Open jobs you can accept, plus your active and recent ones. Update each step as you go.</p></div>
     {% if jobs %}
-    <div class="overflow-x-auto -mx-1">
-      <table class="w-full text-sm">
+    <div class="rd-table-wrap overflow-x-auto -mx-1">
+      <table class="rd-table w-full text-sm">
         <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Job</th><th class="px-2 py-2 font-medium">From → To</th><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Fare</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium text-right">Update</th></tr></thead>
         <tbody>
           {% for j in jobs %}
           <tr class="border-t">
-            <td class="px-2 py-2.5 font-mono text-xs">{{ j.ref }}{% if not j.mine %}<div class="text-[10px] text-muted-foreground">open</div>{% endif %}</td>
-            <td class="px-2 py-2.5"><div class="text-sm">{{ j.from }}</div><div class="text-xs text-muted-foreground">→ {{ j.to }}</div></td>
-            <td class="px-2 py-2.5">{{ j.item }}<div class="text-[10px] text-muted-foreground">{{ j.type }}</div></td>
-            <td class="px-2 py-2.5 font-medium">{{ j.fare|ugx }}</td>
-            <td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ j.status|badge_class }}">{{ j.status }}</span></td>
-            <td class="px-2 py-2.5 text-right">
+            <td data-label="Job" class="px-2 py-2.5 font-mono text-xs"><div class="rd-cell">{{ j.ref }}{% if not j.mine %}<div class="text-[10px] text-muted-foreground">open</div>{% endif %}</div></td>
+            <td data-label="Route" class="px-2 py-2.5"><div class="rd-cell"><div class="text-sm">{{ j.from }}</div><div class="text-xs text-muted-foreground">→ {{ j.to }}</div></div></td>
+            <td data-label="Item" class="px-2 py-2.5"><div class="rd-cell">{{ j.item }}<div class="text-[10px] text-muted-foreground">{{ j.type }}</div></div></td>
+            <td data-label="Fare" class="px-2 py-2.5 font-medium"><div class="rd-cell">{{ j.fare|ugx }}</div></td>
+            <td data-label="Status" class="px-2 py-2.5"><div class="rd-cell"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ j.status|badge_class }}">{{ j.status }}</span></div></td>
+            <td data-label="Update" class="rd-act px-2 py-2.5 text-right">
               <div class="inline-flex gap-1.5 items-center">
                 {% if j.action_url and verified %}
                 <button type="button" data-api="{{ j.action_url }}"
@@ -127,7 +234,7 @@
 <div class="grid lg:grid-cols-2 gap-4 mt-5">
   <section id="earnings" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
     <div class="mb-4"><h2 class="font-semibold">Earnings · last 7 days</h2></div>
-    <div class="grid grid-cols-2 gap-3">
+    <div class="rd-week grid grid-cols-2 gap-3">
       <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ week.gross|ugx }}</div><div class="text-xs text-muted-foreground">Gross earnings</div></div>
       <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ week.commission|ugx }}</div><div class="text-xs text-muted-foreground">Platform commission (routes)</div></div>
       <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ week.net|ugx }}</div><div class="text-xs text-muted-foreground">Net</div></div>
@@ -145,8 +252,33 @@
       <button type="submit" class="w-full h-10 rounded-lg border text-sm font-medium inline-flex items-center justify-center gap-1.5 press-scale"><i data-lucide="wallet" class="h-4 w-4"></i> Withdraw</button>
     </form>
     {% if withdrawals %}
-    <ul class="mt-4 space-y-1.5">{% for w in withdrawals %}<li class="text-xs flex justify-between gap-2 border-t pt-1.5"><span>{{ w.amount|ugx }} → {{ w.phone }} · {{ w.when }}</span><span class="px-1.5 rounded font-semibold {{ w.status|badge_class }}">{{ w.status }}</span></li>{% endfor %}</ul>
+    <ul class="rd-wd mt-4 space-y-1.5">{% for w in withdrawals %}<li class="text-xs flex justify-between gap-2 border-t pt-1.5"><span>{{ w.amount|ugx }} → {{ w.phone }} · {{ w.when }}</span><span class="px-1.5 rounded font-semibold {{ w.status|badge_class }}">{{ w.status }}</span></li>{% endfor %}</ul>
     {% endif %}
   </section>
+</div>
+
+<!-- Footer (remove this block if hub/dashboard.html already renders its own footer) -->
+<footer class="rd-footer text-muted-foreground">
+  <div class="rd-footer-inner">
+    <div class="rd-brand">
+      <div class="rd-logo">1K</div>
+      <div>
+        <div class="rd-name text-foreground">1K Saver Club</div>
+        <div class="rd-sub">Rider workspace · {{ rider.area.name }}</div>
+      </div>
+    </div>
+    <nav class="rd-links" aria-label="Jump to section">
+      <a href="#profile">Profile</a>
+      <a href="#route">Routes</a>
+      <a href="#jobs">Jobs</a>
+      <a href="#earnings">Earnings</a>
+    </nav>
+  </div>
+  <div class="rd-bottom">
+    <div>© {% now "Y" %} 1K Saver Club · Pay 1K. Save more every month.</div>
+    <a class="rd-top" href="#rd-top">Back to top <i data-lucide="arrow-up" class="h-4 w-4"></i></a>
+  </div>
+</footer>
+
 </div>
 {% endblock %}

@@ -3,10 +3,16 @@
 {% block content %}
 {% include "hub/partials/page_header.html" with title="Your profile isn't set up yet" description="You can sign in as this role, but there is no profile attached to your account." %}
 <div class="rounded-2xl bg-card border p-6 shadow-card max-w-xl">
+  {% if reason %}
+  <p class="text-sm">We couldn't create your <strong>{{ missing_label }}</strong> profile automatically:</p>
+  <p class="mt-2 rounded-lg bg-warning/10 border border-warning/40 p-3 text-sm">{{ reason }}</p>
+  <p class="mt-3 text-sm text-muted-foreground">Fix that, then reload this page and the profile will be created for you.</p>
+  {% else %}
   <p class="text-sm text-muted-foreground">
     Your account has the <strong>{{ missing_label }}</strong> role but no {{ missing_label }} profile record exists for it,
     so there is nothing to show here yet. Please contact support or an admin to finish setting up your profile.
   </p>
+  {% endif %}
   <a href="{% url 'landing' %}" class="mt-4 inline-flex h-9 px-3 items-center rounded-lg border text-sm hover:bg-muted">Back to home</a>
 </div>
 {% endblock %}

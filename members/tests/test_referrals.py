@@ -1,3 +1,4 @@
+from decimal import Decimal
 from datetime import timedelta
 
 from django.test import TestCase
@@ -141,4 +142,4 @@ class MyReferralsAPITests(TestCase):
         data = resp.json()["data"]
         self.assertEqual(data["referral_code"], self.referrer.referral_code)
         self.assertEqual(data["referred_count"], 1)
-        self.assertEqual(data["pending_reward_total"], "500")
+        self.assertEqual(Decimal(data["pending_reward_total"]), Decimal("500"))   # "500" on SQLite, "500.00" on MySQL

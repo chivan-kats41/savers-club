@@ -1,7 +1,82 @@
 {% extends "hub/base.html" %}
 {% load static %}
 {% block body %}
-<div class="min-h-screen bg-muted/40">
+
+<style>
+/* =====================================================================
+   Dashboard layout — mobile refinements
+   The layout already has a drawer, role pills and a bottom nav; these
+   rules polish them for real phones (notches, tap size, scroll offsets).
+   Everything is prefixed with .dl-root so it can't leak.
+   ===================================================================== */
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .dl-root #mobile-nav-drawer { transition: none; }
+}
+
+.dl-root a, .dl-root button, .dl-root summary { -webkit-tap-highlight-color: transparent; }
+.dl-root a:focus-visible, .dl-root button:focus-visible { outline: 2px solid #22c55e; outline-offset: 2px; }
+
+/* No sideways page scroll; `clip` keeps the sticky header working */
+.dl-root .dl-col { overflow-x: clip; }
+
+/* ---------- Below the desktop breakpoint (< 1024px) ---------- */
+@media (max-width: 1023.98px) {
+
+  /* Anchor links (#jobs, #claims…) stop hiding under the taller sticky header */
+  html { scroll-padding-top: 2rem; }
+
+  /* Notched phones / standalone (home-screen) mode */
+  .dl-root .dl-header {
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Thumb-sized header buttons */
+  .dl-root .dl-tap { height: 2.5rem; min-width: 2.5rem; }
+  .dl-root #notif-bell.dl-tap { width: 2.5rem; }
+  .dl-root #mobile-nav-open { width: 2.5rem; }
+
+  /* Role pills + admin sub-nav: smooth swipe rows, no scrollbar, bigger targets */
+  .dl-root .dl-pills {
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; overscroll-behavior-x: contain;
+  }
+  .dl-root .dl-pills::-webkit-scrollbar { display: none; }
+  .dl-root .dl-pills > a { flex-shrink: 0; display: inline-flex; align-items: center; min-height: 2.25rem; }
+
+  /* Drawer: never wider than the screen, scrolls inside, respects notches */
+  .dl-root #mobile-nav-drawer {
+    max-width: 85vw;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    overscroll-behavior: contain;
+  }
+  .dl-root #mobile-nav-drawer nav a { min-height: 2.75rem; }
+  .dl-root #mobile-nav-close { height: 2.5rem; width: 2.5rem; }
+  /* Backdrop sits above the bottom nav (both were z-40) */
+  .dl-root #mobile-nav-backdrop { z-index: 45; }
+
+  /* Bottom nav: clear the iPhone home indicator, stable label sizing */
+  .dl-root .dl-bottom-nav { padding-bottom: env(safe-area-inset-bottom); }
+  .dl-root .dl-bottom-nav a { min-width: 0; min-height: 3.5rem; justify-content: center; }
+  .dl-root .dl-bottom-nav a > span {
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  /* Page content always clears the fixed bottom nav (+ home indicator) */
+  .dl-root .dl-main { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+}
+
+/* Very small phones: slightly tighter page gutters */
+@media (max-width: 359.98px) {
+  .dl-root .dl-main { padding-left: .75rem; padding-right: .75rem; }
+  .dl-root .dl-header > div:first-child { padding-left: .75rem; padding-right: .75rem; gap: .5rem; }
+}
+</style>
+
+<div class="dl-root min-h-screen bg-muted/40">
 
   <!-- ============ Sidebar (desktop, lg+) ============ -->
   <aside class="hidden lg:flex fixed inset-y-0 left-0 w-64 flex-col bg-sidebar text-sidebar-foreground">
@@ -46,7 +121,7 @@
           <div class="text-[11px] uppercase tracking-wider text-sidebar-foreground/60">{{ cfg.subtitle }}</div>
         </div>
       </div>
-      <button id="mobile-nav-close" class="h-8 w-8 rounded-lg hover:bg-sidebar-accent flex items-center justify-center">
+      <button id="mobile-nav-close" aria-label="Close menu" class="h-8 w-8 rounded-lg hover:bg-sidebar-accent flex items-center justify-center">
         <i data-lucide="x" class="h-4 w-4"></i>
       </button>
     </div>
@@ -62,11 +137,11 @@
   </aside>
 
   <!-- ============ Main column ============ -->
-  <div class="lg:pl-64">
+  <div class="dl-col lg:pl-64">
     <!-- Top bar -->
-    <header class="sticky top-0 z-30 bg-background/85 backdrop-blur border-b">
+    <header class="dl-header sticky top-0 z-30 bg-background/85 backdrop-blur border-b">
       <div class="flex items-center gap-3 px-4 lg:px-6 h-14">
-        <button id="mobile-nav-open" class="lg:hidden h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-sm">1K</button>
+        <button id="mobile-nav-open" aria-label="Open menu" class="dl-tap lg:hidden h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-sm">1K</button>
         <div class="flex-1 min-w-0">
           <div class="font-semibold text-sm truncate">{{ cfg.title }}</div>
           <div class="text-xs text-muted-foreground truncate">{{ cfg.user.name }} · {{ cfg.user.meta }}</div>
@@ -75,7 +150,7 @@
           <i data-lucide="search" class="h-4 w-4"></i>
           <span>Search anything…</span>
         </div>
-        <a id="notif-bell" href="{% url 'notifications' %}" aria-label="Notifications{% if unread_count %} ({{ unread_count }} unread){% endif %}" class="relative h-9 w-9 rounded-lg border flex items-center justify-center hover:bg-muted press-scale">
+        <a id="notif-bell" href="{% url 'notifications' %}" aria-label="Notifications{% if unread_count %} ({{ unread_count }} unread){% endif %}" class="dl-tap relative h-9 w-9 rounded-lg border flex items-center justify-center hover:bg-muted press-scale">
           <i data-lucide="bell" class="h-4 w-4"></i>
           {% if unread_count %}<span class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-accent text-accent-foreground text-[10px] font-semibold flex items-center justify-center">{% if unread_count > 9 %}9+{% else %}{{ unread_count }}{% endif %}</span>{% endif %}
         </a>
@@ -84,12 +159,12 @@
         </a>
         <form method="post" action="{% url 'accounts:logout' %}" class="m-0">
           {% csrf_token %}
-          <button type="submit" class="h-9 px-3 flex items-center rounded-lg border text-sm hover:bg-muted press-scale"><i data-lucide="log-out" class="h-4 w-4 sm:mr-1.5"></i><span class="hidden sm:inline">Sign out</span></button>
+          <button type="submit" aria-label="Sign out" class="dl-tap h-9 px-3 flex items-center justify-center rounded-lg border text-sm hover:bg-muted press-scale"><i data-lucide="log-out" class="h-4 w-4 sm:mr-1.5"></i><span class="hidden sm:inline">Sign out</span></button>
         </form>
       </div>
 
       <!-- Mobile role pills -->
-      <div class="lg:hidden flex gap-1.5 px-4 pb-3 overflow-x-auto">
+      <div class="dl-pills lg:hidden flex gap-1.5 px-4 pb-3 overflow-x-auto">
         {% for r in all_roles %}
         <a href="{% url r.url %}" class="text-xs whitespace-nowrap px-3 py-1.5 rounded-full border press-scale {% if r.role == role_key %}bg-primary text-primary-foreground border-primary{% else %}bg-card{% endif %}">
           {{ r.label }}
@@ -99,7 +174,7 @@
 
       <!-- Mobile admin sub-nav scroller -->
       {% if role_key == "admin" %}
-      <div class="lg:hidden flex gap-1.5 px-4 pb-3 overflow-x-auto border-t border-border/60 pt-2.5">
+      <div class="dl-pills lg:hidden flex gap-1.5 px-4 pb-3 overflow-x-auto border-t border-border/60 pt-2.5">
         {% for item in nav %}
         <a href="{% url item.url %}" class="text-xs whitespace-nowrap px-3 py-1.5 rounded-full border press-scale {% if item.active %}bg-foreground text-background border-foreground{% else %}bg-card{% endif %}">
           {{ item.label }}
@@ -109,13 +184,13 @@
       {% endif %}
     </header>
 
-    <main class="px-4 lg:px-6 py-5 pb-24 lg:pb-10 max-w-7xl mx-auto">
+    <main class="dl-main px-4 lg:px-6 py-5 pb-24 lg:pb-10 max-w-7xl mx-auto">
       {% block content %}{% endblock %}
     </main>
   </div>
 
   <!-- ============ Bottom nav (mobile) ============ -->
-  <nav class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-background border-t">
+  <nav class="dl-bottom-nav lg:hidden fixed bottom-0 inset-x-0 z-40 bg-background border-t">
     <div class="grid grid-cols-4">
       {% for item in bottom_nav %}
       <a href="{% url item.url %}{% if item.hash %}#{{ item.hash }}{% endif %}"

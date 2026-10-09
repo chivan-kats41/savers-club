@@ -91,7 +91,8 @@ cp .env.example .env                              # for local dev set DJANGO_SET
 python manage.py migrate
 python manage.py seed_system_settings && python manage.py seed_subscription_plans && python manage.py seed_admin_group
 python manage.py seed_demo_data                   # optional demo members/merchants/offers (password: DemoPass123!)
-python manage.py createsuperuser
+python manage.py seed_reference_data             # offer categories + promotion packages (run BEFORE createsuperuser)
+python manage.py createsuperuser                  # also creates the admin's member, merchant, rider and agent profiles
 python manage.py runserver
 ```
 Tests: `DJANGO_SETTINGS_MODULE=config.settings.testing python manage.py test`
@@ -104,3 +105,12 @@ Lucide, Chart.js and the Inter font are vendored under `hub/static/hub/`.
 `docker compose up -d --build`, then `migrate` and the seed commands (see comments in `docker-compose.yml`). Put TLS certs in `deploy/certs/`.
 Admin users must enrol an authenticator app on first login; reset a lost device with `python manage.py reset_2fa <phone>`.
 See `REVIEW.md` for the pre-launch checklist.
+
+
+## Super admins get every profile
+Creating a super admin (`createsuperuser`, Django admin, or promoting a user) automatically creates that account's member,
+merchant, rider and agent profiles (merchant/rider pre-verified, agent covering every active area), so one login can operate and
+test the whole site. Existing admins are fixed on their next login or first visit to a role page, or run
+`python manage.py ensure_admin_profiles`. It needs no seed data: if no offer category (or area) exists yet it creates a
+"General Shop" category (or a "Default Area") so the merchant profile is always created. Run `seed_reference_data` for the full category list.
+Disable with `AUTO_CREATE_ADMIN_PROFILES=False`. Regular `admin` staff do not get these profiles.

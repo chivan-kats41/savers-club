@@ -3,14 +3,134 @@
 {% block title %}Merchant Dashboard · 1K Saver Club{% endblock %}
 {% block content %}
 
+<style>
+/* =====================================================================
+   Merchant dashboard — mobile responsiveness + compact footer
+   Everything is prefixed with .mc-page / .mc-footer so it can't leak.
+   ===================================================================== */
+.mc-page { overflow-x: clip; }
+.mc-page fieldset { min-width: 0; border: 0; padding: 0; margin: 0; }
+.mc-page input, .mc-page select { min-width: 0; max-width: 100%; }
+.mc-page select { text-overflow: ellipsis; }
+.mc-page a:focus-visible, .mc-page button:focus-visible,
+.mc-footer a:focus-visible { outline: 2px solid #22c55e; outline-offset: 2px; }
+.mc-page .mc-avatar { flex-shrink: 0; }
+.mc-page .mc-stats > *, .mc-page .mc-vis > * { min-width: 0; overflow-wrap: anywhere; }
+.mc-page .mc-name { overflow-wrap: anywhere; }
+
+/* Odd card out → full width instead of a lonely half-row */
+@media (max-width: 1023.98px) { .mc-page .mc-stats > :last-child { grid-column: 1 / -1; } }
+@media (max-width: 767.98px)  { .mc-page .mc-vis > :last-child   { grid-column: 1 / -1; } }
+
+/* ---------- Phones ---------- */
+@media (max-width: 639.98px) {
+
+  /* Stop iOS zooming into fields (needs >= 16px) + comfortable height */
+  .mc-page input, .mc-page select, .mc-page textarea { font-size: 16px; }
+  .mc-page input:not([type="checkbox"]):not([type="file"]),
+  .mc-page select { min-height: 2.75rem; }
+  .mc-page input[type="checkbox"] { height: 1.25rem; width: 1.25rem; }
+  .mc-page input[type="file"] { font-size: 14px; max-width: 100%; }
+
+  /* Thumb-friendly buttons */
+  .mc-page button[data-api] { min-height: 2.5rem; padding: .5rem .875rem; font-size: .8125rem; }
+  .mc-page form button[type="submit"] { min-height: 2.75rem; }
+  .mc-page .mc-submit button { width: 100%; }
+  .mc-page .mc-check { padding-top: 0; min-height: 2.75rem; }
+
+  /* Redeem form keeps one row; button stays easy to hit */
+  .mc-page .mc-redeem button { min-height: 2.75rem; }
+
+  /* "Requests from members" reply form: message on its own row */
+  .mc-page .mc-respond { flex-wrap: wrap; gap: .5rem; }
+  .mc-page .mc-respond input[name="message"] { flex: 1 1 100%; }
+  .mc-page .mc-respond input[name="price"] { flex: 1 1 6rem; width: auto; }
+  .mc-page .mc-respond input { height: 2.75rem; padding: 0 .75rem; }
+  .mc-page .mc-respond button { height: 2.75rem; padding: 0 1.25rem; font-size: .875rem; }
+
+  /* ---- Tables → stacked cards (Offers + Claims) ---- */
+  .mc-page .mc-table-wrap { margin-left: 0; margin-right: 0; overflow: visible; }
+  .mc-page .mc-table,
+  .mc-page .mc-table tbody,
+  .mc-page .mc-table tr,
+  .mc-page .mc-table td { display: block; width: 100%; }
+  .mc-page .mc-table thead {            /* hidden visually, still read by screen readers */
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .mc-page .mc-table tr {
+    margin-bottom: .75rem; padding: .375rem .875rem;
+    border: 1px solid rgba(128,128,128,.28); border-radius: .875rem;
+  }
+  .mc-page .mc-table td {
+    display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    padding: .5rem 0; text-align: right; white-space: normal;
+  }
+  .mc-page .mc-table td + td { border-top: 1px dashed rgba(128,128,128,.22); }
+  .mc-page .mc-table td::before {
+    content: attr(data-label); flex-shrink: 0; text-align: left;
+    font-size: .75rem; font-weight: 500; opacity: .65;
+  }
+  .mc-page .mc-table .mc-cell { min-width: 0; overflow-wrap: anywhere; }
+  /* Action cell (Pause / Delete): no label, buttons on the right, hidden when empty */
+  .mc-page .mc-table td.mc-act { justify-content: flex-end; flex-wrap: wrap; gap: .5rem; }
+  .mc-page .mc-table td.mc-act::before { content: none; }
+  .mc-page .mc-table td.mc-act:not(:has(button)) { display: none; }
+  .mc-page .mc-table td.mc-act button { border: 1px solid rgba(128,128,128,.3); border-radius: .5rem; margin-left: 0; }
+}
+
+/* Extra-small phones */
+@media (max-width: 479.98px) {
+  .mc-page .mc-create-head { flex-direction: column; }
+}
+@media (max-width: 359.98px) {
+  .mc-page .mc-redeem { flex-direction: column; }
+  .mc-page .mc-redeem button { width: 100%; }
+}
+
+/* ---------- Footer (compact, dashboard-style) ---------- */
+.mc-footer {
+  margin-top: 2rem; border-top: 1px solid rgba(128,128,128,.25);
+  padding: 1.5rem 0 calc(1.25rem + env(safe-area-inset-bottom));
+  font-size: .875rem;
+}
+.mc-footer a { color: inherit; text-decoration: none; }
+.mc-footer-inner { display: flex; flex-direction: column; gap: 1.25rem; }
+.mc-brand { display: flex; align-items: center; gap: .75rem; }
+.mc-logo {
+  height: 2.5rem; width: 2.5rem; flex-shrink: 0; border-radius: .75rem;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #22c55e, #0ea5a4); color: #04210f; font-weight: 700;
+}
+.mc-fname { font-weight: 600; line-height: 1.2; }
+.mc-sub { font-size: .75rem; opacity: .65; }
+.mc-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .25rem; }
+.mc-links a {
+  display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 .75rem;
+  border-radius: .5rem; transition: background .15s;
+}
+.mc-links a:hover { background: rgba(128,128,128,.14); }
+.mc-bottom {
+  display: flex; flex-direction: column; gap: .5rem; margin-top: 1.25rem; padding-top: 1rem;
+  border-top: 1px solid rgba(128,128,128,.18); font-size: .75rem; opacity: .75;
+}
+.mc-top { display: inline-flex; align-items: center; gap: .35rem; min-height: 2.25rem; align-self: flex-start; }
+@media (min-width: 640px) {
+  .mc-footer-inner { flex-direction: row; align-items: center; justify-content: space-between; }
+  .mc-links { display: flex; flex-wrap: wrap; gap: .25rem; }
+  .mc-bottom { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+</style>
+
+<div id="mc-top" class="mc-page">
+
 {% include "hub/partials/page_header.html" with title=merchant.business_name description=merchant.category.label|add:" · "|add:merchant.area.name action_url="#create" action_icon="plus" action_label="New offer" %}
 
 <!-- Profile / verification -->
 <div id="profile" class="rounded-2xl border bg-card p-5 mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 scroll-mt-20">
-  <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-bold text-lg">{{ initials }}</div>
-  <div class="flex-1">
-    <div class="flex items-center gap-2">
-      <div class="font-semibold">{{ merchant.business_name }}</div>
+  <div class="mc-avatar h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-bold text-lg">{{ initials }}</div>
+  <div class="flex-1 min-w-0">
+    <div class="flex flex-wrap items-center gap-2">
+      <div class="mc-name font-semibold">{{ merchant.business_name }}</div>
       <span class="text-[11px] px-2 py-0.5 rounded-full inline-flex items-center gap-1 font-medium {{ merchant.get_status_display|badge_class }}">{{ merchant.get_status_display }}</span>
     </div>
     <div class="text-sm text-muted-foreground mt-0.5 flex flex-wrap gap-x-3 gap-y-1">
@@ -28,7 +148,7 @@
 {% endif %}
 
 <!-- Summary cards -->
-<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
+<div class="mc-stats grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
   {% include "hub/partials/stat_card.html" with label="Offer views" value=stats.views hint="All offers, lifetime" icon="eye" tone="secondary" %}
   {% include "hub/partials/stat_card.html" with label="Claim codes" value=stats.claims_month hint="This month" icon="ticket" tone="primary" %}
   {% include "hub/partials/stat_card.html" with label="Redemptions" value=stats.redeemed_month hint="Confirmed this month" icon="check-circle-2" tone="primary" %}
@@ -39,7 +159,7 @@
 <!-- Redeem a code -->
 <section id="redeem" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20 mb-5">
   <div class="mb-3"><h2 class="font-semibold">Redeem a member's code</h2><p class="text-xs text-muted-foreground mt-0.5">Ask the member to show their code, type it here, then hand over the item at the member price.</p></div>
-  <form data-api="{% url 'claims:redeem_claim' %}" data-success="Code redeemed ✓" class="flex gap-2 max-w-md">
+  <form data-api="{% url 'claims:redeem_claim' %}" data-success="Code redeemed ✓" class="mc-redeem flex gap-2 max-w-md">
     <input name="code" required maxlength="20" autocomplete="off" autocapitalize="characters" class="flex-1 h-10 rounded-lg border bg-background px-3 text-sm font-mono uppercase tracking-wider" placeholder="1K-XXXX" />
     <button type="submit" class="h-10 px-4 text-sm rounded-lg bg-primary text-primary-foreground font-medium press-scale">Redeem</button>
   </form>
@@ -47,7 +167,7 @@
 
 <!-- Post today's deal -->
 <section id="create" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
-  <div class="flex items-start justify-between gap-3 mb-4">
+  <div class="mc-create-head flex items-start justify-between gap-3 mb-4">
     <div><h2 class="font-semibold">Post today's deal</h2><p class="text-xs text-muted-foreground mt-0.5">Be truthful — the listed price must be honoured. New offers are reviewed by an area agent before going live.</p></div>
     <span class="text-[11px] px-2 py-1 rounded bg-accent-soft text-accent font-medium inline-flex items-center gap-1 shrink-0"><i data-lucide="shield-alert" class="h-3 w-3"></i> Offer responsibility</span>
   </div>
@@ -71,9 +191,9 @@
       </div>
       <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Offer radius (km, optional)</label><input name="offer_radius_km" data-number type="number" min="0" max="50" step="0.5" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="2" /></div>
       <div class="space-y-1.5"><label class="text-xs font-medium text-muted-foreground">Photo (optional)</label><input type="file" name="photo" data-upload-field="image" accept="image/jpeg,image/png,image/webp" class="w-full text-sm" /></div>
-      <label class="flex items-center gap-2 text-sm pt-6"><input type="checkbox" name="delivery_available" class="h-4 w-4" /> Delivery available</label>
+      <label class="mc-check flex items-center gap-2 text-sm pt-6"><input type="checkbox" name="delivery_available" class="h-4 w-4" /> Delivery available</label>
     </div>
-    <div class="mt-4 flex flex-col sm:flex-row justify-between gap-2">
+    <div class="mc-submit mt-4 flex flex-col sm:flex-row justify-between gap-2">
       <p class="text-[11px] text-muted-foreground max-w-md">By posting, you confirm the item is in stock, the member price will be honoured, and your area agent may verify this offer.</p>
       <button type="submit" class="h-9 px-4 text-sm rounded-lg bg-primary text-primary-foreground font-medium press-scale shrink-0">Submit for approval</button>
     </div>
@@ -85,7 +205,7 @@
 <div class="mt-5">
   <section id="visibility" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
     <div class="mb-4"><h2 class="font-semibold">Local visibility</h2><p class="text-xs text-muted-foreground mt-0.5">How nearby buyers interacted with your offers in the last 7 days.</p></div>
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+    <div class="mc-vis grid grid-cols-2 md:grid-cols-5 gap-3">
       <div class="rounded-xl border p-3 bg-muted/40"><div class="font-semibold text-sm">{{ stats.calls }}</div><div class="text-[11px] text-muted-foreground">Calls</div></div>
       <div class="rounded-xl border p-3 bg-muted/40"><div class="font-semibold text-sm">{{ stats.whatsapp }}</div><div class="text-[11px] text-muted-foreground">WhatsApp</div></div>
       <div class="rounded-xl border p-3 bg-muted/40"><div class="font-semibold text-sm">{{ stats.delivery_clicks }}</div><div class="text-[11px] text-muted-foreground">Delivery requests</div></div>
@@ -100,18 +220,18 @@
   <section id="offers" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
     <div class="mb-4"><h2 class="font-semibold">Your offers</h2><p class="text-xs text-muted-foreground mt-0.5">Latest 50</p></div>
     {% if offers %}
-    <div class="overflow-x-auto -mx-1">
-      <table class="w-full text-sm">
+    <div class="mc-table-wrap overflow-x-auto -mx-1">
+      <table class="mc-table w-full text-sm">
         <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Price</th><th class="px-2 py-2 font-medium">Qty</th><th class="px-2 py-2 font-medium">Views / Claims</th><th class="px-2 py-2 font-medium">Status</th><th></th></tr></thead>
         <tbody>
           {% for o in offers %}
           <tr class="border-t">
-            <td class="px-2 py-2.5"><div class="font-medium">{{ o.item }}</div><div class="text-xs text-muted-foreground">expires {{ o.expires }}</div></td>
-            <td class="px-2 py-2.5"><div class="font-semibold text-primary">{{ o.member|ugx }}</div><div class="text-xs line-through text-muted-foreground">{{ o.normal|ugx }}</div></td>
-            <td class="px-2 py-2.5">{{ o.qty }}</td>
-            <td class="px-2 py-2.5 text-xs">{{ o.views }} / <span class="px-1.5 py-0.5 rounded bg-primary-soft text-primary font-semibold">{{ o.claims }}</span></td>
-            <td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ o.status_label|badge_class }}">{{ o.status_label }}</span></td>
-            <td class="px-2 py-2.5 text-right whitespace-nowrap">
+            <td data-label="Item" class="px-2 py-2.5"><div class="mc-cell"><div class="font-medium">{{ o.item }}</div><div class="text-xs text-muted-foreground">expires {{ o.expires }}</div></div></td>
+            <td data-label="Price" class="px-2 py-2.5"><div class="mc-cell"><div class="font-semibold text-primary">{{ o.member|ugx }}</div><div class="text-xs line-through text-muted-foreground">{{ o.normal|ugx }}</div></div></td>
+            <td data-label="Qty" class="px-2 py-2.5"><div class="mc-cell">{{ o.qty }}</div></td>
+            <td data-label="Views / Claims" class="px-2 py-2.5 text-xs"><div class="mc-cell">{{ o.views }} / <span class="px-1.5 py-0.5 rounded bg-primary-soft text-primary font-semibold">{{ o.claims }}</span></div></td>
+            <td data-label="Status" class="px-2 py-2.5"><div class="mc-cell"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ o.status_label|badge_class }}">{{ o.status_label }}</span></div></td>
+            <td class="mc-act px-2 py-2.5 text-right whitespace-nowrap">
               {% if o.can_pause %}<button type="button" data-api="{% url 'offers:pause_offer' o.id %}" class="text-xs text-muted-foreground hover:text-foreground">Pause</button>{% endif %}
               {% if o.can_delete %}<button type="button" data-api="{% url 'offers:merchant_offer_detail' o.id %}" data-method="DELETE" data-confirm="Delete this offer?" class="text-xs text-destructive ml-2">Delete</button>{% endif %}
             </td>
@@ -127,17 +247,17 @@
   <section id="claims" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
     <div class="mb-4"><h2 class="font-semibold">Claims &amp; redemptions</h2><p class="text-xs text-muted-foreground mt-0.5">Codes are hidden until redeemed — use the box above to confirm one.</p></div>
     {% if claims %}
-    <div class="overflow-x-auto -mx-1">
-      <table class="w-full text-sm">
+    <div class="mc-table-wrap overflow-x-auto -mx-1">
+      <table class="mc-table w-full text-sm">
         <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Code</th><th class="px-2 py-2 font-medium">Member</th><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium">When</th></tr></thead>
         <tbody>
           {% for c in claims %}
           <tr class="border-t">
-            <td class="px-2 py-2.5"><span class="font-mono font-semibold">{{ c.code }}</span></td>
-            <td class="px-2 py-2.5">{{ c.member }}</td>
-            <td class="px-2 py-2.5">{{ c.item }}</td>
-            <td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ c.status_label|badge_class }}">{{ c.status_label }}</span></td>
-            <td class="px-2 py-2.5 text-xs text-muted-foreground">{{ c.time }}</td>
+            <td data-label="Code" class="px-2 py-2.5"><div class="mc-cell"><span class="font-mono font-semibold">{{ c.code }}</span></div></td>
+            <td data-label="Member" class="px-2 py-2.5"><div class="mc-cell">{{ c.member }}</div></td>
+            <td data-label="Item" class="px-2 py-2.5"><div class="mc-cell">{{ c.item }}</div></td>
+            <td data-label="Status" class="px-2 py-2.5"><div class="mc-cell"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ c.status_label|badge_class }}">{{ c.status_label }}</span></div></td>
+            <td data-label="When" class="px-2 py-2.5 text-xs text-muted-foreground"><div class="mc-cell">{{ c.time }}</div></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -171,7 +291,7 @@
         {% if r.budget %}<div class="text-xs text-muted-foreground">Budget up to {{ r.budget|ugx }}</div>{% endif %}
         {% if r.responded %}<div class="mt-2 text-xs text-primary font-medium">You responded ✓</div>
         {% elif can_post %}
-        <form data-api="{% url 'item_requests:respond_to_request' r.id %}" data-success="Response sent." class="mt-2 flex gap-1.5">
+        <form data-api="{% url 'item_requests:respond_to_request' r.id %}" data-success="Response sent." class="mc-respond mt-2 flex gap-1.5">
           <input name="message" required maxlength="300" placeholder="Message" class="flex-1 min-w-0 h-8 rounded-md border bg-background px-2 text-xs" />
           <input name="price" data-number type="number" min="0" step="100" placeholder="Price" class="w-20 h-8 rounded-md border bg-background px-2 text-xs" />
           <button class="h-8 px-2.5 rounded-md bg-primary text-primary-foreground text-xs">Send</button>
@@ -200,5 +320,32 @@
     {% elif not packages %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No promotion packages are available right now.</div>
     {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">You need an active offer to promote.</div>{% endif %}
   </section>
+</div>
+
+<!-- Footer (remove this block if hub/dashboard.html already renders its own footer) -->
+<footer class="mc-footer text-muted-foreground">
+  <div class="mc-footer-inner">
+    <div class="mc-brand">
+      <div class="mc-logo">1K</div>
+      <div>
+        <div class="mc-fname text-foreground">1K Saver Club</div>
+        <div class="mc-sub">Merchant workspace · {{ merchant.area.name }}</div>
+      </div>
+    </div>
+    <nav class="mc-links" aria-label="Jump to section">
+      <a href="#redeem">Redeem code</a>
+      <a href="#create">New offer</a>
+      <a href="#offers">Offers</a>
+      <a href="#claims">Claims</a>
+      <a href="#delivery">Delivery</a>
+      <a href="#promo">Promotions</a>
+    </nav>
+  </div>
+  <div class="mc-bottom">
+    <div>© {% now "Y" %} 1K Saver Club · Pay 1K. Save more every month.</div>
+    <a class="mc-top" href="#mc-top">Back to top <i data-lucide="arrow-up" class="h-4 w-4"></i></a>
+  </div>
+</footer>
+
 </div>
 {% endblock %}

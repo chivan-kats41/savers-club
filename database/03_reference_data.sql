@@ -1,0 +1,124 @@
+-- =====================================================================================
+-- 1K Saver Club: reference data (load AFTER 02_schema.sql, safe to re-run: INSERT IGNORE)
+--   * django_migrations ... marks the schema as already migrated so `manage.py migrate` doesn't try to rebuild it
+--   * core_area ........... 13 areas (Mutungo, Kitintale, Luzira are launch areas); edit in Admin > Settings
+--   * core_systemsetting .. commissions, fees, delivery fares, limits (editable in Admin > Settings)
+--   * subscriptions_subscriptionplan ... membership plans (price/period editable)
+--   * offers_offercategory ... categories merchants pick from; promotions_promotionpackage ... boost packages
+-- No users, merchants, payments or any personal data is included.
+-- =====================================================================================
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+LOCK TABLES `django_migrations` WRITE;
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (1,'contenttypes','0001_initial','2026-10-03 15:57:19.322949');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (2,'contenttypes','0002_remove_content_type_name','2026-10-03 15:57:19.347392');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (3,'auth','0001_initial','2026-10-03 15:57:19.426690');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (4,'auth','0002_alter_permission_name_max_length','2026-10-03 15:57:19.446150');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (5,'auth','0003_alter_user_email_max_length','2026-10-03 15:57:19.452135');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (6,'auth','0004_alter_user_username_opts','2026-10-03 15:57:19.456279');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (7,'auth','0005_alter_user_last_login_null','2026-10-03 15:57:19.460379');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (8,'auth','0006_require_contenttypes_0002','2026-10-03 15:57:19.461455');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (9,'auth','0007_alter_validators_add_error_messages','2026-10-03 15:57:19.465283');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (10,'auth','0008_alter_user_username_max_length','2026-10-03 15:57:19.469195');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (11,'auth','0009_alter_user_last_name_max_length','2026-10-03 15:57:19.473353');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (12,'auth','0010_alter_group_name_max_length','2026-10-03 15:57:19.482894');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (13,'auth','0011_update_proxy_permissions','2026-10-03 15:57:19.488777');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (14,'auth','0012_alter_user_first_name_max_length','2026-10-03 15:57:19.493278');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (15,'accounts','0001_initial','2026-10-03 15:57:19.594578');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (16,'accounts','0002_emailverification_loginattempt_phoneverification_and_more','2026-10-03 15:57:19.799944');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (17,'accounts','0003_user_totp_enabled_user_totp_secret','2026-10-03 15:57:19.892332');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (18,'admin','0001_initial','2026-10-03 15:57:19.951071');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (19,'admin','0002_logentry_remove_auto_add','2026-10-03 15:57:19.961527');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (20,'admin','0003_logentry_add_action_flag_choices','2026-10-03 15:57:19.970393');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (21,'core','0001_initial','2026-10-03 15:57:20.045038');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (22,'core','0002_admincapability','2026-10-03 15:57:20.047102');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (23,'core','0003_riskevent','2026-10-03 15:57:20.086625');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (24,'core','0004_alter_admincapability_options','2026-10-03 15:57:20.088742');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (25,'merchants','0001_initial','2026-10-03 15:57:20.125542');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (26,'offers','0001_initial','2026-10-03 15:57:20.342111');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (27,'agents','0001_initial','2026-10-03 15:57:20.550114');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (28,'agents','0002_agenttask','2026-10-03 15:57:20.636122');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (29,'members','0001_initial','2026-10-03 15:57:20.724853');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (30,'claims','0001_initial','2026-10-03 15:57:20.949480');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (31,'complaints','0001_initial','2026-10-03 15:57:21.184484');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (32,'riders','0001_initial','2026-10-03 15:57:21.511925');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (33,'merchants','0002_initial','2026-10-03 15:57:21.884467');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (34,'deliveries','0001_initial','2026-10-03 15:57:21.997167');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (35,'deliveries','0002_initial','2026-10-03 15:57:22.437176');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (36,'deliveries','0003_sharedroute_deliveryjob_route_and_more','2026-10-03 15:57:22.637998');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (37,'deliveries','0004_pickuppoint','2026-10-03 15:57:22.708629');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (38,'members','0002_referralreward','2026-10-03 15:57:22.788117');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (39,'item_requests','0001_initial','2026-10-03 15:57:23.043479');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (40,'notifications','0001_initial','2026-10-03 15:57:23.167327');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (41,'notifications','0002_alter_notification_category','2026-10-03 15:57:23.191817');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (42,'promotions','0001_initial','2026-10-03 15:57:23.388597');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (43,'subscriptions','0001_initial','2026-10-03 15:57:23.657325');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (44,'payments','0001_initial','2026-10-03 15:57:24.042293');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (45,'payments','0002_withdrawal_withdrawalcallback_and_more','2026-10-03 15:57:24.374180');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (46,'payments','0003_payment_promotion_purchase_alter_payment_purpose','2026-10-03 15:57:24.473860');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (47,'riders','0002_alter_riderdocument_file','2026-10-03 15:57:24.502773');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (48,'savings','0001_initial','2026-10-03 15:57:24.617636');
+INSERT  IGNORE INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES (49,'sessions','0001_initial','2026-10-03 15:57:24.636119');
+UNLOCK TABLES;
+LOCK TABLES `core_area` WRITE;
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (1,'2026-10-03 15:57:25.641282','2026-10-03 15:57:25.641445','Mutungo',1,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (2,'2026-10-03 15:57:25.644160','2026-10-03 15:57:25.644183','Kitintale',1,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (3,'2026-10-03 15:57:25.646482','2026-10-03 15:57:25.646502','Luzira',1,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (4,'2026-10-03 15:57:25.648494','2026-10-03 15:57:25.648513','Kireka',0,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (5,'2026-10-03 15:57:25.650620','2026-10-03 15:57:25.650640','Bweyogerere',0,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (6,'2026-10-03 15:57:25.652705','2026-10-03 15:57:25.652726','Makindye',0,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (7,'2026-10-03 15:57:25.654757','2026-10-03 15:57:25.654778','Nansana',0,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (8,'2026-10-03 15:57:25.656809','2026-10-03 15:57:25.656829','Nakawa',0,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (9,'2026-10-03 15:57:25.659027','2026-10-03 15:57:25.659047','Ntinda',0,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (10,'2026-10-03 15:57:25.661033','2026-10-03 15:57:25.661053','Katabi',0,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (11,'2026-10-03 15:57:25.663352','2026-10-03 15:57:25.663373','Entebbe',0,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (12,'2026-10-03 15:57:25.665443','2026-10-03 15:57:25.665463','Kampala',0,NULL,NULL,1);
+INSERT  IGNORE INTO `core_area` (`id`, `created_at`, `updated_at`, `name`, `is_launch_area`, `latitude`, `longitude`, `is_active`) VALUES (13,'2026-10-03 15:57:25.667658','2026-10-03 15:57:25.667678','Wakiso',0,NULL,NULL,1);
+UNLOCK TABLES;
+LOCK TABLES `core_systemsetting` WRITE;
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (1,'2026-10-03 15:57:25.670701','2026-10-03 15:57:25.670722','subscription.price_ugx','1000','1K Saver Club monthly subscription price (UGX).',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (2,'2026-10-03 15:57:25.672750','2026-10-03 15:57:25.672769','delivery.route_commission_percent','10.00','Platform commission on shared-route delivery earnings (%).',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (3,'2026-10-03 15:57:25.675650','2026-10-03 15:57:25.675670','delivery.fare_same_area','2000','Delivery fare (UGX) when seller and buyer are in the same area.',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (4,'2026-10-03 15:57:25.677688','2026-10-03 15:57:25.677709','delivery.fare_cross_area','4000','Delivery fare (UGX) between different areas.',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (5,'2026-10-03 15:57:25.679776','2026-10-03 15:57:25.679796','delivery.fare_shared_route','2000','Delivery fare (UGX) for shared-route delivery.',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (6,'2026-10-03 15:57:25.681580','2026-10-03 15:57:25.681600','claim.code_expiry_hours','48','Hours before an unredeemed claim code expires.',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (7,'2026-10-03 15:57:25.683674','2026-10-03 15:57:25.683695','delivery.otp_expiry_minutes','30','Minutes before a delivery OTP expires.',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (8,'2026-10-03 15:57:25.685661','2026-10-03 15:57:25.685681','delivery.otp_max_attempts','5','Max wrong-OTP attempts before lockout.',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (9,'2026-10-03 15:57:25.687726','2026-10-03 15:57:25.687748','payment.reconciliation_timeout_minutes','60','Minutes a payment can stay PENDING before reconciliation flags it REQUIRES_REVIEW.',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (10,'2026-10-03 15:57:25.689709','2026-10-03 15:57:25.689731','withdrawal.minimum_ugx','2000','Minimum amount a rider/merchant/agent can withdraw in one request (UGX).',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (11,'2026-10-03 15:57:25.691843','2026-10-03 15:57:25.691864','withdrawal.fee_percent','1.00','Platform fee charged on withdrawals (%).',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (12,'2026-10-03 15:57:25.693730','2026-10-03 15:57:25.693752','agent.merchant_verification_fee_ugx','500','Flat fee credited to an agent for each merchant they verify (UGX).',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (13,'2026-10-03 15:57:25.695696','2026-10-03 15:57:25.695716','agent.rider_verification_fee_ugx','500','Flat fee credited to an agent for each rider they verify (UGX).',1);
+INSERT  IGNORE INTO `core_systemsetting` (`id`, `created_at`, `updated_at`, `key`, `value`, `description`, `is_active`) VALUES (14,'2026-10-03 15:57:25.697642','2026-10-03 15:57:25.697661','referral.reward_ugx','500','Reward credited to a member when someone they referred activates their first subscription (UGX).',1);
+UNLOCK TABLES;
+LOCK TABLES `subscriptions_subscriptionplan` WRITE;
+INSERT  IGNORE INTO `subscriptions_subscriptionplan` (`id`, `created_at`, `updated_at`, `code`, `label`, `price`, `period_days`, `is_active`, `is_popular`, `benefits`) VALUES (1,'2026-10-03 15:57:26.487204','2026-10-03 15:57:26.487408','1k-monthly','Monthly',1000.00,30,1,1,'[]');
+INSERT  IGNORE INTO `subscriptions_subscriptionplan` (`id`, `created_at`, `updated_at`, `code`, `label`, `price`, `period_days`, `is_active`, `is_popular`, `benefits`) VALUES (2,'2026-10-03 15:57:26.490215','2026-10-03 15:57:26.490274','3k-quarterly','Quarterly',3000.00,90,1,0,'[]');
+INSERT  IGNORE INTO `subscriptions_subscriptionplan` (`id`, `created_at`, `updated_at`, `code`, `label`, `price`, `period_days`, `is_active`, `is_popular`, `benefits`) VALUES (3,'2026-10-03 15:57:26.492966','2026-10-03 15:57:26.492988','6k-semi','Six Months',6000.00,182,1,0,'[]');
+INSERT  IGNORE INTO `subscriptions_subscriptionplan` (`id`, `created_at`, `updated_at`, `code`, `label`, `price`, `period_days`, `is_active`, `is_popular`, `benefits`) VALUES (4,'2026-10-03 15:57:26.495682','2026-10-03 15:57:26.495701','10k-year','Yearly Promo',10000.00,365,1,1,'[]');
+UNLOCK TABLES;
+LOCK TABLES `offers_offercategory` WRITE;
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (1,'2026-10-03 15:57:50.161932','2026-10-03 15:57:50.162088','general','General Shop','🏪',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (2,'2026-10-03 15:57:50.164730','2026-10-03 15:57:50.164750','soap','Soap','🧼',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (3,'2026-10-03 15:57:50.167871','2026-10-03 15:57:50.167892','rice','Rice','🍚',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (4,'2026-10-03 15:57:50.169805','2026-10-03 15:57:50.169833','posho','Posho','🌽',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (5,'2026-10-03 15:57:50.171459','2026-10-03 15:57:50.171477','sugar','Sugar','🍬',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (6,'2026-10-03 15:57:50.173272','2026-10-03 15:57:50.173290','oil','Cooking Oil','🛢️',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (7,'2026-10-03 15:57:50.175093','2026-10-03 15:57:50.175111','vegetables','Vegetables','🥬',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (8,'2026-10-03 15:57:50.176900','2026-10-03 15:57:50.176920','fruits','Fruits','🍌',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (9,'2026-10-03 15:57:50.178808','2026-10-03 15:57:50.178863','pharmacy','Pharmacy','💊',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (10,'2026-10-03 15:57:50.180872','2026-10-03 15:57:50.180892','food','Food / Lunch','🍛',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (11,'2026-10-03 15:57:50.182898','2026-10-03 15:57:50.182918','school','School Items','📚',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (12,'2026-10-03 15:57:50.185051','2026-10-03 15:57:50.185073','gas','Gas','🔥',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (13,'2026-10-03 15:57:50.186998','2026-10-03 15:57:50.187018','charcoal','Charcoal','🪵',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (14,'2026-10-03 15:57:50.189146','2026-10-03 15:57:50.189166','phone','Phone & Data','📱',1);
+INSERT  IGNORE INTO `offers_offercategory` (`id`, `created_at`, `updated_at`, `key`, `label`, `emoji`, `is_active`) VALUES (15,'2026-10-03 15:57:50.191105','2026-10-03 15:57:50.191124','other','Other','📦',1);
+UNLOCK TABLES;
+LOCK TABLES `promotions_promotionpackage` WRITE;
+INSERT  IGNORE INTO `promotions_promotionpackage` (`id`, `created_at`, `updated_at`, `code`, `label`, `price`, `duration_days`, `visibility_boost`, `is_active`) VALUES (1,'2026-10-03 15:57:50.193515','2026-10-03 15:57:50.193547','boost-1d','Boost: 1 day',2000.00,1,20,1);
+INSERT  IGNORE INTO `promotions_promotionpackage` (`id`, `created_at`, `updated_at`, `code`, `label`, `price`, `duration_days`, `visibility_boost`, `is_active`) VALUES (2,'2026-10-03 15:57:50.195688','2026-10-03 15:57:50.195708','boost-3d','Boost: 3 days',5000.00,3,20,1);
+INSERT  IGNORE INTO `promotions_promotionpackage` (`id`, `created_at`, `updated_at`, `code`, `label`, `price`, `duration_days`, `visibility_boost`, `is_active`) VALUES (3,'2026-10-03 15:57:50.198602','2026-10-03 15:57:50.198621','boost-7d','Boost: 7 days',10000.00,7,30,1);
+UNLOCK TABLES;
+
+SET FOREIGN_KEY_CHECKS = 1;

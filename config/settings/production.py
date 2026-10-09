@@ -1,10 +1,5 @@
 from .base import *  # noqa: F401,F403
 from .base import env
-import mimetypes
-
-mimetypes.add_type('text/css', '.css', True)
-mimetypes.add_type('application/javascript', '.js', True)
-
 
 DEBUG = False
 
@@ -21,27 +16,13 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 # deps on Windows dev machines / constrained hosts). Swap for mysqlclient in
 # production if you prefer the C driver; PyMySQL is drop-in DB-API compatible.
 # ---------------------------------------------------------------------------
-import pymysql  # noqa: E402
+from ._mysql import mysql_database  # noqa: E402
 
-pymysql.install_as_MySQLdb()
-# pymysql reports its own version (e.g. 1.4.6) when asked, which no
-# longer clears Django 6's raised minimum of 2.2.1 for the mysqlclient
-# API it's emulating — this is the standard, documented workaround.
-pymysql.version_info = (2, 2, 4, "final", 0)
-pymysql.__version__ = "2.2.4"
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST", default="localhost"),
-        "PORT": env("DB_PORT", default="3306"),
-        "OPTIONS": {"charset": "utf8mb4"},
-        "CONN_MAX_AGE": 60,
-    }
-}
+DATABASES = {"default": mysql_database(env, default_name="", default_user="")}
+DATABASES["default"]["NAME"] = env("DB_NAME")        # required in production: fail loudly if missing
+DATABASES["default"]["USER"] = env("DB_USER")
+DATABASES["default"]["PASSWORD"] = env("DB_PASSWORD")
+DATABASES["default"]["HOST"] = env("DB_HOST", default="localhost")
 
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 
