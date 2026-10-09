@@ -48,6 +48,21 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   font: inherit; font-size: .875rem; text-align: left; cursor: pointer;
 }
 
+/* ---------- Grid "blowout" fix ----------
+   Grids that only set columns at sm:/lg: have ONE auto-sized column on phones.
+   That column grew to its widest child (buttons, price rows) and pushed the
+   content off the right edge. minmax(0,1fr) keeps it inside the screen. */
+.kc-page .grid > * { min-width: 0; }
+.kc-page h1, .kc-page h2, .kc-page h3 { overflow-wrap: break-word; }
+@media (max-width: 1023.98px) {
+  .kc-page .kc-split { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 639.98px) {
+  .kc-page .grid:not([class~="grid-cols-2"]):not([class~="grid-cols-3"]):not([class~="grid-cols-4"]) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* ---------- Small screens (phones) ---------- */
 @media (max-width: 639.98px) {
   .kc-page .kc-menu { display: block; }
@@ -58,9 +73,11 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   .kc-page .kc-hero p { font-size: 1rem; }
 
   /* Hero buttons: primary full-width, the rest in a tidy 2-column grid */
-  .kc-page .kc-hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .625rem; }
-  .kc-page .kc-hero-actions > a { width: 100%; justify-content: center; text-align: center; padding-left: .5rem; padding-right: .5rem; }
-  .kc-page .kc-hero-actions > a:first-child { grid-column: 1 / -1; height: 3rem; }
+  .kc-page .kc-hero-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .625rem; }
+  .kc-page .kc-hero-actions > a {
+    width: 100%; height: auto; min-height: 2.75rem; justify-content: center; text-align: center;
+    white-space: normal; line-height: 1.2; padding: .5rem; }
+  .kc-page .kc-hero-actions > a:first-child { grid-column: 1 / -1; min-height: 3rem; }
 
   .kc-page .kc-stats { max-width: none; gap: .5rem; }
 
@@ -133,10 +150,13 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   height: 2.75rem; padding: 0 1.1rem; border-radius: .75rem;
   font-size: .875rem; font-weight: 500; transition: background .2s, filter .2s;
 }
-.kf-btn-primary { background: var(--kf-accent); color: #04210f; }
-.kf-btn-primary:hover { filter: brightness(1.08); }
-.kf-btn-ghost { border: 1px solid rgba(255,255,255,.18); color: #fff; }
-.kf-btn-ghost:hover { background: rgba(255,255,255,.07); }
+.kf-btn-primary {
+  background: #ffffff; color: #064e2b; font-weight: 600;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.7), 0 8px 24px rgba(34,197,94,.28);
+}
+.kf-btn-primary:hover { background: #dcfce7; color: #043d22; }
+.kf-btn-ghost { border: 1px solid rgba(255,255,255,.38); color: #fff; }
+.kf-btn-ghost:hover { background: rgba(255,255,255,.12); }
 @media (max-width: 479.98px) { .kf-btns .kf-btn { flex: 1 1 100%; } }
 @media (min-width: 768px) {
   .kf-cta { flex-direction: row; align-items: center; justify-content: space-between; padding: 3rem 0; }
@@ -256,7 +276,7 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
   <!-- Hero -->
   <section class="kc-hero px-4 sm:px-6 py-10 sm:py-16">
-    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+    <div class="kc-split max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
       <div class="animate-fade-in-up">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-soft text-primary text-xs font-medium">
           <i data-lucide="sparkles" class="h-3 w-3"></i> Now live in Nakawa East
@@ -359,7 +379,7 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
   <!-- Built for local sellers -->
   <section id="local-sellers" class="kc-section px-4 sm:px-6 py-14">
-    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
+    <div class="kc-split max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
       <div class="reveal">
         <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight">Built for local sellers — not only big shops</h2>
         <p class="text-muted-foreground mt-2">
@@ -403,7 +423,7 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   <!-- Local radius advertising -->
   <section class="kc-section px-4 sm:px-6 py-14 bg-muted/40 border-y">
     <div class="max-w-6xl mx-auto">
-      <div class="grid lg:grid-cols-3 gap-6 items-start">
+      <div class="kc-split grid lg:grid-cols-3 gap-6 items-start">
         <div class="lg:col-span-1 reveal">
           <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight">Local radius advertising</h2>
           <p class="text-muted-foreground mt-2">
@@ -494,7 +514,7 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
   <!-- Savings tracker -->
   <section class="kc-section px-4 sm:px-6 py-14 bg-muted/40 border-y">
-    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
+    <div class="kc-split max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
       <div class="reveal">
         <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight">Pay 1K. Save more every month.</h2>
         <p class="text-muted-foreground mt-2">
@@ -574,7 +594,11 @@ html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
     </div>
   </section>
 
-  
+  {# ===================== FOOTER =====================
+     Fill these once and the matching footer items appear automatically.
+     Leave a value as "" to hide it. kf_whatsapp = digits only, e.g. 2567XXXXXXXX
+     kf_privacy_url / kf_terms_url = any URL or path, e.g. "/privacy/"
+  #}
   {% with kf_email="" kf_phone="" kf_whatsapp="" kf_privacy_url="" kf_terms_url="" %}
   <footer class="kf" aria-labelledby="kf-title">
     <div class="kf-wrap">

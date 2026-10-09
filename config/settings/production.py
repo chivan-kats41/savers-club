@@ -18,6 +18,8 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 # ---------------------------------------------------------------------------
 from ._mysql import mysql_database  # noqa: E402
 
+
+
 DATABASES = {"default": mysql_database(env, default_name="", default_user="")}
 DATABASES["default"]["NAME"] = env("DB_NAME")        # required in production: fail loudly if missing
 DATABASES["default"]["USER"] = env("DB_USER")
