@@ -2,7 +2,8 @@
   "name": "savings-hub-assets",
   "private": true,
   "scripts": {
+    "test:js": "node hub/static_tests/geo.test.js",
     "build:css": "tailwindcss -c tailwind.config.js -i hub/static/hub/css/tailwind.input.css -o hub/static/hub/css/tailwind.css --minify"
   },
-  "devDependencies": { "tailwindcss": "3.4.17" }
+  "devDependencies": { "tailwindcss": "3.4.17", "jsdom": "24.1.3" }
 }

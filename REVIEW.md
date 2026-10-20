@@ -70,3 +70,11 @@ every login, and the first visit to a role page; plus `manage.py ensure_admin_pr
 never raises into signup/login, never depends on seed data (creates a General Shop category / Default Area if none exist), creates each profile independently so one failure cannot block the others. Verification audit rows record that profiles were
 auto-created. The internal admin merchant is excluded from the public landing "verified sellers" number. 20 new tests; 318 total pass on
 SQLite and on MySQL 8.0.
+
+
+## Update: geo-locking
+Members only see/claim offers within their distance (default 5 km), riders only see/accept jobs within 5 km, members see a rider count.
+New location fields on members/riders/merchants (latest point only, rounded), approximate area positions (migration + seed), location API
+(validated, CSRF, rate limited, jump detection), merchant shop-location requirement, admin area-position editor, `geo.*` settings,
+Permissions-Policy header, `geo.js` + 18 browser tests. 359 Python tests pass on SQLite and on MySQL 8.0; schema/SQL files regenerated
+and verified identical to the migrations. See GEOLOCK.md.

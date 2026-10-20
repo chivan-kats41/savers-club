@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from core.models import Area, SystemSetting
+from core.area_centroids import fill_empty_positions
 from hub.data import AREAS, LAUNCH_AREAS
 
 
@@ -25,7 +26,10 @@ class Command(BaseCommand):
             created += was_created
             updated += not was_created
 
-        self.stdout.write(self.style.SUCCESS(f"Areas: {created} created, {updated} already present."))
+        placed = fill_empty_positions(Area)
+        self.stdout.write(self.style.SUCCESS(
+            f"Areas: {created} created, {updated} already present; {placed} given an approximate map position "
+            "(check them in Admin console > Settings > Area map positions)."))
 
         defaults = {
             "subscription.price_ugx": (
@@ -39,6 +43,13 @@ class Command(BaseCommand):
             "delivery.fare_same_area": ("2000", "Delivery fare (UGX) when seller and buyer are in the same area."),
             "delivery.fare_cross_area": ("4000", "Delivery fare (UGX) between different areas."),
             "delivery.fare_shared_route": ("2000", "Delivery fare (UGX) for shared-route delivery."),
+            "geo.enforce": ("true", "Geo-lock: members only see/claim offers near them, riders only see jobs near them. true/false."),
+            "geo.default_radius_km": ("5", "Default 'near me' distance in km for members."),
+            "geo.max_radius_km": ("25", "Largest search distance a member may choose (km). Choices: 1, 2, 5, 10, 25."),
+            "geo.rider_job_radius_km": ("5", "Riders only see and can accept jobs whose pickup is within this many km of them."),
+            "geo.rider_location_max_age_minutes": ("10", "A rider's location counts as live for this many minutes after their last update."),
+            "geo.claim_location_max_age_minutes": ("60", "A member's GPS location must be this fresh to claim an offer."),
+            "geo.max_accuracy_m": ("5000", "Reject GPS readings less accurate than this many metres."),
             "claim.code_expiry_hours": (
                 str(settings.CLAIM_CODE_EXPIRY_HOURS),
                 "Hours before an unredeemed claim code expires.",

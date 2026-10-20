@@ -1,0 +1,35 @@
+{# Member location bar. Expects `geo` (member_location_state) and `riders_nearby`. #}
+<div id="geo-bar" data-geo-auto="member" data-geo-age="{{ geo.age_s }}"
+     class="rounded-2xl border bg-card p-3 sm:p-4 mb-5 flex flex-wrap items-center gap-x-4 gap-y-3 shadow-card">
+  <div class="flex items-center gap-3 min-w-0">
+    <span class="h-9 w-9 rounded-xl bg-primary-soft text-primary flex items-center justify-center shrink-0"><i data-lucide="map-pin" class="h-4 w-4"></i></span>
+    <div class="min-w-0">
+      <div class="text-sm font-medium truncate">
+        {% if geo.source == "area" %}Showing deals near {% if geo.area_label %}{{ geo.area_label }}{% else %}the area you picked{% endif %} <span class="text-xs font-normal text-muted-foreground">(approximate)</span>
+        {% else %}Showing deals near you{% endif %}
+      </div>
+      <div class="text-xs text-muted-foreground">
+        {% if geo.source == "area" %}Using an area centre, not GPS{% else %}From your device · updated {{ geo.updated }}{% endif %}
+        {% if riders_nearby %} · {{ riders_nearby }} rider{{ riders_nearby|pluralize }} nearby{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <form data-api="{% url 'hub_api:geo_radius' %}" data-after="reload" class="flex items-center gap-1.5 text-xs text-muted-foreground">
+    <label for="geo-radius">Within</label>
+    <select id="geo-radius" name="radius_km" data-number data-autosubmit class="h-9 rounded-lg border bg-background px-2 text-sm text-foreground">
+      {% for r in geo.radius_choices %}<option value="{{ r }}" {% if r == geo.radius_km|floatformat:0|add:0 %}selected{% endif %}>{{ r }} km</option>{% endfor %}
+    </select>
+  </form>
+
+  <div class="flex flex-wrap items-center gap-2 ml-auto">
+    <button type="button" data-geo-locate data-geo-role="member" class="h-9 px-3 rounded-lg border text-sm hover:bg-muted press-scale">Update location</button>
+    <form data-api="{% url 'hub_api:geo_area' %}" class="flex items-center gap-1.5">
+      <select name="area_id" data-number aria-label="Use an area instead of GPS" class="h-9 rounded-lg border bg-background px-2 text-sm">
+        {% for a in areas %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}
+      </select>
+      <button class="h-9 px-3 rounded-lg border text-sm hover:bg-muted press-scale">Use area</button>
+    </form>
+    <button type="button" data-api="{% url 'hub_api:geo_clear' %}" data-body='{"role": "member"}' data-confirm="Stop sharing your location? You won't see nearby deals until you share it again." class="h-9 px-2 text-xs text-muted-foreground hover:text-destructive">Stop sharing</button>
+  </div>
+</div>

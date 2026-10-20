@@ -25,3 +25,4 @@ SECURE_SSL_REDIRECT = False
 
 # Off by default in tests so existing fixtures/counts are unaffected; the feature has its own tests that turn it on.
 AUTO_CREATE_ADMIN_PROFILES = False
+GEO_ENFORCE_DEFAULT = False   # old fixtures have no coordinates; geo tests switch it on explicitly

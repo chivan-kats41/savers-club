@@ -43,6 +43,12 @@ class Rider(TimeStampedModel):
     # real-time infra (Channels/WebSockets, spec section 73) — deferred.
     is_available = models.BooleanField(default=True)
 
+    # Live location while the rider app is open (latest point only, ~11 m precision). Used so riders only see and can
+    # only accept jobs near them, and so members can see how many riders are close.
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_updated_at = models.DateTimeField(null=True, blank=True)
+
     class Meta:
         ordering = ["-created_at"]
         indexes = [models.Index(fields=["area", "status", "is_available"])]

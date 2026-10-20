@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import api
+from . import api, geo_api
 
 app_name = "hub_api"
 
@@ -25,4 +25,9 @@ urlpatterns = [
     path("admin/agent-tasks/", api.AdminAgentTasksView.as_view(), name="admin_agent_tasks"),
     path("admin/agent-tasks/<int:task_id>/cancel/", api.AdminAgentTaskCancelView.as_view(), name="admin_agent_task_cancel"),
     path("admin/notifications/broadcast/", api.AdminBroadcastView.as_view(), name="admin_broadcast"),
+    path("geo/location/", geo_api.LocationView.as_view(), name="geo_location"),
+    path("geo/area/", geo_api.AreaLocationView.as_view(), name="geo_area"),
+    path("geo/radius/", geo_api.RadiusView.as_view(), name="geo_radius"),
+    path("geo/clear/", geo_api.ClearLocationView.as_view(), name="geo_clear"),
+    path("admin/areas/<int:area_id>/coordinates/", geo_api.AdminAreaCoordinatesView.as_view(), name="admin_area_coordinates"),
 ]

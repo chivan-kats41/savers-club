@@ -114,3 +114,9 @@ test the whole site. Existing admins are fixed on their next login or first visi
 `python manage.py ensure_admin_profiles`. It needs no seed data: if no offer category (or area) exists yet it creates a
 "General Shop" category (or a "Default Area") so the merchant profile is always created. Run `seed_reference_data` for the full category list.
 Disable with `AUTO_CREATE_ADMIN_PROFILES=False`. Regular `admin` staff do not get these profiles.
+
+
+## Geo-locking (nearby deals and riders only)
+Members only see and claim offers near them; riders only see and accept jobs near them; members see how many riders are close.
+Location is required (GPS or pick an area). See `GEOLOCK.md` for the walkthrough, settings, privacy and limits.
+After upgrading run `python manage.py migrate` and `python manage.py seed_system_settings`.

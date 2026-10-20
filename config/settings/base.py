@@ -175,6 +175,7 @@ REST_FRAMEWORK = {
         "redeem": "200/hour",
         "delivery_otp": "40/hour",
         "write": "120/hour",
+        "location": "600/hour",
         "agent_action": "300/hour",
         "interact": "600/hour",
         "page_write": "60/hour",
@@ -330,4 +331,6 @@ ADMIN_2FA_MAX_AGE_SECONDS = 12 * 60 * 60
 
 # Super admins automatically get a member, merchant, rider and agent profile (see accounts/admin_profiles.py),
 # so one login can operate every part of the site. Set to False to disable.
+# Geo-lock default when the "geo.enforce" system setting has no row (Admin console > Settings can override it live).
+GEO_ENFORCE_DEFAULT = env.bool("GEO_ENFORCE_DEFAULT", default=True)
 AUTO_CREATE_ADMIN_PROFILES = env.bool("AUTO_CREATE_ADMIN_PROFILES", default=True)

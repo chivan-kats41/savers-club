@@ -13,6 +13,12 @@ def create_offer(merchant: Merchant, **fields) -> Offer:
     if merchant.status != Merchant.Status.VERIFIED:
         raise OfferError("Only verified merchants can post offers.")
 
+    from core import geoservice
+
+    if geoservice.geo_settings().enforce and geoservice.merchant_point(merchant) is None:
+        raise OfferError("Set your shop location first (Merchant page > Shop location). Customers only see offers "
+                         "near them, so an offer without a location would be invisible.")
+
     offer = Offer(merchant=merchant, status=Offer.Status.PENDING, **fields)
     try:
         offer.save()

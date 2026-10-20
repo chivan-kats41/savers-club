@@ -26,6 +26,14 @@ class Member(TimeStampedModel):
     account_status = models.CharField(max_length=20, choices=AccountStatus.choices, default=AccountStatus.ACTIVE)
 
     referral_code = models.CharField(max_length=16, unique=True, default=generate_referral_code)
+
+    # Current location, used to show only nearby deals and riders ("geo-lock"). Latest point only (never a history),
+    # rounded to ~110 m on save. `location_source` is "gps" (device) or "area" (the member picked an area centre).
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_updated_at = models.DateTimeField(null=True, blank=True)
+    location_source = models.CharField(max_length=10, blank=True, default="")
+    search_radius_km = models.PositiveSmallIntegerField(null=True, blank=True, help_text="Empty = platform default")
     referred_by = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.SET_NULL, related_name="referrals"
     )

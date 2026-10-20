@@ -41,6 +41,7 @@ class CSPMiddleware:
                 "form-action 'self'",
                 "frame-ancestors 'none'",
             ])
+        response.setdefault("Permissions-Policy", "geolocation=(self), camera=(), microphone=(), payment=()")
         if getattr(settings, "CSP_REPORT_ONLY", False):
             response["Content-Security-Policy-Report-Only"] = policy
         else:

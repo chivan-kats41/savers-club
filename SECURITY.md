@@ -177,3 +177,12 @@ of the last verification.
 - **Uploads** (`core/uploads.py`): decode + re-encode images, size/pixel limits, private storage for ID documents.
 - **Delivery fares** are computed on the server (`delivery.fare_same_area`, `delivery.fare_cross_area`, `delivery.fare_shared_route`).
 - **Audit trail**: all admin writes create `AuditLog` rows.
+
+
+---
+
+## Location data (geo-lock)
+Latest point only (no history), rounded (member ~110 m, rider ~11 m, merchant ~1 m), never exposed to other users (riders appear only as a
+count), wipe on "stop sharing", validated + CSRF + rate limited, `Permissions-Policy: geolocation=(self)`, jump detection on riders (reject)
+and members (log). Client-reported GPS can be spoofed: treat it as a convenience filter, not proof; physical redemption stays the control.
+Consider your obligations under Uganda's Data Protection and Privacy Act before launch (consent wording, retention, privacy notice).

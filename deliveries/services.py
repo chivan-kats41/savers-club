@@ -70,6 +70,12 @@ def accept_job(rider: Rider, job_id: int) -> DeliveryJob:
     if job.status != DeliveryJob.Status.REQUESTED:
         raise DeliveryError("This job is no longer available.")
 
+    from core import geoservice
+
+    ok_geo, why = geoservice.check_rider_can_accept(rider, job)
+    if not ok_geo:
+        raise DeliveryError(why)
+
     _transition(job, DeliveryJob.Status.ACCEPTED, actor=rider.user, rider=rider, assigned_at=timezone.now())
     return job
 

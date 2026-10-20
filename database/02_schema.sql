@@ -6,11 +6,7 @@
 -- Load into the (empty) database created by 01_create_database.sql:
 --     mysql -u savings_hub_user -p savings_hub < database/02_schema.sql
 -- Then load 03_reference_data.sql, then run `python manage.py migrate` (see README: it applies nothing, it just
--- creates Django's permission rows). Safe to re-run: every table is CREATE TABLE IF NOT EXISTS.
--- Works on MySQL 8.0+ and MariaDB 10.5+ (Django 6.1 itself needs MySQL 8.4+ / MariaDB 10.11+).
--- =====================================================================================
-
-
+-- creates Django's permission rows). Safe to re-run: every table is 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -662,6 +658,11 @@ CREATE TABLE IF NOT EXISTS `members_member` (
   `area_id` bigint NOT NULL,
   `referred_by_id` bigint DEFAULT NULL,
   `user_id` char(32) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `latitude` decimal(9,6) DEFAULT NULL,
+  `location_source` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `location_updated_at` datetime(6) DEFAULT NULL,
+  `longitude` decimal(9,6) DEFAULT NULL,
+  `search_radius_km` smallint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `referral_code` (`referral_code`),
   UNIQUE KEY `user_id` (`user_id`),
@@ -669,7 +670,8 @@ CREATE TABLE IF NOT EXISTS `members_member` (
   KEY `members_member_referred_by_id_17ca75b5_fk_members_member_id` (`referred_by_id`),
   CONSTRAINT `members_member_area_id_8c544b26_fk_core_area_id` FOREIGN KEY (`area_id`) REFERENCES `core_area` (`id`),
   CONSTRAINT `members_member_referred_by_id_17ca75b5_fk_members_member_id` FOREIGN KEY (`referred_by_id`) REFERENCES `members_member` (`id`),
-  CONSTRAINT `members_member_user_id_5b73e2f8_fk_accounts_user_id` FOREIGN KEY (`user_id`) REFERENCES `accounts_user` (`id`)
+  CONSTRAINT `members_member_user_id_5b73e2f8_fk_accounts_user_id` FOREIGN KEY (`user_id`) REFERENCES `accounts_user` (`id`),
+  CONSTRAINT `members_member_chk_1` CHECK ((`search_radius_km` >= 0))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -709,6 +711,8 @@ CREATE TABLE IF NOT EXISTS `merchants_merchant` (
   `category_id` bigint NOT NULL,
   `user_id` char(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `verified_by_id` char(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `location_source` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `location_updated_at` datetime(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`),
   KEY `merchants_merchant_category_id_b0660ca9_fk_offers_of` (`category_id`),
@@ -1028,6 +1032,9 @@ CREATE TABLE IF NOT EXISTS `riders_rider` (
   `area_id` bigint NOT NULL,
   `user_id` char(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `verified_by_id` char(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `latitude` decimal(9,6) DEFAULT NULL,
+  `location_updated_at` datetime(6) DEFAULT NULL,
+  `longitude` decimal(9,6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_id` (`user_id`),
   KEY `riders_ride_area_id_e054da_idx` (`area_id`,`status`,`is_available`),

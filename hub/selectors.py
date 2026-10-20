@@ -22,6 +22,7 @@ from collections import defaultdict
 from datetime import timedelta
 from decimal import Decimal
 
+from core import geo, geoservice
 from django.db.models import Avg, Case, Count, DecimalField, F, IntegerField, Max, Min, Q, Sum, Value, When
 from django.db.models.functions import Coalesce, TruncMonth
 from django.utils import timezone
@@ -201,7 +202,7 @@ def live_offers_qs():
     ).select_related("merchant", "category", "area").prefetch_related("images")
 
 
-def _offer_card(offer: Offer, origin: Area | None = None) -> dict:
+def _offer_card(offer: Offer, origin: Area | None = None, km: float | None = None, approx: bool = False) -> dict:
     badges = []
     if origin is not None and offer.area_id == origin.pk:
         badges.append("In your area")
@@ -219,7 +220,8 @@ def _offer_card(offer: Offer, origin: Area | None = None) -> dict:
         "seller": offer.merchant.business_name,
         "vendorType": offer.merchant.vendor_type or offer.category.label,
         "area": offer.area.name,
-        "distance": distance_label(origin, offer.area),
+        "distance": (geo.format_distance(km) + " away" + (" (approx.)" if approx else "")) if km is not None else distance_label(origin, offer.area),
+        "km": km,
         "same_area": bool(origin is not None and offer.area_id == origin.pk),
         "category": offer.category.label,
         "emoji": offer.category.emoji or "🏷️",
@@ -359,56 +361,112 @@ def member_context(user: User, params) -> dict | None:
     only_delivery = params.get("delivery") == "1"
     only_my_area = params.get("here") == "1"
 
-    qs = live_offers_qs()
-    if q:
-        qs = qs.filter(Q(item_name__icontains=q) | Q(merchant__business_name__icontains=q) | Q(category__label__icontains=q))
-    if cat:
-        qs = qs.filter(category__key=cat)
-    if only_delivery:
-        qs = qs.filter(delivery_available=True)
-    if only_my_area:
-        qs = qs.filter(area=member.area)
+    gs = geoservice.geo_settings()
+    geo_state = geoservice.member_location_state(member, gs)
+    point = geoservice.member_point(member)
+    radius = geoservice.member_radius_km(member, gs)
+    riders_nearby = 0
 
-    qs = qs.annotate(
-        _here=Case(When(area_id=member.area_id, then=Value(0)), default=Value(1), output_field=IntegerField()),
-        _saving=F("normal_price") - F("member_price"),
-    )
-    if sort == "cheapest":
-        qs = qs.order_by("member_price", "_here")
-    elif sort == "saving":
-        qs = qs.order_by("-_saving", "_here")
+    def _filtered(base):
+        f = base
+        if q:
+            f = f.filter(Q(item_name__icontains=q) | Q(merchant__business_name__icontains=q) | Q(category__label__icontains=q))
+        if cat:
+            f = f.filter(category__key=cat)
+        if only_delivery:
+            f = f.filter(delivery_available=True)
+        return f
+
+    if gs.enforce:
+        # ---- GEO-LOCKED: only offers within the member's radius, nearest first ---------------------------------
+        searching = bool(q or cat or only_delivery)
+        if point is None:
+            near_all, found_pairs = [], []
+        else:
+            near_all = geoservice.offers_near(live_offers_qs(), point, radius)            # everything near, for the side panels
+            wanted = {o.pk for o, _ in geoservice.offers_near(_filtered(live_offers_qs()), point, radius)}
+            found_pairs = [(o, km) for o, km in near_all if o.pk in wanted]
+            riders_nearby = geoservice.riders_near(point, radius, gs)
+        if sort == "cheapest":
+            found_pairs.sort(key=lambda t: (t[0].member_price, t[1]))
+        elif sort == "saving":
+            found_pairs.sort(key=lambda t: (-(t[0].normal_price - t[0].member_price), t[1]))
+        else:
+            found_pairs.sort(key=lambda t: (t[1], -t[0].visibility_score, t[0].member_price))
+        approx = bool(point and point.approx)
+        cards = [_offer_card(o, member.area, km, approx) for o, km in found_pairs[:48]]
+        nearby_deals = [_offer_card(o, member.area, km, approx) for o, km in near_all[:6]]
+        basket_items = [_offer_card(o, member.area, km, approx)
+                        for o, km in sorted(near_all, key=lambda t: (-t[0].visibility_score, t[0].member_price))[:8]]
+        counts = {}
+        for o, _km in near_all:
+            counts.setdefault(o.item_name, set()).add(o.merchant_id)
+        compare_options = [{"item_name": n, "sellers": len(m)}
+                           for n, m in sorted(counts.items(), key=lambda kv: (-len(kv[1]), kv[0]))[:30]]
+        compare_item = (params.get("compare") or "").strip()
+        if not compare_item:
+            for opt in compare_options:
+                if opt["sellers"] >= 2:
+                    compare_item = opt["item_name"]
+                    break
+            if not compare_item and compare_options:
+                compare_item = compare_options[0]["item_name"]
+        compare_rows = [_offer_card(o, member.area, km, approx)
+                        for o, km in sorted((p for p in near_all if p[0].item_name.lower() == compare_item.lower()),
+                                            key=lambda t: t[0].member_price)[:8]] if compare_item else []
     else:
-        qs = qs.order_by("_here", "-visibility_score", "member_price")
-
-    found = list(qs[:48])
-    cards = [_offer_card(o, member.area) for o in found]
-    searching = bool(q or cat or only_delivery or only_my_area)
-
-    nearby_deals = [c for c in cards if c["same_area"]][:6] or cards[:6]
-    basket_qs = (
-        live_offers_qs().filter(area=member.area).order_by("-visibility_score", "member_price")[:8]
-    )
-    basket_items = [_offer_card(o, member.area) for o in basket_qs]
-
-    # ---- compare same item across sellers ---------------------------------
-    compare_options = list(
-        live_offers_qs()
-        .values("item_name")
-        .annotate(sellers=Count("merchant", distinct=True))
-        .order_by("-sellers", "item_name")[:30]
-    )
-    compare_item = (params.get("compare") or "").strip()
-    if not compare_item:
-        for opt in compare_options:
-            if opt["sellers"] >= 2:
-                compare_item = opt["item_name"]
-                break
-        if not compare_item and compare_options:
-            compare_item = compare_options[0]["item_name"]
-    compare_rows = []
-    if compare_item:
-        for o in live_offers_qs().filter(item_name__iexact=compare_item).order_by("member_price")[:8]:
-            compare_rows.append(_offer_card(o, member.area))
+        qs = live_offers_qs()
+        if q:
+            qs = qs.filter(Q(item_name__icontains=q) | Q(merchant__business_name__icontains=q) | Q(category__label__icontains=q))
+        if cat:
+            qs = qs.filter(category__key=cat)
+        if only_delivery:
+            qs = qs.filter(delivery_available=True)
+        if only_my_area:
+            qs = qs.filter(area=member.area)
+    
+        qs = qs.annotate(
+            _here=Case(When(area_id=member.area_id, then=Value(0)), default=Value(1), output_field=IntegerField()),
+            _saving=F("normal_price") - F("member_price"),
+        )
+        if sort == "cheapest":
+            qs = qs.order_by("member_price", "_here")
+        elif sort == "saving":
+            qs = qs.order_by("-_saving", "_here")
+        else:
+            qs = qs.order_by("_here", "-visibility_score", "member_price")
+    
+        found = list(qs[:48])
+        cards = [_offer_card(o, member.area) for o in found]
+        searching = bool(q or cat or only_delivery or only_my_area)
+    
+        nearby_deals = [c for c in cards if c["same_area"]][:6] or cards[:6]
+        basket_qs = (
+            live_offers_qs().filter(area=member.area).order_by("-visibility_score", "member_price")[:8]
+        )
+        basket_items = [_offer_card(o, member.area) for o in basket_qs]
+    
+        # ---- compare same item across sellers ---------------------------------
+        compare_options = list(
+            live_offers_qs()
+            .values("item_name")
+            .annotate(sellers=Count("merchant", distinct=True))
+            .order_by("-sellers", "item_name")[:30]
+        )
+        compare_item = (params.get("compare") or "").strip()
+        if not compare_item:
+            for opt in compare_options:
+                if opt["sellers"] >= 2:
+                    compare_item = opt["item_name"]
+                    break
+            if not compare_item and compare_options:
+                compare_item = compare_options[0]["item_name"]
+        compare_rows = []
+        if compare_item:
+            for o in live_offers_qs().filter(item_name__iexact=compare_item).order_by("member_price")[:8]:
+                compare_rows.append(_offer_card(o, member.area))
+    
+    
 
     # ---- claims ------------------------------------------------------------
     claim_qs = (
@@ -433,6 +491,9 @@ def member_context(user: User, params) -> dict | None:
             "can_cancel": status == OfferClaim.Status.CLAIMED,
             "has_delivery": hasattr(c, "delivery_job"),
             "delivery_offered": c.offer.delivery_available,
+            "riders_near_seller": (
+                geoservice.riders_near(geoservice.merchant_point(c.offer.merchant), gs.rider_job_radius_km, gs)
+                if (status == OfferClaim.Status.CLAIMED and gs.enforce and geoservice.merchant_point(c.offer.merchant)) else None),
         })
     deliverable_claims = [c for c in claimed_offers if c["status"] == OfferClaim.Status.CLAIMED and not c["has_delivery"]]
 
@@ -526,6 +587,9 @@ def member_context(user: User, params) -> dict | None:
         "referral": referral,
         "complaints": complaints,
         "areas": areas_active(),
+        "geo": geo_state,
+        "riders_nearby": riders_nearby,
+        "geo_radius_km": radius,
     }
 
 
@@ -634,6 +698,8 @@ def merchant_context(user: User) -> dict | None:
     promo_offers = [o for o in offers if o["status"] == Offer.Status.ACTIVE]
 
     return {
+        "geo": geoservice.merchant_location_state(merchant),
+        "geo_enforced": geoservice.geo_settings().enforce,
         "merchant": merchant,
         "initials": initials(merchant.business_name),
         "verified_by": display_name(merchant.verified_by) if merchant.verified_by else None,
@@ -700,10 +766,23 @@ def rider_context(user: User) -> dict | None:
         .order_by("-created_at")[:40]
     )
     jobs = []
+    gs = geoservice.geo_settings()
+    rider_pt = geoservice.rider_point(rider, gs)
+    hidden_far = 0
     for j in job_qs:
         action = ACTION_FOR_STATUS.get(j.status)
         mine = j.rider_id == rider.pk
+        job_km = None
+        if not mine and j.status == DeliveryJob.Status.REQUESTED and gs.enforce:
+            # GEO-LOCK: an open job is only shown to riders close to its pickup (and only if their location is live)
+            job_km = geoservice.job_distance_km(rider_pt, j)
+            if rider_pt is None:
+                continue
+            if job_km is None or job_km > gs.rider_job_radius_km:
+                hidden_far += 1
+                continue
         jobs.append({
+            "distance": geo.format_distance(job_km) if job_km is not None else "",
             "id": j.pk,
             "ref": f"JOB-{j.pk}",
             "from": j.pickup_merchant.business_name,
@@ -780,8 +859,12 @@ def rider_context(user: User) -> dict | None:
         for w in Withdrawal.objects.filter(user=user).order_by("-created_at")[:5]
     ]
 
+    rider_geo = {"enforce": gs.enforce, "radius_km": gs.rider_job_radius_km, "hidden_far": hidden_far,
+                 "state": "live" if rider_pt else ("missing" if rider.latitude is None else "stale"),
+                 "updated": geoservice.ago(rider.location_updated_at), "max_age_min": gs.rider_max_age_min}
     return {
         "rider": rider,
+        "geo": rider_geo,
         "initials": initials(display_name(user)),
         "jobs": jobs,
         "stats": {

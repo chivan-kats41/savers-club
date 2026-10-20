@@ -29,6 +29,9 @@ class Merchant(TimeStampedModel):
     address = models.CharField(max_length=255, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    # "gps" = set from the device while at the shop; "" = not set (the area centre is used, marked approximate).
+    location_source = models.CharField(max_length=10, blank=True, default="")
+    location_updated_at = models.DateTimeField(null=True, blank=True)
 
     phone = models.CharField(max_length=20, blank=True)
     whatsapp = models.CharField(max_length=20, blank=True)

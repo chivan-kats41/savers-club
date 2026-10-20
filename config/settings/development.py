@@ -1,7 +1,7 @@
 from .base import *  # noqa: F401,F403
 from .base import BASE_DIR, env
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -18,9 +18,6 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-    
-
-    
 
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = env.list(

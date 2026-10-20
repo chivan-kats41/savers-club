@@ -44,6 +44,27 @@
   </section>
 </div>
 
+<section id="areapos" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20 mb-5">
+  <h2 class="font-semibold">Area map positions</h2>
+  <p class="text-xs text-muted-foreground mt-0.5 mb-3">Geo-lock uses these to place offers and members who choose an area instead of GPS. The values filled in for existing areas are <strong>approximate</strong> (about 1-2 km): check them on a map and correct them. Areas with no position can't be used for "near me".</p>
+  <div class="overflow-x-auto -mx-1"><table class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Area</th><th class="px-2 py-2 font-medium">Latitude</th><th class="px-2 py-2 font-medium">Longitude</th><th class="px-2 py-2 font-medium"></th></tr></thead>
+    <tbody>
+    {% for a in areas %}
+    <tr class="border-t">
+      <td class="px-2 py-2.5 font-medium">{{ a.name }}{% if not a.latitude %} <span class="text-[10px] px-1.5 py-0.5 rounded bg-destructive/10 text-destructive">no position</span>{% endif %}</td>
+      <td colspan="3" class="px-2 py-1.5">
+        <form data-api="{% url 'hub_api:admin_area_coordinates' a.pk %}" data-method="PATCH" data-success="Position saved." class="flex flex-wrap gap-1.5">
+          <input name="latitude" data-number required type="number" step="0.000001" min="-90" max="90" value="{{ a.latitude|default_if_none:'' }}" placeholder="e.g. 0.3136" class="h-9 w-32 rounded-lg border bg-background px-2 text-sm" />
+          <input name="longitude" data-number required type="number" step="0.000001" min="-180" max="180" value="{{ a.longitude|default_if_none:'' }}" placeholder="e.g. 32.5811" class="h-9 w-32 rounded-lg border bg-background px-2 text-sm" />
+          <button class="h-9 px-3 rounded-lg border text-xs hover:bg-muted">Save</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody></table></div>
+</section>
+
 <section id="commission" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20 mb-5">
   <h2 class="font-semibold">System settings</h2><p class="text-xs text-muted-foreground mt-0.5 mb-3">Commissions, fees, delivery fares and limits. Changes apply immediately.</p>
   <div class="overflow-x-auto -mx-1"><table id="sysT" class="w-full text-sm">

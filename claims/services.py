@@ -29,6 +29,12 @@ def claim_offer(member, offer_id: int) -> OfferClaim:
     if offer.quantity <= 0:
         raise ClaimError("This offer is out of stock.")
 
+    from core import geoservice
+
+    ok_geo, why = geoservice.check_member_can_claim(member, offer)
+    if not ok_geo:
+        raise ClaimError(why)
+
     already_claimed = OfferClaim.objects.filter(
         member=member, offer=offer, status=OfferClaim.Status.CLAIMED
     ).exists()

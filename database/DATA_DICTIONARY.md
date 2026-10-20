@@ -5,6 +5,7 @@ Generated from the live MySQL schema and the model docstrings. **Do not edit by 
 **63 tables · 104 foreign-key columns · 131 secondary indexes**
 
 Conventions: `id` is the primary key; UUID keys are stored as `char(32)`; money is `decimal(12,2)` in UGX; every datetime is stored in Africa/Kampala local time (see README, *Time zones*); `created_at`/`updated_at` are on most tables.
+**Location data (geo-lock):** `members_member`, `riders_rider` and `merchants_merchant` hold `latitude`/`longitude` as `decimal(9,6)`. Only the *latest* point is kept (never a history): members ~110 m, riders ~11 m, merchants ~1 m precision. `core_area` holds the approximate centre of each area.
 
 ## Contents
 
@@ -15,7 +16,7 @@ Conventions: `id` is the primary key; UUID keys are stored as `char(32)`; money 
 - [Merchants](#merchants) (3 tables)
 - [Offers, categories & interactions](#offers) (4 tables)
 - [Claim codes & redemptions](#claims) (2 tables)
-- [Savings records](#savings) (1 tables)
+- [Savings records](#savings) (1 table)
 - [Item requests](#item_requests) (2 tables)
 - [Deliveries, routes & pickup points](#deliveries) (6 tables)
 - [Riders](#riders) (3 tables)
@@ -232,6 +233,11 @@ Member profile. Subscription status lives on subscriptions.Subscription (Phase 4
 | `area_id` | bigint | no | FK → `core_area.id` |
 | `referred_by_id` | bigint | yes | FK → `members_member.id` |
 | `user_id` | char(32) | no | unique, FK → `accounts_user.id` |
+| `latitude` | decimal(9,6) | yes |  |
+| `location_source` | varchar(10) | no |  |
+| `location_updated_at` | datetime(6) | yes |  |
+| `longitude` | decimal(9,6) | yes |  |
+| `search_radius_km` | smallint unsigned | yes |  |
 
 ### `members_referralreward`
 
@@ -334,6 +340,8 @@ Admin-configurable — nothing about price/period is hard-coded in application c
 | `category_id` | bigint | no | FK → `offers_offercategory.id` |
 | `user_id` | char(32) | no | unique, FK → `accounts_user.id` |
 | `verified_by_id` | char(32) | yes | FK → `accounts_user.id` |
+| `location_source` | varchar(10) | no |  |
+| `location_updated_at` | datetime(6) | yes |  |
 
 Composite indexes: `(area_id,status)`
 
@@ -645,6 +653,9 @@ Composite indexes: `(status,origin_area_id,destination_area_id)`
 | `area_id` | bigint | no | FK → `core_area.id` |
 | `user_id` | char(32) | no | unique, FK → `accounts_user.id` |
 | `verified_by_id` | char(32) | yes | FK → `accounts_user.id` |
+| `latitude` | decimal(9,6) | yes |  |
+| `location_updated_at` | datetime(6) | yes |  |
+| `longitude` | decimal(9,6) | yes |  |
 
 Composite indexes: `(area_id,status,is_available)`
 

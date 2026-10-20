@@ -1,0 +1,16 @@
+{# Shown to members instead of deals until they share a location (geo-lock is on). Expects `geo`. #}
+<section id="geo-gate" data-geo-auto="member" data-geo-age="" class="rounded-2xl border bg-card p-6 sm:p-8 shadow-card mb-5 text-center max-w-2xl mx-auto">
+  <div class="mx-auto h-14 w-14 rounded-2xl bg-primary-soft text-primary flex items-center justify-center"><i data-lucide="map-pin" class="h-6 w-6"></i></div>
+  <h2 class="mt-4 text-xl font-semibold">Share your location to see deals near you</h2>
+  <p class="mt-2 text-sm text-muted-foreground">1K Saver Club only shows offers and riders close to you (within {{ geo.default_radius_km|floatformat:"-1" }} km by default), so what you see is what you can actually collect today.</p>
+  <button type="button" data-geo-locate data-geo-role="member" data-geo-reload class="mt-5 h-11 px-6 rounded-xl bg-primary text-primary-foreground font-medium press-scale">Share my location</button>
+
+  <div class="mt-6 text-xs uppercase tracking-wider text-muted-foreground">or</div>
+  <form data-api="{% url 'hub_api:geo_area' %}" class="mt-3 flex flex-wrap items-center justify-center gap-2">
+    <select name="area_id" data-number aria-label="Choose your area" class="h-10 rounded-lg border bg-background px-3 text-sm">
+      {% for a in areas %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}
+    </select>
+    <button class="h-10 px-4 rounded-lg border text-sm hover:bg-muted press-scale">Use this area instead</button>
+  </form>
+  <p class="mt-5 text-[11px] text-muted-foreground max-w-md mx-auto">Your location is rounded to about 100 m, only your latest position is kept, nobody else can see it, and you can stop sharing any time. Offers from an area centre are approximate.</p>
+</section>

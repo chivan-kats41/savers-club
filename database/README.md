@@ -8,7 +8,7 @@ drift from the code (`hub/tests/test_schema_sql.py`).
 |---|---|
 | `01_create_database.sql` | Creates the `savings_hub` database and a least-privilege app user. **Edit the password first.** |
 | `02_schema.sql` | All 63 tables, keys and indexes (`CREATE TABLE IF NOT EXISTS`, safe to re-run). |
-| `03_reference_data.sql` | 13 areas, 14 system settings, 4 plans, 15 offer categories, 3 promotion packages, and Django's migration records. No users or personal data. Safe to re-run. |
+| `03_reference_data.sql` | 13 areas (with approximate map positions), 21 system settings (incl. geo-lock), 4 plans, 15 offer categories, 3 promotion packages, and Django's migration records. No users or personal data. Safe to re-run. |
 | `DATA_DICTIONARY.md` | Every table and column, grouped by feature, with foreign keys. |
 | `mysql-recommended.cnf` | Server settings for a production box. |
 | `backup_mysql.sh` / `backup_mysql.bat` | Nightly compressed backup with retention (Linux / Windows). |
@@ -116,7 +116,7 @@ Then strip `AUTO_INCREMENT=n`, change `CREATE TABLE` to `CREATE TABLE IF NOT EXI
 `hub/tests/test_schema_sql.py` tells you when this is needed. Path A never needs it.
 
 ## 9. What was and wasn't tested
-Tested on **MySQL 8.0.46** (Linux): all 63 tables build, the whole test suite (314 tests) passes, and the SQL files load and match.
+Tested on **MySQL 8.0.46** (Linux): all 63 tables build, the whole test suite (359 tests) passes, and the SQL files load and match.
 Django 6.1's minimum-version check was bypassed for that run (`ALLOW_UNSUPPORTED_DB_VERSION=1` in `config/settings/testing_mysql.py`,
 lab use only) because 8.4 wasn't installable there. **Not tested on MySQL 8.4 or MariaDB**; the SQL uses nothing beyond 8.0/MariaDB 10.5
 features, but run `DJANGO_SETTINGS_MODULE=config.settings.testing_mysql python manage.py test` on your target server once.

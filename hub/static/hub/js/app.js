@@ -202,7 +202,7 @@ function makePieChart(canvasId, labels, data) {
 // ---- CSP-safe helpers (no inline event handlers anywhere) -------------------
 document.addEventListener("change", function (ev) {
   var el = ev.target.closest("[data-autosubmit]");
-  if (el && el.form) el.form.submit();
+  if (el && el.form) { if (el.form.requestSubmit) el.form.requestSubmit(); else el.form.submit(); }
 });
 
 // Pages that should stay fresh (rider jobs, agent queue, notifications) set
