@@ -1,0 +1,15 @@
+{# Self-contained: push.js fills in the status. Safe on any signed-in page. #}
+<div class="rounded-xl border p-3 bg-muted/40" data-push-card hidden>
+  <div class="flex items-start gap-3">
+    <div class="h-9 w-9 rounded-lg bg-secondary-soft text-secondary flex items-center justify-center shrink-0"><i data-lucide="bell" class="h-4 w-4"></i></div>
+    <div class="flex-1 min-w-0">
+      <div class="text-sm font-medium">Phone &amp; browser alerts</div>
+      <p class="text-xs text-muted-foreground mt-0.5" data-push-status>Checking…</p>
+      <div class="mt-2 flex flex-wrap gap-2">
+        <button type="button" data-push-enable class="text-xs px-3 py-1.5 rounded-lg bg-primary text-primary-foreground press-scale" hidden>Turn on alerts</button>
+        <button type="button" data-push-test class="text-xs px-3 py-1.5 rounded-lg border press-scale" hidden>Send a test</button>
+        <button type="button" data-push-disable class="text-xs px-3 py-1.5 rounded-lg border text-destructive press-scale" hidden>Turn off on this device</button>
+      </div>
+    </div>
+  </div>
+</div>

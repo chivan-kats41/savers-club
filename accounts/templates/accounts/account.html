@@ -1,0 +1,23 @@
+{% extends "accounts/_auth_layout.html" %}
+{% block title %}Your account — 1K Saver Club{% endblock %}
+{% block heading %}Your account{% endblock %}
+{% block subheading %}Sign in with your phone number or your email: either works.{% endblock %}
+{% block fields %}
+  <div class="rounded-lg border border-border p-3 text-sm space-y-1">
+    <div><span class="text-muted-foreground">Phone:</span> <strong>{{ user.phone }}</strong>
+      {% if user.phone_verified %}<span class="text-primary text-xs">verified</span>{% endif %}</div>
+    <div><span class="text-muted-foreground">Email:</span> <strong>{% if user.email %}{{ user.email }}{% else %}not set{% endif %}</strong></div>
+  </div>
+  {% for field in form %}
+    <div>
+      <label class="block text-sm font-medium text-foreground mb-1">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<p class="text-xs text-muted-foreground mt-1">{{ field.help_text }}</p>{% endif %}
+      {% for error in field.errors %}<p class="text-xs text-destructive mt-1">{{ error }}</p>{% endfor %}
+    </div>
+  {% endfor %}
+{% endblock %}
+{% block submit_label %}Save email{% endblock %}
+{% block footer %}
+  <p class="text-sm text-muted-foreground mt-4 text-center"><a href="{% url 'landing' %}" class="text-primary font-medium">Back to home</a></p>
+{% endblock %}

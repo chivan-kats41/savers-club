@@ -1,0 +1,31 @@
+{% extends "hub/dashboard.html" %}
+{% block title %}Become a merchant · 1K Saver Club{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Become a merchant" description="Post daily deals and reach nearby members. An area agent verifies every business in person." %}
+<section class="rounded-2xl bg-card border p-5 shadow-card max-w-2xl">
+  {% if existing %}
+    <div class="rounded-xl bg-primary-soft text-primary p-4 text-sm">
+      You've applied as <strong>{{ existing.business_name }}</strong> — status: <strong>{{ existing.get_status_display }}</strong>.
+      {% if existing.status == "verified" %}<a class="underline font-medium" href="{% url 'merchant' %}">Open your merchant dashboard</a>.{% else %}We'll notify you when an agent has reviewed it. You can switch to the Merchant role from the dashboard once it's set up.{% endif %}
+    </div>
+  {% else %}
+  <form data-api="{% url 'hub_api:merchant_apply' %}" data-success="Application sent. An agent will visit soon." class="grid sm:grid-cols-2 gap-3">
+    <label class="block text-xs text-muted-foreground sm:col-span-2">Business name
+      <input name="business_name" required minlength="2" maxlength="150" class="mt-1 w-full h-10 rounded-lg border bg-background px-3 text-sm text-foreground" /></label>
+    <label class="block text-xs text-muted-foreground">Category
+      <select name="category" data-number required class="mt-1 w-full h-10 rounded-lg border bg-background px-2 text-sm text-foreground">{% for c in categories %}<option value="{{ c.pk }}">{{ c.label }}</option>{% endfor %}</select></label>
+    <label class="block text-xs text-muted-foreground">Area
+      <select name="area" data-number required class="mt-1 w-full h-10 rounded-lg border bg-background px-2 text-sm text-foreground">{% for a in areas %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}</select></label>
+    <label class="block text-xs text-muted-foreground">Type (shop, stall, restaurant…)
+      <input name="vendor_type" maxlength="100" class="mt-1 w-full h-10 rounded-lg border bg-background px-3 text-sm text-foreground" /></label>
+    <label class="block text-xs text-muted-foreground">Address / landmark
+      <input name="address" maxlength="255" class="mt-1 w-full h-10 rounded-lg border bg-background px-3 text-sm text-foreground" /></label>
+    <label class="block text-xs text-muted-foreground">Business phone
+      <input name="phone" value="{{ user.phone }}" inputmode="tel" class="mt-1 w-full h-10 rounded-lg border bg-background px-3 text-sm text-foreground" /></label>
+    <label class="block text-xs text-muted-foreground">WhatsApp (optional)
+      <input name="whatsapp" inputmode="tel" class="mt-1 w-full h-10 rounded-lg border bg-background px-3 text-sm text-foreground" /></label>
+    <div class="sm:col-span-2"><button type="submit" class="h-10 px-5 rounded-lg bg-primary text-primary-foreground text-sm font-medium press-scale">Submit application</button></div>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}

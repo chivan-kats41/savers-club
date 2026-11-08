@@ -1,0 +1,29 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Settlements · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Settlements" description="Derived from rider earnings, withdrawals and agent earnings (there is no separate settlement table)." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Owed to riders" value=totals.pending|ugx icon="wallet" tone="warning" %}
+  {% include "hub/partials/stat_card.html" with label="Paid to riders" value=totals.paid|ugx icon="check-circle-2" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Rider commission" value=totals.commission|ugx icon="receipt" tone="accent" %}
+  {% include "hub/partials/stat_card.html" with label="Agent earnings" value=totals.agent_earned|ugx icon="banknote" tone="secondary" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="mb-4"><h2 class="font-semibold">Balances</h2></div>
+<div class="overflow-x-auto -mx-1">
+  <table id="settTable" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Who</th><th class="px-2 py-2 font-medium">Type</th><th class="px-2 py-2 font-medium">Gross</th><th class="px-2 py-2 font-medium">Commission</th><th class="px-2 py-2 font-medium">Net</th><th class="px-2 py-2 font-medium">Paid out</th><th class="px-2 py-2 font-medium">In flight</th><th class="px-2 py-2 font-medium">Still owed</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="border-t hover:bg-muted/40">
+        <td class="px-2 py-2.5"><span class="font-medium">{{ r.who }}</span></td><td class="px-2 py-2.5">{{ r.type }}</td><td class="px-2 py-2.5">{{ r.gross|ugx }}</td><td class="px-2 py-2.5">{{ r.commission|ugx }}</td><td class="px-2 py-2.5">{{ r.net|ugx }}</td><td class="px-2 py-2.5">{% if r.paid is None %}—{% else %}{{ r.paid|ugx }}{% endif %}</td><td class="px-2 py-2.5">{{ r.inflight|ugx }}</td><td class="px-2 py-2.5">{% if r.pending is None %}—{% else %}{{ r.pending|ugx }}{% endif %}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" class="px-2 py-8 text-center text-sm text-muted-foreground">Nothing to settle yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</section>
+{% endblock %}

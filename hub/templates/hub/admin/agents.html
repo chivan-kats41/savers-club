@@ -1,0 +1,39 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Agents · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Agents" description="Field agents verify merchants and riders, collect prices and resolve complaints in their areas." %}
+<div class="-mt-3 mb-5 flex justify-end"><button type="button" data-modal-open="createAgentModal" class="h-9 px-3 text-sm rounded-lg bg-primary text-primary-foreground inline-flex items-center gap-1.5">+ New agent</button></div><div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Total agents" value=stats.total icon="user-check" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Active" value=stats.active icon="shield-check" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Suspended" value=stats.suspended icon="x" tone="destructive" %}
+  {% include "hub/partials/stat_card.html" with label="Areas covered" value=stats.covered_label icon="map-pin" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Agent earnings" value=stats.earnings_total|ugx icon="banknote" tone="accent" %}
+  {% include "hub/partials/stat_card.html" with label="Top performer" value=stats.top icon="user-check" tone="secondary" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+<div class="mb-4"><h2 class="font-semibold">All agents</h2></div>
+<div class="overflow-x-auto -mx-1"><table id="agentsT" class="w-full text-sm">
+<thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Agent</th><th class="px-2 py-2 font-medium">Phone</th><th class="px-2 py-2 font-medium">Areas</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium">Merchants verified</th><th class="px-2 py-2 font-medium">Riders verified</th><th class="px-2 py-2 font-medium">Prices</th><th class="px-2 py-2 font-medium">Complaints</th><th class="px-2 py-2 font-medium">Earnings</th><th class="px-2 py-2 font-medium">Last login</th><th class="px-2 py-2 font-medium text-right">Actions</th></tr></thead>
+<tbody>{% for r in rows %}<tr class="border-t hover:bg-muted/40"><td class="px-2 py-2.5"><span class="font-medium">{{ r.name }}</span></td><td class="px-2 py-2.5">{{ r.phone }}</td><td class="px-2 py-2.5"><div class="flex flex-wrap gap-1 max-w-[220px]">{% for ar in r.areas %}<span class="text-[10px] px-1.5 py-0.5 rounded-md bg-muted">{{ ar }}</span>{% empty %}<span class="text-xs text-muted-foreground">none</span>{% endfor %}</div></td><td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status|badge_class }}">{{ r.status }}</span></td><td class="px-2 py-2.5">{{ r.merchants }}</td><td class="px-2 py-2.5">{{ r.riders }}</td><td class="px-2 py-2.5">{{ r.prices }}</td><td class="px-2 py-2.5">{{ r.complaints }}</td><td class="px-2 py-2.5">{% if r.earnings %}<span class="text-primary font-medium">{{ r.earnings|ugx }}</span>{% else %}—{% endif %}</td><td class="px-2 py-2.5"><span class="text-muted-foreground">{{ r.last }}</span></td><td class="px-2 py-2.5"><div class="text-right">{% if r.suspended %}<button type="button" data-api="{% url 'accounts_api:reactivate_user' r.user_id %}" data-confirm="Reactivate this agent?" class="text-xs px-2 py-1 rounded-md border">Reactivate</button>{% else %}<button type="button" data-api="{% url 'accounts_api:suspend_user' r.user_id %}" data-confirm="Suspend this agent? They will be signed out." class="text-xs px-2 py-1 rounded-md border text-destructive">Suspend</button>{% endif %}</div></td></tr>
+{% empty %}<tr><td colspan="11" class="px-2 py-8 text-center text-sm text-muted-foreground">No agents yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+
+<div id="createAgentModal" class="modal-backdrop hidden fixed inset-0 z-50 bg-foreground/40 flex items-end sm:items-center justify-center p-4">
+  <form data-api="{% url 'agents:admin_agents' %}" data-success="Agent saved." class="bg-card rounded-2xl w-full max-w-lg shadow-2xl border max-h-[90vh] overflow-y-auto animate-scale-in">
+    <div class="flex items-center justify-between p-5 border-b">
+      <div><div class="font-semibold">Make a user an agent</div><div class="text-xs text-muted-foreground">The person must already have an account — enter the phone number they registered with.</div></div>
+      <button type="button" data-modal-close class="h-8 w-8 rounded-md border flex items-center justify-center" aria-label="Close">✕</button>
+    </div>
+    <div class="p-5 space-y-3">
+      <label class="block"><div class="text-xs font-medium text-muted-foreground mb-1">Phone number of an existing user</div><input name="phone" required inputmode="tel" placeholder="+2567XXXXXXXX" class="w-full h-9 rounded-lg border bg-background px-3 text-sm" /></label>
+      <div><div class="text-xs font-medium text-muted-foreground mb-1.5">Assigned areas</div>
+        <select name="area_ids" multiple data-ids size="6" class="w-full rounded-lg border bg-background px-2 py-1 text-sm">{% for a in areas %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="p-4 border-t flex justify-end gap-2 bg-muted/30">
+      <button type="button" data-modal-close class="h-9 px-3 text-sm rounded-lg border">Cancel</button>
+      <button type="submit" class="h-9 px-3 text-sm rounded-lg bg-primary text-primary-foreground font-medium">Save agent</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

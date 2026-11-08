@@ -1,0 +1,69 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Settings · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Settings" description="Plans, fees, areas and categories. Every change is written to the audit log; some need extra permissions." %}
+
+<div class="grid lg:grid-cols-3 gap-4 mb-5">
+  <section id="pricing" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <h2 class="font-semibold mb-3">Subscription plans</h2>
+    <ul class="space-y-2">
+      {% for p in plans %}
+      <li class="rounded-xl border p-3">
+        <div class="flex justify-between text-sm"><span class="font-medium">{{ p.label }}</span><span class="text-xs text-muted-foreground">{{ p.period }}</span></div>
+        <form data-api="{% url 'hub_api:admin_plan' p.id %}" data-method="PATCH" data-success="Plan updated." class="mt-2 flex gap-1.5">
+          <input name="price" data-number type="number" min="1" step="100" value="{{ p.price|floatformat:0 }}" class="h-9 w-28 rounded-lg border bg-background px-2 text-sm" />
+          <select name="is_active" class="h-9 rounded-lg border bg-background px-2 text-sm"><option value="true" {% if p.active %}selected{% endif %}>Active</option><option value="false" {% if not p.active %}selected{% endif %}>Off</option></select>
+          <button class="h-9 px-3 rounded-lg bg-primary text-primary-foreground text-xs">Save</button>
+        </form>
+      </li>
+      {% empty %}<li class="text-sm text-muted-foreground">No plans configured.</li>{% endfor %}
+    </ul>
+  </section>
+
+  <section id="areas" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <h2 class="font-semibold mb-3">Areas</h2>
+    <div class="flex flex-wrap gap-1.5 mb-3">
+      {% for a in areas %}<button type="button" data-api="{% url 'hub_api:admin_area_toggle' a.pk %}" data-confirm="{% if a.is_active %}Disable{% else %}Enable{% endif %} {{ a.name }}?" title="Click to {% if a.is_active %}disable{% else %}enable{% endif %}" class="text-xs px-2.5 py-1 rounded-md border hover:bg-muted {% if not a.is_active %}opacity-50 line-through{% endif %}">{{ a.name }}{% if a.is_launch_area %} ★{% endif %}</button>{% empty %}<span class="text-sm text-muted-foreground">No areas.</span>{% endfor %}
+    </div>
+    <form data-api="{% url 'hub_api:admin_areas' %}" data-success="Area added." class="flex gap-1.5">
+      <input name="name" required minlength="2" maxlength="120" placeholder="New area name" class="h-9 flex-1 min-w-0 rounded-lg border bg-background px-3 text-sm" /><button class="h-9 px-3 rounded-lg bg-primary text-primary-foreground text-xs">Add</button>
+    </form>
+    <p class="text-[11px] text-muted-foreground mt-2">★ launch area · struck-through = disabled (click to toggle)</p>
+  </section>
+
+  <section id="categories" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <h2 class="font-semibold mb-3">Offer categories</h2>
+    <div class="flex flex-wrap gap-1.5 mb-3">{% for c in categories %}<span class="text-xs px-2.5 py-1 rounded-md border {% if not c.is_active %}opacity-50{% endif %}">{{ c.emoji }} {{ c.label }}</span>{% empty %}<span class="text-sm text-muted-foreground">None.</span>{% endfor %}</div>
+    <form data-api="{% url 'hub_api:admin_categories' %}" data-success="Category added." class="grid grid-cols-5 gap-1.5">
+      <input name="emoji" maxlength="8" placeholder="🏷️" class="h-9 rounded-lg border bg-background px-2 text-sm text-center" />
+      <input name="label" required maxlength="100" placeholder="Label" class="col-span-2 h-9 rounded-lg border bg-background px-2 text-sm" />
+      <input name="key" required maxlength="50" pattern="[a-z0-9_-]+" placeholder="key" class="h-9 rounded-lg border bg-background px-2 text-sm" />
+      <button class="h-9 rounded-lg bg-primary text-primary-foreground text-xs">Add</button>
+    </form>
+  </section>
+</div>
+
+<section id="commission" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20 mb-5">
+  <h2 class="font-semibold">System settings</h2><p class="text-xs text-muted-foreground mt-0.5 mb-3">Commissions, fees, delivery fares and limits. Changes apply immediately.</p>
+  <div class="overflow-x-auto -mx-1"><table id="sysT" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Key</th><th class="px-2 py-2 font-medium">Value</th><th class="px-2 py-2 font-medium">Description</th></tr></thead>
+    <tbody>
+    {% for r in settings %}
+    <tr class="border-t">
+      <td class="px-2 py-2.5 font-mono text-xs">{{ r.key }}</td>
+      <td class="px-2 py-2.5"><form data-api="{% url 'hub_api:admin_setting' r.key %}" data-method="PATCH" data-success="Saved." class="flex gap-1.5"><input name="value" value="{{ r.value }}" maxlength="500" class="h-9 w-40 rounded-lg border bg-background px-2 text-sm" /><button class="h-9 px-2.5 rounded-lg border text-xs hover:bg-muted">Save</button></form></td>
+      <td class="px-2 py-2.5 text-muted-foreground">{{ r.description }}</td>
+    </tr>
+    {% empty %}<tr><td colspan="3" class="px-2 py-8 text-center text-sm text-muted-foreground">No settings seeded. Run: python manage.py seed_system_settings</td></tr>{% endfor %}
+    </tbody></table></div>
+</section>
+
+<section id="promo" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <h2 class="font-semibold mb-3">Promotion packages</h2>
+  <div class="overflow-x-auto -mx-1"><table id="pkT" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Package</th><th class="px-2 py-2 font-medium">Price</th><th class="px-2 py-2 font-medium">Duration</th><th class="px-2 py-2 font-medium">Boost</th><th class="px-2 py-2 font-medium">Active</th></tr></thead>
+    <tbody>{% for r in packages %}<tr class="border-t"><td class="px-2 py-2.5">{{ r.label }}</td><td class="px-2 py-2.5">{{ r.price|ugx }}</td><td class="px-2 py-2.5">{{ r.duration_days }} day{{ r.duration_days|pluralize }}</td><td class="px-2 py-2.5">{{ r.visibility_boost }}</td><td class="px-2 py-2.5">{% if r.is_active %}Yes{% else %}No{% endif %}</td></tr>
+    {% empty %}<tr><td colspan="5" class="px-2 py-8 text-center text-sm text-muted-foreground">No packages.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endblock %}

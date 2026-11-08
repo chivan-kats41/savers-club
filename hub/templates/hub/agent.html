@@ -1,0 +1,196 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Agent Dashboard · 1K Saver Club{% endblock %}
+{% block body_attrs %}data-autorefresh="60"{% endblock %}
+{% block content %}
+
+{% include "hub/partials/page_header.html" with title="Habari, "|add:agent.user.first_name description="Verify sellers and riders, collect prices, and resolve complaints in your areas." %}
+
+<!-- Coverage -->
+<div class="rounded-2xl border bg-card p-4 mb-5">
+  <div class="text-xs uppercase tracking-wider text-muted-foreground">Your coverage</div>
+  {% if areas %}
+  <div class="mt-2 flex gap-2 overflow-x-auto pb-1">{% for a in areas %}<span class="shrink-0 text-xs px-3 py-1.5 rounded-full border bg-primary text-primary-foreground border-primary">{{ a.name }}</span>{% endfor %}</div>
+  {% else %}<p class="mt-2 text-sm text-muted-foreground">No areas are assigned to you yet — ask an admin to assign some. Until then you won't see anything to verify.</p>{% endif %}
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Waiting for you" value=stats.pending_total hint="Merchants, riders, offers" icon="clipboard-list" tone="warning" %}
+  {% include "hub/partials/stat_card.html" with label="Merchants verified" value=stats.verified_merchants hint="By you" icon="store" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Riders verified" value=stats.verified_riders hint="By you" icon="bike" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Prices today" value=stats.prices_today hint="Submitted by you" icon="database" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Open complaints" value=stats.open_complaints hint="In your areas" icon="alert-circle" tone="destructive" %}
+</div>
+
+<!-- Assigned tasks -->
+<section id="mytasks" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20 mb-5">
+  <div class="mb-3"><h2 class="font-semibold">Your tasks</h2><p class="text-xs text-muted-foreground mt-0.5">Assigned to you by an admin.</p></div>
+  {% if tasks %}<ul class="space-y-2">{% for tk in tasks %}
+    <li class="rounded-xl border p-3 flex flex-wrap items-center justify-between gap-2">
+      <div><div class="font-medium text-sm">{{ tk.title }} <span class="text-[10px] px-1.5 py-0.5 rounded bg-muted">{{ tk.kind }}</span></div><div class="text-xs text-muted-foreground">{% if tk.area %}{{ tk.area }} · {% endif %}{% if tk.due %}due {{ tk.due }}{% if tk.overdue %} <span class="text-destructive font-semibold">OVERDUE</span>{% endif %}{% else %}no deadline{% endif %}</div>{% if tk.description %}<p class="text-xs mt-1">{{ tk.description }}</p>{% endif %}</div>
+      <button type="button" data-api="{% url 'hub_api:task_complete' tk.id %}" class="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs">Mark done</button>
+    </li>{% endfor %}</ul>
+  {% else %}<div class="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">No open tasks.</div>{% endif %}
+</section>
+
+<!-- Verify merchants -->
+<section id="merchants" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <div class="mb-4"><h2 class="font-semibold">Verify merchants</h2><p class="text-xs text-muted-foreground mt-0.5">Visit in person. Tick only what you actually checked.</p></div>
+  {% if merchants_to_verify %}
+  <div class="space-y-3">
+    {% for m in merchants_to_verify %}
+    <details class="rounded-xl border p-3">
+      <summary class="cursor-pointer flex flex-wrap justify-between gap-2 items-center">
+        <span><span class="font-medium">{{ m.name }}</span> <span class="text-xs text-muted-foreground">· {{ m.area }} · {{ m.category }} · submitted {{ m.submitted }}</span></span>
+        <span class="text-xs text-muted-foreground inline-flex items-center gap-1"><i data-lucide="phone" class="h-3 w-3"></i> {{ m.contact }}</span>
+      </summary>
+      <form data-api="{% url 'agents:verify_merchant' m.id %}" class="mt-3 space-y-2">
+        <div class="grid sm:grid-cols-2 gap-1.5">
+          {% for key, label in merchant_checklist %}<label class="flex items-center gap-2 text-sm"><input type="checkbox" name="checklist.{{ key }}" class="h-4 w-4" /> {{ label }}</label>{% endfor %}
+        </div>
+        <textarea name="notes" maxlength="1000" class="w-full min-h-[60px] rounded-lg border bg-background px-3 py-2 text-sm" placeholder="Notes (optional)"></textarea>
+        <div class="flex gap-2">
+          <select name="outcome" class="h-9 rounded-lg border bg-background px-2 text-sm"><option value="verified">Verify</option><option value="rejected">Reject</option></select>
+          <button type="submit" class="h-9 px-3 rounded-lg bg-primary text-primary-foreground text-sm font-medium press-scale">Submit decision</button>
+        </div>
+      </form>
+    </details>
+    {% endfor %}
+  </div>
+  {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No merchants waiting for verification in your areas.</div>{% endif %}
+</section>
+
+<!-- Verify riders -->
+<div class="mt-5">
+<section id="riders" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <div class="mb-4"><h2 class="font-semibold">Verify riders</h2><p class="text-xs text-muted-foreground mt-0.5">Check ID, permit and vehicle in person.</p></div>
+  {% if riders_to_verify %}
+  <div class="space-y-3">
+    {% for r in riders_to_verify %}
+    <details class="rounded-xl border p-3">
+      <summary class="cursor-pointer flex flex-wrap justify-between gap-2 items-center">
+        <span><span class="font-medium">{{ r.name }}</span> <span class="text-xs text-muted-foreground">· {{ r.vehicle }} {{ r.plate }} · {{ r.area }} · submitted {{ r.submitted }}</span></span>
+        <span class="text-xs text-muted-foreground">{{ r.contact }}</span>
+      </summary>
+      <div class="mt-3 text-xs">Documents: {% for d in r.docs %}<a class="text-primary underline mr-2" target="_blank" rel="noopener" href="{% url 'rider_document' d.id %}">{{ d.label }}</a>{% empty %}<span class="text-muted-foreground">none uploaded yet — don't verify without checking originals in person</span>{% endfor %}</div>
+      <form data-api="{% url 'agents:verify_rider' r.id %}" class="mt-3 space-y-2">
+        <div class="grid sm:grid-cols-2 gap-1.5">
+          {% for key, label in rider_checklist %}<label class="flex items-center gap-2 text-sm"><input type="checkbox" name="checklist.{{ key }}" class="h-4 w-4" /> {{ label }}</label>{% endfor %}
+        </div>
+        <textarea name="notes" maxlength="1000" class="w-full min-h-[60px] rounded-lg border bg-background px-3 py-2 text-sm" placeholder="Notes (optional)"></textarea>
+        <div class="flex gap-2">
+          <select name="outcome" class="h-9 rounded-lg border bg-background px-2 text-sm"><option value="verified">Verify</option><option value="rejected">Reject</option></select>
+          <button type="submit" class="h-9 px-3 rounded-lg bg-primary text-primary-foreground text-sm font-medium press-scale">Submit decision</button>
+        </div>
+      </form>
+    </details>
+    {% endfor %}
+  </div>
+  {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No riders waiting for verification in your areas.</div>{% endif %}
+</section>
+</div>
+
+<!-- Offers to approve -->
+<div class="mt-5">
+<section id="offers" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <div class="mb-4"><h2 class="font-semibold">Offers to approve</h2><p class="text-xs text-muted-foreground mt-0.5">Check the price is believable for the area before approving.</p></div>
+  {% if offers_to_approve %}
+  <ul class="space-y-2">
+    {% for o in offers_to_approve %}
+    <li class="rounded-xl border p-3 flex flex-wrap items-center justify-between gap-2">
+      <div><div class="font-medium text-sm">{{ o.item }} <span class="text-xs text-muted-foreground">× {{ o.qty }}</span></div><div class="text-xs text-muted-foreground">{{ o.merchant }} · {{ o.area }} · {{ o.member|ugx }} <span class="line-through">{{ o.normal|ugx }}</span></div></div>
+      <div class="flex gap-2">
+        <button type="button" data-api="{% url 'agents:approve_offer' o.id %}" class="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs font-medium">Approve</button>
+        <button type="button" data-api="{% url 'agents:reject_offer' o.id %}" data-prompt="reason" data-prompt-label="Reason for rejecting this offer" class="h-8 px-3 rounded-md border text-destructive text-xs">Reject</button>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No offers waiting for approval.</div>{% endif %}
+</section>
+</div>
+
+<!-- Prices -->
+<div class="mt-5">
+<section id="prices" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <div class="mb-4"><h2 class="font-semibold">Collect prices</h2><p class="text-xs text-muted-foreground mt-0.5">Record today's shelf price for items you've tracked before, or add a new one.</p></div>
+  {% if price_collection %}
+  <div class="overflow-x-auto -mx-1">
+    <table class="w-full text-sm">
+      <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Item</th><th class="px-2 py-2 font-medium">Area</th><th class="px-2 py-2 font-medium">Last price</th><th class="px-2 py-2 font-medium">Today's price</th></tr></thead>
+      <tbody>
+        {% for p in price_collection %}
+        <tr class="border-t">
+          <td class="px-2 py-2.5 font-medium">{{ p.item }}</td>
+          <td class="px-2 py-2.5 text-muted-foreground">{{ p.area }}</td>
+          <td class="px-2 py-2.5 text-muted-foreground">{{ p.lastPrice|ugx }}</td>
+          <td class="px-2 py-2.5">
+            <form data-api="{% url 'agents:prices' %}" data-success="Price saved." class="flex gap-1.5">
+              <input type="hidden" name="item_name" value="{{ p.item }}" /><input type="hidden" name="area_id" value="{{ p.area_id }}" data-number /><input type="hidden" name="category_id" value="{{ p.category_id }}" data-number />
+              <input name="price" data-number required type="number" min="1" step="50" class="h-9 w-28 rounded-lg border bg-background px-3 text-sm" placeholder="{{ p.lastPrice|floatformat:0 }}" />
+              <button class="h-9 px-3 rounded-lg bg-primary text-primary-foreground text-xs">Save</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+  <form data-api="{% url 'agents:prices' %}" data-success="Price saved." class="mt-4 grid sm:grid-cols-5 gap-2 rounded-xl border p-3 bg-muted/40">
+    <input name="item_name" required maxlength="120" class="h-10 rounded-lg border bg-background px-3 text-sm sm:col-span-2" placeholder="New item, e.g. Rice (1kg)" />
+    <select name="area_id" data-number required class="h-10 rounded-lg border bg-background px-2 text-sm">{% for a in areas %}<option value="{{ a.pk }}">{{ a.name }}</option>{% endfor %}</select>
+    <select name="category_id" data-number required class="h-10 rounded-lg border bg-background px-2 text-sm">{% for c in categories %}<option value="{{ c.pk }}">{{ c.label }}</option>{% endfor %}</select>
+    <div class="flex gap-1.5"><input name="price" data-number required type="number" min="1" step="50" class="h-10 w-full rounded-lg border bg-background px-3 text-sm" placeholder="UGX" /><button class="h-10 px-3 rounded-lg bg-primary text-primary-foreground text-sm">Add</button></div>
+  </form>
+</section>
+</div>
+
+<!-- Complaints -->
+<div class="mt-5">
+<section id="complaints" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <div class="mb-4"><h2 class="font-semibold">Complaints</h2><p class="text-xs text-muted-foreground mt-0.5">Open and in-progress cases in your areas.</p></div>
+  {% if complaints %}
+  <ul class="space-y-3">
+    {% for c in complaints %}
+    <li class="rounded-xl border p-3">
+      <div class="flex flex-wrap justify-between gap-2">
+        <div><div class="font-medium text-sm">{{ c.subject }}</div><div class="text-xs text-muted-foreground">{{ c.member }} · {{ c.area }} · {{ c.when }}</div></div>
+        <span class="text-[11px] px-2 py-0.5 rounded font-semibold h-fit {{ c.status_label|badge_class }}">{{ c.status_label }}</span>
+      </div>
+      <p class="text-sm mt-1.5">{{ c.description }}</p>
+      <div class="mt-2 flex flex-wrap gap-2">
+        {% if c.can_start %}<button type="button" data-api="{% url 'complaints:start_investigating' c.id %}" class="h-8 px-3 rounded-md border text-xs">Start investigating</button>{% endif %}
+        <button type="button" data-api="{% url 'complaints:resolve_complaint' c.id %}" data-prompt="resolution_note" data-prompt-label="Resolution note (what was done?)" class="h-8 px-3 rounded-md bg-primary text-primary-foreground text-xs">Resolve</button>
+        <button type="button" data-api="{% url 'complaints:escalate_complaint' c.id %}" data-prompt="note" data-prompt-label="Why is this being escalated?" class="h-8 px-3 rounded-md border text-destructive text-xs">Escalate</button>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No open complaints in your areas.</div>{% endif %}
+</section>
+</div>
+
+<!-- Tasks + earnings -->
+<div class="grid lg:grid-cols-2 gap-4 mt-5">
+  <section id="tasks" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Area snapshot · last 30 days</h2></div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ area_perf.members }}</div><div class="text-xs text-muted-foreground">Members</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ area_perf.merchants }}</div><div class="text-xs text-muted-foreground">Verified merchants</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ area_perf.riders }}</div><div class="text-xs text-muted-foreground">Verified riders</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ area_perf.savings_30d|ugx }}</div><div class="text-xs text-muted-foreground">Member savings</div></div>
+    </div>
+  </section>
+  <section id="earnings" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Your earnings</h2></div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ earnings.month|ugx }}</div><div class="text-xs text-muted-foreground">This month</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ earnings.total|ugx }}</div><div class="text-xs text-muted-foreground">All time</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ earnings.merchant_fees|ugx }}</div><div class="text-xs text-muted-foreground">Merchant verifications (month)</div></div>
+      <div class="rounded-xl bg-muted/60 p-3"><div class="font-semibold">{{ earnings.rider_fees|ugx }}</div><div class="text-xs text-muted-foreground">Rider verifications (month)</div></div>
+    </div>
+  </section>
+</div>
+{% endblock %}

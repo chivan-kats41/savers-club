@@ -1,0 +1,9 @@
+{% load static %}
+{# End-of-body part: config for the scripts + Leaflet + our geo/push code. All served from our own origin. #}
+<div id="geo-config" hidden
+     data-tile-url="{{ geo_config.tile_url }}" data-tile-referrer="{{ geo_config.tile_referrer_policy }}" data-attribution="{{ geo_config.attribution }}"
+     data-center-lat="{{ geo_config.center_lat }}" data-center-lng="{{ geo_config.center_lng }}"
+     data-vapid="{{ geo_config.vapid_public_key }}"></div>
+<script src="{% static 'hub/vendor/leaflet/leaflet.js' %}"></script>
+<script src="{% static 'hub/js/geo.js' %}"></script>
+<script src="{% static 'hub/js/push.js' %}"></script>

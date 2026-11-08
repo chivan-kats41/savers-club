@@ -1,0 +1,30 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Reports · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Reports" description=month_label %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Confirmed savings (month)" value=stats.confirmed_month|ugx_short icon="trending-up" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Subscription revenue (month)" value=stats.subs_month|ugx_short icon="credit-card" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Member net benefit" value=stats.net_benefit|ugx_short icon="wallet" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Payment success rate" value=stats.payment_success_rate|default_if_none:"—" icon="check-circle-2" tone="accent" %}
+</div>
+<div class="grid lg:grid-cols-2 gap-4"><section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card"><div class="mb-3"><h2 class="font-semibold">Member growth & renewals</h2><p class="text-xs text-muted-foreground mt-0.5">Last 10 months</p></div><div class="h-64"><canvas id="growthChart"></canvas></div></section>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card"><div class="mb-3"><h2 class="font-semibold">Confirmed savings by category</h2></div><div class="h-64"><canvas id="savingsChart"></canvas></div></section>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card"><div class="mb-3"><h2 class="font-semibold">Shared route earnings</h2><p class="text-xs text-muted-foreground mt-0.5">Top 5 routes</p></div><div class="h-64"><canvas id="routeChart"></canvas></div></section>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card"><div class="mb-3"><h2 class="font-semibold">Complaints by status</h2></div><div class="h-64"><canvas id="complaintsChart"></canvas></div></section>
+</div>{% endblock %}
+
+{% block extra_scripts %}
+{{ charts|json_script:"charts-data" }}
+<script nonce="{{ csp_nonce }}">
+  document.addEventListener("DOMContentLoaded", () => {
+    const c = JSON.parse(document.getElementById("charts-data").textContent);
+    const empty = (id, msg) => { const el = document.getElementById(id); if (el) el.parentElement.innerHTML = '<div class="h-full flex items-center justify-center text-sm text-muted-foreground">' + msg + '</div>'; };
+    makeLineChart("growthChart", c.growth_months, [{ label: "Members", data: c.growth_members }, { label: "Renewals", data: c.growth_renewals }]);
+    c.savings_values.length ? makeBarChart("savingsChart", c.savings_labels, c.savings_values, { multiColor: true }) : empty("savingsChart", "No savings recorded yet");
+    c.route_values.length ? makeBarChart("routeChart", c.route_labels, c.route_values, { horizontal: true }) : empty("routeChart", "No route earnings yet");
+    c.complaint_values.length ? makeBarChart("complaintsChart", c.complaint_labels, c.complaint_values, { multiColor: true }) : empty("complaintsChart", "No complaints");
+  });
+</script>
+{% endblock %}

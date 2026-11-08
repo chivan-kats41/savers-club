@@ -1,0 +1,26 @@
+{% extends "hub/dashboard.html" %}
+{% block title %}Notifications · 1K Saver Club{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Notifications" description="Updates about your claims, payments, deliveries and account." %}
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card max-w-3xl">
+  <div class="flex items-center justify-between mb-4">
+    <div class="text-sm text-muted-foreground">{{ unread }} unread</div>
+    {% if unread %}<button type="button" data-api="{% url 'hub_api:read_all' %}" class="text-xs px-3 py-1.5 rounded-lg border hover:bg-muted">Mark all as read</button>{% endif %}
+  </div>
+  {% if items %}
+  <ul class="divide-y">
+    {% for n in items %}
+    <li class="py-3 flex gap-3">
+      <span class="mt-1.5 h-2 w-2 rounded-full shrink-0 {% if n.read %}bg-muted{% else %}bg-accent{% endif %}"></span>
+      <div class="min-w-0 flex-1">
+        <div class="flex justify-between gap-2"><div class="font-medium text-sm">{{ n.title }}</div><span class="text-[11px] text-muted-foreground shrink-0">{{ n.when }}</span></div>
+        <p class="text-sm text-muted-foreground mt-0.5">{{ n.message }}</p>
+        <span class="text-[10px] px-1.5 py-0.5 rounded bg-muted font-medium">{{ n.category }}</span>
+        {% if not n.read %}<button type="button" data-api="{% url 'notifications:mark_read' n.id %}" class="ml-2 text-[11px] text-primary">Mark read</button>{% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}<div class="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">You're all caught up.</div>{% endif %}
+</section>
+{% endblock %}

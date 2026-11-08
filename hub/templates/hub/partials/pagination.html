@@ -1,0 +1,9 @@
+{% if page.paginator.num_pages > 1 %}
+<nav class="mt-4 flex items-center justify-between text-sm" aria-label="Pagination">
+  <span class="text-muted-foreground">Page {{ page.number }} of {{ page.paginator.num_pages }} · {{ page.paginator.count }} total</span>
+  <div class="flex gap-2">
+    {% if page.has_previous %}<a class="h-9 px-3 inline-flex items-center rounded-lg border hover:bg-muted" href="?page={{ page.previous_page_number }}&q={{ filters.q|urlencode }}&status={{ filters.status|urlencode }}">← Prev</a>{% endif %}
+    {% if page.has_next %}<a class="h-9 px-3 inline-flex items-center rounded-lg border hover:bg-muted" href="?page={{ page.next_page_number }}&q={{ filters.q|urlencode }}&status={{ filters.status|urlencode }}">Next →</a>{% endif %}
+  </div>
+</nav>
+{% endif %}

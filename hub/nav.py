@@ -1,0 +1,127 @@
+"""Port of the `roleConfig` object in src/components/layout/DashboardLayout.tsx.
+Icon names are lucide kebab-case names for the lucide.js CDN build.
+"""
+
+ROLE_CONFIG = {
+    "admin": {
+        "title": "Admin Console",
+        "subtitle": "Platform control room",
+        "user": {"name": "Daniel Ssemwogerere", "meta": "Platform Owner"},
+        "nav": [
+            {"label": "Overview", "url": "admin_index", "icon": "layout-dashboard", "exact": True},
+            {"label": "Members", "url": "admin_members", "icon": "users"},
+            {"label": "Subscriptions", "url": "admin_subscriptions", "icon": "badge-check"},
+            {"label": "Merchants", "url": "admin_merchants", "icon": "store"},
+            {"label": "Offers", "url": "admin_offers", "icon": "tag"},
+            {"label": "Claim Codes", "url": "admin_claims", "icon": "ticket"},
+            {"label": "Redemptions", "url": "admin_redemptions", "icon": "list-checks"},
+            {"label": "Riders / Bodas", "url": "admin_riders", "icon": "bike"},
+            {"label": "Route Deliveries", "url": "admin_routes", "icon": "route"},
+            {"label": "Pickup Points", "url": "admin_pickup", "icon": "map-pin"},
+            {"label": "Agents", "url": "admin_agents", "icon": "user-check"},
+            {"label": "Agent Tasks", "url": "admin_tasks", "icon": "clipboard-list"},
+            {"label": "Price Database", "url": "admin_prices", "icon": "database"},
+            {"label": "Payments", "url": "admin_payments", "icon": "credit-card"},
+            {"label": "Settlements", "url": "admin_settlements", "icon": "receipt"},
+            {"label": "Complaints", "url": "admin_complaints", "icon": "alert-circle"},
+            {"label": "Notifications", "url": "admin_notifications", "icon": "megaphone"},
+            {"label": "Reports", "url": "admin_reports", "icon": "file-bar-chart"},
+            {"label": "Settings", "url": "admin_settings", "icon": "settings"},
+        ],
+        "bottom_nav": [
+            {"label": "Home", "url": "admin_index", "icon": "layout-dashboard", "exact": True},
+            {"label": "Members", "url": "admin_members", "icon": "users"},
+            {"label": "Routes", "url": "admin_routes", "icon": "route"},
+            {"label": "Alerts", "url": "admin_complaints", "icon": "alert-circle"},
+        ],
+    },
+    "member": {
+        "title": "My 1K Saver Club",
+        "subtitle": "Your monthly savings",
+        "user": {"name": "Sarah Nakato", "meta": "Member · Mutungo"},
+        "nav": [
+            {"label": "Home", "url": "member", "hash": "", "icon": "layout-dashboard", "exact": True},
+            {"label": "Daily Basket", "url": "member", "hash": "basket", "icon": "shopping-basket"},
+            {"label": "Nearby Deals", "url": "member", "hash": "deals", "icon": "tag"},
+            {"label": "My Claims", "url": "member", "hash": "claims", "icon": "ticket"},
+            {"label": "Delivery", "url": "member", "hash": "delivery", "icon": "package"},
+            {"label": "Savings History", "url": "member", "hash": "history", "icon": "history"},
+            {"label": "Refer & Earn", "url": "member", "hash": "refer", "icon": "gift"},
+            {"label": "Report Problem", "url": "member", "hash": "report", "icon": "message-square-warning"},
+        ],
+        "bottom_nav": [
+            {"label": "Home", "url": "member", "hash": "", "icon": "layout-dashboard", "exact": True},
+            {"label": "Basket", "url": "member", "hash": "basket", "icon": "shopping-basket"},
+            {"label": "Deals", "url": "member", "hash": "deals", "icon": "tag"},
+            {"label": "Claims", "url": "member", "hash": "claims", "icon": "ticket"},
+        ],
+    },
+    "merchant": {
+        "title": "Merchant Hub",
+        "subtitle": "Grow with verified savers",
+        "user": {"name": "Kitintale Mini Mart", "meta": "Verified · Daily Basket"},
+        "nav": [
+            {"label": "Overview", "url": "merchant", "hash": "", "icon": "layout-dashboard", "exact": True},
+            {"label": "Create Offer", "url": "merchant", "hash": "create", "icon": "tag"},
+            {"label": "Active Offers", "url": "merchant", "hash": "offers", "icon": "list-checks"},
+            {"label": "Claims", "url": "merchant", "hash": "claims", "icon": "ticket"},
+            {"label": "Delivery Requests", "url": "merchant", "hash": "delivery", "icon": "package"},
+            {"label": "Quality Score", "url": "merchant", "hash": "quality", "icon": "scroll-text"},
+            {"label": "Promotions", "url": "merchant", "hash": "promo", "icon": "gift"},
+            {"label": "Profile", "url": "merchant", "hash": "profile", "icon": "store"},
+        ],
+        "bottom_nav": [
+            {"label": "Home", "url": "merchant", "hash": "", "icon": "layout-dashboard", "exact": True},
+            {"label": "Create", "url": "merchant", "hash": "create", "icon": "tag"},
+            {"label": "Claims", "url": "merchant", "hash": "claims", "icon": "ticket"},
+            {"label": "Delivery", "url": "merchant", "hash": "delivery", "icon": "package"},
+        ],
+    },
+    "rider": {
+        "title": "Rider Hub",
+        "subtitle": "Boda & route delivery",
+        "user": {"name": "Boda Musoke", "meta": "Verified · Mutungo Stage"},
+        "nav": [
+            {"label": "Overview", "url": "rider", "hash": "", "icon": "layout-dashboard", "exact": True},
+            {"label": "Nearby Jobs", "url": "rider", "hash": "jobs", "icon": "list-checks"},
+            {"label": "Shared Route", "url": "rider", "hash": "route", "icon": "route"},
+            {"label": "Returning Trips", "url": "rider", "hash": "return", "icon": "bike"},
+            {"label": "Earnings", "url": "rider", "hash": "earnings", "icon": "wallet"},
+            {"label": "Profile", "url": "rider", "hash": "profile", "icon": "user-check"},
+        ],
+        "bottom_nav": [
+            {"label": "Home", "url": "rider", "hash": "", "icon": "layout-dashboard", "exact": True},
+            {"label": "Jobs", "url": "rider", "hash": "jobs", "icon": "list-checks"},
+            {"label": "Route", "url": "rider", "hash": "route", "icon": "route"},
+            {"label": "Earnings", "url": "rider", "hash": "earnings", "icon": "wallet"},
+        ],
+    },
+    "agent": {
+        "title": "Agent Console",
+        "subtitle": "Verify · collect · monitor",
+        "user": {"name": "Agent Wakiso", "meta": "Area · Nansana / Katabi / Entebbe"},
+        "nav": [
+            {"label": "Overview", "url": "agent", "hash": "", "icon": "layout-dashboard", "exact": True},
+            {"label": "Verify Merchants", "url": "agent", "hash": "merchants", "icon": "store"},
+            {"label": "Verify Riders", "url": "agent", "hash": "riders", "icon": "bike"},
+            {"label": "Collect Prices", "url": "agent", "hash": "prices", "icon": "clipboard-list"},
+            {"label": "Complaints", "url": "agent", "hash": "complaints", "icon": "alert-circle"},
+            {"label": "My Tasks", "url": "agent", "hash": "tasks", "icon": "list-checks"},
+            {"label": "Earnings", "url": "agent", "hash": "earnings", "icon": "banknote"},
+        ],
+        "bottom_nav": [
+            {"label": "Home", "url": "agent", "hash": "", "icon": "layout-dashboard", "exact": True},
+            {"label": "Merchants", "url": "agent", "hash": "merchants", "icon": "store"},
+            {"label": "Prices", "url": "agent", "hash": "prices", "icon": "clipboard-list"},
+            {"label": "Earnings", "url": "agent", "hash": "earnings", "icon": "banknote"},
+        ],
+    },
+}
+
+ALL_ROLES = [
+    {"role": "admin", "url": "admin_index", "label": "Admin"},
+    {"role": "member", "url": "member", "label": "Member"},
+    {"role": "merchant", "url": "merchant", "label": "Merchant"},
+    {"role": "rider", "url": "rider", "label": "Rider"},
+    {"role": "agent", "url": "agent", "label": "Agent"},
+]

@@ -1,0 +1,17 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -r requirements.txt
+      - name: Migrations are up to date
+        run: DJANGO_SETTINGS_MODULE=config.settings.testing python manage.py makemigrations --check --dry-run
+      - name: Django system checks (deploy profile)
+        run: SECRET_KEY=$(python -c "import secrets;print(secrets.token_urlsafe(64))") DB_NAME=x DB_USER=x DB_PASSWORD=x ALLOWED_HOSTS=example.com IOTEC_MESSAGING_CLIENT_ID=ci IOTEC_MESSAGING_API_KEY=ci DJANGO_SETTINGS_MODULE=config.settings.production python manage.py check --deploy --tag security --fail-level WARNING
+      - run: DJANGO_SETTINGS_MODULE=config.settings.testing python manage.py test
+      - name: Dependency vulnerabilities
+        run: pip install pip-audit && pip-audit -r requirements.txt

@@ -1,0 +1,6 @@
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+# Overwrite, never append: whatever X-Forwarded-For the visitor sent is discarded, so Django can trust it.
+proxy_set_header X-Forwarded-For $remote_addr;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_read_timeout 30s;

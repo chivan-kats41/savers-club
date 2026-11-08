@@ -1,0 +1,446 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% load static %}
+{% block title %}Member Dashboard · 1K Saver Club{% endblock %}
+{% block extra_head %}{% include "hub/partials/geo_assets.html" %}{% endblock %}
+{% block content %}
+
+{% include "hub/partials/page_header.html" with title="Karibu, "|add:member.user.first_name description="Here's how your 1K membership is saving you money." %}
+
+<!-- Welcome / status -->
+<div class="rounded-2xl bg-gradient-to-br from-primary via-primary to-secondary text-primary-foreground p-5 mb-5 shadow-card animate-fade-in-up">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <div class="text-xs uppercase tracking-wider opacity-80">Subscription</div>
+      <div class="mt-1 text-lg font-semibold flex items-center gap-2">
+        {{ sub.status_label }}{% if sub.price %} · {{ sub.price|ugx }}{% if sub.period_days %} / {{ sub.period_days }} days{% endif %}{% endif %}
+        {% if sub.active %}<i data-lucide="check" class="h-4 w-4"></i>{% endif %}
+      </div>
+      <div class="text-sm opacity-90 mt-0.5 flex items-center gap-1.5">
+        <i data-lucide="calendar" class="h-3.5 w-3.5"></i>
+        {% if sub.pending_payment %}<span data-pending-text>{% if sub.payment_stale %}We haven't been able to confirm your last payment yet.{% else %}Payment pending — approve it on your phone.{% endif %}</span>
+          {% if sub.payment_status_url %}<button type="button" data-pending-check data-status-url="{{ sub.payment_status_url }}" class="ml-1 underline underline-offset-2 text-xs opacity-95">Check status</button>{% endif %}
+        {% elif sub.renews_on %}{% if sub.active %}Renews on{% else %}Ended on{% endif %} {{ sub.renews_on }}{% if sub.method %} · last paid via {{ sub.method }}{% endif %}
+        {% else %}Subscribe to start claiming member prices.{% endif %}
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <button type="button" data-modal-open="pay-modal" class="h-9 px-3 text-sm rounded-lg bg-white text-primary font-medium press-scale">{% if sub.active %}Renew now{% else %}Subscribe{% endif %}</button>
+      {% if sub.active %}<button type="button" data-api="{% url 'subscriptions:pause' %}" data-confirm="Pause your subscription? You won't be able to claim offers while paused." class="h-9 px-3 text-sm rounded-lg bg-white/15 hover:bg-white/25 backdrop-blur press-scale">Pause</button>{% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Pay / renew modal -->
+<div id="pay-modal" class="modal-backdrop hidden fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+  <form data-api="{% url 'payments:initiate' %}" data-after="payment" class="w-full max-w-sm rounded-2xl bg-card border p-5 shadow-card space-y-3">
+    <div class="flex items-center justify-between"><h3 class="font-semibold">{% if sub.active %}Renew or change plan{% else %}Subscribe{% endif %}</h3><button type="button" data-modal-close class="text-muted-foreground" aria-label="Close">✕</button></div>
+    <input type="hidden" name="purpose" value="subscription" />
+    <fieldset class="space-y-2">
+      <legend class="text-xs text-muted-foreground mb-1">Choose your plan</legend>
+      {% for p in plans %}
+      <label class="plan-option flex items-center gap-3 rounded-xl border p-3 cursor-pointer">
+        <input type="radio" name="plan" value="{{ p.code }}" {% if p.selected %}checked{% endif %} required />
+        <span class="flex-1">
+          <span class="block text-sm font-medium">{{ p.label }}{% if p.popular %} <span class="ml-1 text-[10px] uppercase tracking-wide text-primary">Popular</span>{% endif %}</span>
+          <span class="block text-[11px] text-muted-foreground">{{ p.period_days }} days · {{ p.per_month|ugx }} / month{% if p.saving %} · save {{ p.saving|ugx }}{% endif %}{% if p.current and sub.active %} · current plan{% endif %}</span>
+        </span>
+        <span class="text-sm font-semibold">{{ p.price|ugx }}</span>
+      </label>
+      {% empty %}
+      <p class="text-xs text-muted-foreground">No plans are available right now. Please try again later.</p>
+      {% endfor %}
+    </fieldset>
+    <label class="block text-xs text-muted-foreground">Pay with
+      <select name="method" data-method-switch class="mt-1 w-full h-10 rounded-lg border bg-background px-2 text-sm text-foreground">
+        <option value="mobile_money">Mobile money (MTN / Airtel)</option>
+        <option value="card">Visa / Mastercard</option>
+      </select>
+    </label>
+    <label data-show-for="mobile_money" class="block text-xs text-muted-foreground">Mobile money number
+      <input name="phone" value="{{ member.user.phone }}" inputmode="tel" autocomplete="tel" required class="mt-1 w-full h-10 rounded-lg border bg-background px-3 text-sm text-foreground" />
+    </label>
+    <label data-show-for="card" class="hidden block text-xs text-muted-foreground">Email for your card receipt
+      <input name="email" type="email" value="{{ member.user.email }}" autocomplete="email" required disabled class="mt-1 w-full h-10 rounded-lg border bg-background px-3 text-sm text-foreground" />
+    </label>
+    <p data-method-hint class="text-[11px] text-muted-foreground"></p>
+    <button type="submit" class="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium press-scale">Continue to payment</button>
+  </form>
+</div>
+
+<!-- Search + categories + filters -->
+
+<!-- Location, map and alerts -->
+<section id="location" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20 mb-5" data-view-scope>
+  <div class="mb-3 flex flex-wrap items-start justify-between gap-2">
+    <div>
+      <h2 class="font-semibold">Where you are · deals near you</h2>
+      <p class="text-xs text-muted-foreground mt-0.5">{% if geo.origin %}Showing deals around <strong>{{ geo.origin.label }}</strong>{% if geo.origin.precise %} (from your device location){% elif geo.origin.source == "manual_area" %} (the area you chose){% else %} (your home area){% endif %}.{% else %}Pick where you are to see deals around you.{% endif %}</p>
+    </div>
+    <div class="geo-row">
+      <button type="button" class="geo-btn geo-btn-primary" data-geo-locate="member" data-authenticated="1">📍 Use my location</button>
+      <div class="geo-seg" data-view-toggle><button type="button" data-view-target="list" aria-pressed="true">Settings</button><button type="button" data-view-target="map" aria-pressed="false">Map</button></div>
+    </div>
+  </div>
+
+  <div data-view="map" hidden>
+    <div class="geo-map geo-map-lg" data-deals-map data-source="member-map-data" data-open-url="#deals"></div>
+    <p class="geo-note">Pins show the deals above. A pin at an area's centre means that seller hasn't pinned its exact shop yet.</p>
+  </div>
+
+  <div data-view="list" class="space-y-3">
+    <div class="grid sm:grid-cols-2 gap-3">
+      <label class="block text-xs">I'm in
+        <select data-geo-area class="mt-1 w-full h-10 rounded-lg border bg-background px-2 text-sm">
+          <option value="">{{ member.area.name }} (my home area)</option>
+          {% for a in areas %}{% if a.pk != member.area_id %}<option value="{{ a.pk }}" {% if geo.state.area_override_id == a.pk %}selected{% endif %}>{{ a.name }}</option>{% endif %}{% endfor %}
+        </select>
+      </label>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-start gap-2"><input type="checkbox" data-geo-setting="share_location" class="mt-1" {% if geo.state.share_location %}checked{% endif %} /><span>Remember my location<span class="block text-[11px] text-muted-foreground">Rank deals by where I am. Off by default; only I can see it.</span></span></label>
+        <label class="flex items-start gap-2"><input type="checkbox" data-geo-setting="save_history" class="mt-1" {% if geo.state.save_history %}checked{% endif %} {% if not geo.state.share_location %}disabled{% endif %} /><span>Keep a location history<span class="block text-[11px] text-muted-foreground">A private trail I can review and delete. Auto-deleted after {{ geo.retention_days }} days.</span></span></label>
+      </div>
+    </div>
+
+    <label class="flex items-start gap-2 text-sm"><input type="checkbox" id="deal-alerts" class="mt-1" {% if geo.prefs.deal_alerts_enabled %}checked{% endif %} data-pref="deal_alerts_enabled" data-pref-url="{% url 'notifications:preferences' %}" /><span>Alert me to hot deals near me<span class="block text-[11px] text-muted-foreground">At most one a day, never at night, no SMS.</span></span></label>
+
+    {% include "hub/partials/push_card.html" %}
+
+    {% if geo.history %}
+    <details class="rounded-xl border p-3" data-trail-wrap>
+      <summary class="cursor-pointer text-sm font-medium">My location history ({{ geo.history|length }} recent)</summary>
+      <div class="geo-map geo-map-sm mt-3" data-trail-map data-source="trail-data"></div>
+      <ul class="geo-trail mt-2">
+        {% for h in geo.history %}<li><span>📍</span><span class="geo-grow"><span>{{ h.label }}</span><span class="geo-sub block">{{ h.source }} · {{ h.when }}</span></span><button type="button" class="geo-btn" data-geo-del="{{ h.id }}">Delete</button></li>{% endfor %}
+      </ul>
+      <div class="geo-row mt-2"><button type="button" class="geo-btn" data-geo-clear>Delete all history</button><a class="geo-btn" href="/api/v1/geo/me/history/export/" target="_blank" rel="noopener">Download my data</a></div>
+    </details>
+    {{ geo.history|json_script:"trail-data" }}
+    {% endif %}
+  </div>
+  {{ geo.map_data|json_script:"member-map-data" }}
+</section>
+
+<section id="search" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <div class="mb-4"><h2 class="font-semibold">What are you looking for near you?</h2><p class="text-xs text-muted-foreground mt-0.5">Search verified sellers around {{ member.area.name }}{% if areas %} and {{ areas|length }} active area{{ areas|length|pluralize }}{% endif %}.</p></div>
+  <form method="get" action="#results" class="flex items-center gap-2 h-12 rounded-xl border bg-background px-3">
+    <i data-lucide="search" class="h-4 w-4 text-muted-foreground"></i>
+    <input name="q" value="{{ search.q }}" maxlength="80" class="flex-1 bg-transparent outline-none text-sm" placeholder="e.g. soap, posho, tomatoes, panadol, lunch…" />
+    {% if search.cat %}<input type="hidden" name="cat" value="{{ search.cat }}" />{% endif %}
+    {% if search.delivery %}<input type="hidden" name="delivery" value="1" />{% endif %}
+    {% if search.here %}<input type="hidden" name="here" value="1" />{% endif %}
+    <input type="hidden" name="sort" value="{{ search.sort }}" />
+    <button type="submit" class="h-9 px-3 text-sm rounded-lg bg-primary text-primary-foreground font-medium press-scale">Search</button>
+  </form>
+  <div class="mt-3 flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+    {% for c in search_categories %}
+    <a href="?cat={{ c.key }}&sort={{ search.sort }}#results" class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm hover:bg-muted press-scale {% if search.cat == c.key %}bg-foreground text-background border-foreground{% else %}bg-card{% endif %}"><span>{{ c.emoji }}</span> {{ c.label }}</a>
+    {% endfor %}
+  </div>
+  <div class="mt-3 flex flex-wrap gap-1.5 items-center">
+    {% for key, label in sorts.items %}
+    <a href="?q={{ search.q|urlencode }}&cat={{ search.cat|urlencode }}&sort={{ key }}{% if search.delivery %}&delivery=1{% endif %}{% if search.here %}&here=1{% endif %}#results" class="text-xs px-2.5 py-1 rounded-md border {% if search.sort == key %}bg-foreground text-background border-foreground{% else %}bg-card{% endif %}">{{ label }}</a>
+    {% endfor %}
+    <a href="?q={{ search.q|urlencode }}&cat={{ search.cat|urlencode }}&sort={{ search.sort }}{% if not search.delivery %}&delivery=1{% endif %}{% if search.here %}&here=1{% endif %}#results" class="text-xs px-2.5 py-1 rounded-md border {% if search.delivery %}bg-foreground text-background border-foreground{% else %}bg-card{% endif %}">Delivery available</a>
+    <a href="?q={{ search.q|urlencode }}&cat={{ search.cat|urlencode }}&sort={{ search.sort }}{% if search.delivery %}&delivery=1{% endif %}{% if not search.here %}&here=1{% endif %}#results" class="text-xs px-2.5 py-1 rounded-md border {% if search.here %}bg-foreground text-background border-foreground{% else %}bg-card{% endif %}">My area only</a>
+    {% if search.active %}<a href="{% url 'member' %}" class="text-xs text-primary font-medium ml-1">Clear</a>{% endif %}
+  </div>
+
+  {% if search.active %}
+  <div id="results" class="mt-5 scroll-mt-20">
+    <div class="text-xs text-muted-foreground mb-2">{{ results|length }} result{{ results|length|pluralize }}</div>
+    {% if results %}
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">{% for o in results %}{% include "hub/partials/offer_card.html" %}{% endfor %}</div>
+    {% else %}
+    <div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">Nothing matches right now. <a href="#request" class="text-primary font-medium">Request it</a> and verified sellers in your area can respond.</div>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+
+<div class="h-5"></div>
+
+<!-- Monthly summary -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Subscription paid" value=savings.paid_this_month|ugx hint="This month" icon="ticket" %}
+  {% include "hub/partials/stat_card.html" with label="Confirmed savings" value=savings.confirmed_month|ugx hint="Codes redeemed this month" icon="check" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Possible savings" value=savings.possible|ugx hint="Active offers in your area" icon="tag" tone="accent" %}
+  {% include "hub/partials/stat_card.html" with label="Net benefit" value=savings.net_benefit|ugx hint="After subscription" icon="trending-up" tone="primary" %}
+</div>
+
+<!-- Daily basket -->
+<section id="basket" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+  <div class="flex items-start justify-between gap-3 mb-4">
+    <div><h2 class="font-semibold">Daily Basket Saver</h2><p class="text-xs text-muted-foreground mt-0.5">Live member prices for everyday items in your area.</p></div>
+    <span class="text-xs text-muted-foreground">{{ member.area.name }}</span>
+  </div>
+  {% if basket_items %}
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+    {% for b in basket_items %}
+    <div class="rounded-xl border p-3 hover:shadow-sm transition-shadow reveal">
+      <div class="flex items-start justify-between gap-2">
+        <div class="font-medium text-sm">{{ b.item }}</div>
+        <span class="text-[10px] px-1.5 py-0.5 rounded bg-primary-soft text-primary font-semibold">-{{ b.saving|percent_of:b.normal }}%</span>
+      </div>
+      <div class="mt-2 flex items-baseline gap-2">
+        <span class="font-semibold text-primary">{{ b.member|ugx }}</span>
+        <span class="text-xs line-through text-muted-foreground">{{ b.normal|ugx }}</span>
+      </div>
+      <div class="text-[11px] text-muted-foreground mt-1">{{ b.seller }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No live offers in {{ member.area.name }} yet. Check back soon or request an item below.</div>
+  {% endif %}
+</section>
+
+<!-- Nearby deals -->
+<div class="mt-5">
+  <section id="deals" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Nearby verified deals</h2><p class="text-xs text-muted-foreground mt-0.5">Live offers from verified merchants, your area first.</p></div>
+    {% if nearby_deals %}
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {% for o in nearby_deals %}{% include "hub/partials/offer_card.html" %}{% endfor %}
+    </div>
+    {% else %}
+    <div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No live deals right now.</div>
+    {% endif %}
+  </section>
+</div>
+
+<!-- Compare nearby prices -->
+<div class="mt-5">
+  <section id="compare" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+      <div><h2 class="font-semibold">Compare nearby prices{% if compare_item %} · {{ compare_item }}{% endif %}</h2><p class="text-xs text-muted-foreground mt-0.5">Same item, different sellers. Pick the best fit.</p></div>
+      {% if compare_options %}
+      <form method="get" action="#compare" class="flex items-center gap-2">
+        <select name="compare" data-autosubmit class="h-9 rounded-lg border bg-background px-2 text-sm" aria-label="Item to compare">
+          {% for opt in compare_options %}<option value="{{ opt.item_name }}" {% if opt.item_name == compare_item %}selected{% endif %}>{{ opt.item_name }} ({{ opt.sellers }} seller{{ opt.sellers|pluralize }})</option>{% endfor %}
+        </select>
+        <noscript><button class="text-xs text-primary font-medium">Go</button></noscript>
+      </form>
+      {% endif %}
+    </div>
+    {% if compare_rows %}
+    <div class="overflow-x-auto -mx-1">
+      <table class="w-full text-sm">
+        <thead class="text-xs text-muted-foreground">
+          <tr class="text-left">
+            <th class="px-2 py-2 font-medium">Seller</th><th class="px-2 py-2 font-medium">Area · Distance</th>
+            <th class="px-2 py-2 font-medium">Member price</th><th class="px-2 py-2 font-medium">Stock</th>
+            <th class="px-2 py-2 font-medium">Expires</th><th class="px-2 py-2 font-medium">Badges</th>
+            <th class="px-2 py-2 font-medium text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in compare_rows %}
+          <tr class="border-t {% if forloop.first %}bg-primary-soft/40{% endif %}">
+            <td class="px-2 py-2.5 font-medium">{{ c.seller }}</td>
+            <td class="px-2 py-2.5 text-muted-foreground">{{ c.area }} · {{ c.distance }}</td>
+            <td class="px-2 py-2.5"><div class="font-semibold text-primary">{{ c.member|ugx }}</div><div class="text-xs line-through text-muted-foreground">{{ c.normal|ugx }}</div></td>
+            <td class="px-2 py-2.5">{{ c.stock }}</td>
+            <td class="px-2 py-2.5 text-muted-foreground">{{ c.expires }}</td>
+            <td class="px-2 py-2.5"><div class="flex flex-wrap gap-1">{% for b in c.badges %}<span class="text-[10px] px-1.5 py-0.5 rounded bg-muted font-medium">{{ b }}</span>{% endfor %}</div></td>
+            <td class="px-2 py-2.5 text-right"><button type="button" data-api="{% url 'claims:claim_offer' c.id %}" {% if not sub.active %}disabled{% endif %} class="text-xs px-2.5 py-1 rounded-md bg-primary text-primary-foreground press-scale disabled:opacity-50">Claim</button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No items to compare yet.</div>
+    {% endif %}
+  </section>
+</div>
+
+<!-- Request an item -->
+<div class="mt-5">
+  <section id="request" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Can't find it? Request an item near you</h2><p class="text-xs text-muted-foreground mt-0.5">Verified sellers in {{ member.area.name }} can respond with offers.</p></div>
+    <div class="grid lg:grid-cols-3 gap-3">
+      <form data-api="{% url 'item_requests:member_requests' %}" class="lg:col-span-1 rounded-xl border p-4 bg-muted/40 space-y-2">
+        <div class="text-sm font-medium flex items-center gap-1.5"><i data-lucide="sparkles" class="h-4 w-4 text-primary"></i> Post a request</div>
+        <input name="item_name" required maxlength="120" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="e.g. Posho 5kg, sukuma, diapers…" />
+        <input name="description" maxlength="300" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Details (optional)" />
+        <input name="max_budget" data-number type="number" min="0" step="100" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Max budget in UGX (optional)" />
+        <button type="submit" class="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium press-scale">Send to nearby sellers</button>
+      </form>
+      <div class="lg:col-span-2">
+        <div class="text-xs text-muted-foreground mb-2">Recent requests in your area</div>
+        {% if member_requests %}
+        <ul class="space-y-2">
+          {% for r in member_requests %}
+          <li class="rounded-xl border p-3 flex items-center justify-between gap-3">
+            <div class="min-w-0"><div class="font-medium text-sm">{{ r.item }}</div><div class="text-xs text-muted-foreground">{{ r.who }} · {{ r.area }} · {{ r.when }}</div></div>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="text-[11px] px-2 py-0.5 rounded font-semibold {% if r.responses > 0 %}bg-primary-soft text-primary{% else %}bg-muted text-muted-foreground{% endif %}">{{ r.responses }} {% if r.responses == 1 %}offer{% else %}offers{% endif %}</span>
+              {% if r.mine %}<button type="button" data-api="{% url 'item_requests:cancel_request' r.id %}" data-confirm="Cancel this request?" class="text-[11px] text-destructive">Cancel</button>{% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No open requests in your area.</div>{% endif %}
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-4 mt-5">
+  <!-- Claimed offers -->
+  <section id="claims" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Your claim codes</h2><p class="text-xs text-muted-foreground mt-0.5">Show the code at the merchant to redeem.</p></div>
+    {% if claimed_offers %}
+    <div class="space-y-3">
+      {% for c in claimed_offers %}
+      <div class="rounded-xl border p-4 flex items-center justify-between gap-3 {% if c.status != 'claimed' %}opacity-70{% endif %}">
+        <div class="min-w-0">
+          <div class="font-medium">{{ c.item }}</div>
+          <div class="text-xs text-muted-foreground">{{ c.seller }} · {% if c.status == 'claimed' %}expires {% endif %}{{ c.expires }}</div>
+          <div class="text-xs text-primary mt-0.5">Saving {{ c.saving|ugx }}</div>
+          <span class="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded font-semibold {{ c.status_label|badge_class }}">{{ c.status_label }}</span>
+        </div>
+        <div class="text-right shrink-0">
+          <div class="font-mono font-bold text-lg tracking-wider px-3 py-1.5 rounded-lg bg-accent-soft text-accent">{{ c.code }}</div>
+          <div class="mt-1 flex justify-end gap-3">
+            <button type="button" data-copy="{{ c.code }}" class="text-[11px] text-muted-foreground inline-flex items-center gap-1 hover:text-foreground"><i data-lucide="copy" class="h-3 w-3"></i> Copy</button>
+            {% if c.can_cancel %}<button type="button" data-api="{% url 'claims:cancel_claim' %}" data-body='{"code": "{{ c.code }}"}' data-confirm="Cancel this claim? The item goes back on sale." class="text-[11px] text-destructive">Cancel</button>{% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}<div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">You haven't claimed any offers yet.</div>{% endif %}
+  </section>
+
+  <!-- Delivery -->
+  <section id="delivery" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Delivery</h2><p class="text-xs text-muted-foreground mt-0.5">Have a claimed item brought to you.</p></div>
+    {% if deliverable_claims %}
+    <form data-api="{% url 'deliveries:request_delivery' %}" class="rounded-xl border p-3 bg-muted/40 space-y-2 mb-4">
+      <select name="claim_code" required class="w-full h-10 rounded-lg border bg-background px-2 text-sm">
+        {% for c in deliverable_claims %}<option value="{{ c.code }}">{{ c.item }} · {{ c.seller }}</option>{% endfor %}
+      </select>
+      <div class="grid grid-cols-2 gap-2">
+        <select name="dropoff_area" required class="h-10 rounded-lg border bg-background px-2 text-sm">
+          {% for a in areas %}<option value="{{ a.name }}" {% if a.latitude %}data-lat="{{ a.latitude|stringformat:'f' }}" data-lng="{{ a.longitude|stringformat:'f' }}"{% endif %} {% if a.pk == member.area_id %}selected{% endif %}>{{ a.name }}</option>{% endfor %}
+        </select>
+        <select name="delivery_type" class="h-10 rounded-lg border bg-background px-2 text-sm">
+          <option value="normal">Nearby boda</option><option value="shared_route">Shared route</option>
+        </select>
+      </div>
+      <div data-geocode>
+        <div class="geo-wrap">
+          <input name="dropoff_address" data-geocode-input required maxlength="200" autocomplete="off" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Drop-off address / landmark (start typing to search)" />
+          <ul class="geo-list" data-geocode-list hidden></ul>
+        </div>
+        <div class="geo-row mt-2">
+          <button type="button" class="geo-btn" data-geocode-here>📍 Use my location</button>
+          <button type="button" class="geo-btn" data-geocode-pin>Pin on map</button>
+        </div>
+        <div class="geo-map geo-map-sm mt-2" data-geocode-map hidden></div>
+        <p class="geo-note" data-geocode-note>Optional: a pin helps the rider find you faster.</p>
+        <input type="hidden" name="dropoff_lat" /><input type="hidden" name="dropoff_lng" /><input type="hidden" name="dropoff_geocoded" value="false" />
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <select name="payment_method" class="h-10 rounded-lg border bg-background px-2 text-sm" aria-label="How will you pay the delivery fare?">
+          <option value="cash">Cash on delivery</option><option value="online">Pay online now</option>
+        </select>
+        <input name="phone" inputmode="tel" class="h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Mobile money no. (online)" />
+      </div>
+      <input type="hidden" name="method" value="mobile_money" />
+      <p class="text-[11px] text-muted-foreground">The fare is set by the platform. Pay online now, or hand the rider cash when your order arrives.</p>
+      <button type="submit" class="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium press-scale">Request delivery</button>
+    </form>
+    {% endif %}
+    {% if my_deliveries %}
+    <div class="space-y-2">
+      {% for d in my_deliveries %}
+      <div class="rounded-xl border p-3 flex items-center gap-3"><div class="h-10 w-10 rounded-lg bg-secondary-soft text-secondary flex items-center justify-center"><i data-lucide="bike" class="h-4 w-4"></i></div>
+        <div class="flex-1 min-w-0"><div class="font-medium text-sm truncate">{{ d.merchant }} → {{ d.to }}</div><div class="text-xs text-muted-foreground">{{ d.type }}</div></div>
+        <div class="text-right"><span class="text-[10px] px-1.5 py-0.5 rounded font-semibold {{ d.status|badge_class }}">{{ d.status }}</span><div class="text-xs mt-0.5">{{ d.fare|ugx }}</div><div class="text-[10px] text-muted-foreground">{{ d.payment }}</div>
+          {% if d.can_pay %}<button type="button" data-api="{{ d.pay_url }}" data-prompt="phone" data-prompt-label="Mobile money number to pay {{ d.fare|ugx }}" class="mt-1 text-[11px] px-2 py-0.5 rounded-md bg-primary text-primary-foreground press-scale">Pay now</button>{% endif %}
+          {% if d.can_cancel %}<button type="button" data-api="{{ d.cancel_url }}" data-confirm="Cancel this delivery request?" class="mt-1 ml-1 text-[11px] text-destructive">Cancel</button>{% endif %}
+          {% if d.trackable %}<button type="button" data-track-url="{{ d.track_url }}" data-track-panel="track-{{ forloop.counter }}" class="mt-1 ml-1 text-[11px] px-2 py-0.5 rounded-md border press-scale">Track</button>{% endif %}</div></div>
+      {% if d.trackable %}
+      <div class="geo-panel rounded-xl border p-3 -mt-1" id="track-{{ forloop.counter }}" hidden>
+        <div class="text-sm font-medium" data-trip-eta></div>
+        <div class="geo-note mb-2" data-trip-status>Loading…</div>
+        <div class="geo-map geo-map-sm" data-trip-map></div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% elif not deliverable_claims %}
+    <div class="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">Claim a delivery-enabled offer to request delivery.</div>
+    {% endif %}
+    {% if open_routes %}
+    <div class="mt-4 text-xs text-muted-foreground mb-2">Upcoming shared routes</div>
+    <ul class="space-y-1.5">{% for r in open_routes %}<li class="rounded-lg border px-3 py-2 text-sm flex justify-between"><span>{{ r.label }}</span><span class="text-xs text-muted-foreground">{{ r.departs }} · {{ r.free }} slot{{ r.free|pluralize }} free</span></li>{% endfor %}</ul>
+    {% endif %}
+  </section>
+</div>
+
+<!-- Savings history + refer + report -->
+<div class="grid lg:grid-cols-3 gap-4 mt-5">
+  <section id="history" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Savings history</h2><p class="text-xs text-muted-foreground mt-0.5">Confirmed savings, last 6 months</p></div>
+    {% if has_savings_history %}<div class="h-56"><canvas id="savingsHistoryChart"></canvas></div>
+    {% else %}<div class="h-56 flex items-center justify-center text-sm text-muted-foreground text-center">Redeem your first code to start your savings history.</div>{% endif %}
+  </section>
+
+  <section id="refer" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Refer &amp; earn</h2><p class="text-xs text-muted-foreground mt-0.5">Share your code with friends.</p></div>
+    <div class="rounded-2xl bg-gradient-to-br from-accent to-primary text-white p-4">
+      <div class="flex items-center gap-2 text-sm font-medium"><i data-lucide="gift" class="h-4 w-4"></i> Your referral code</div>
+      <div class="mt-2 font-mono text-2xl font-bold tracking-wider">{{ referral.code }}</div>
+      <div class="text-xs opacity-90 mt-1">{{ referral.joined }} friend{{ referral.joined|pluralize }} joined · {{ referral.paying }} rewarded</div>
+      <div class="text-xs opacity-90">Pending {{ referral.pending|ugx }} · Credited {{ referral.credited|ugx }}</div>
+      {% if referral.can_withdraw %}
+      <form data-api="{% url 'payments:request_referral_withdrawal' %}" class="mt-3 flex gap-2" style="flex-wrap:wrap">
+        <input name="amount" type="number" min="1" step="1" value="{{ referral.available|floatformat:0 }}" class="h-9 w-24 rounded-lg bg-white/90 text-foreground px-2 text-sm" aria-label="Amount to withdraw" />
+        <input name="phone" inputmode="tel" required class="h-9 flex-1 min-w-0 rounded-lg bg-white/90 text-foreground px-2 text-sm" placeholder="Mobile money no." />
+        <input name="code" required inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" class="h-9 w-24 rounded-lg bg-white/90 text-foreground px-2 text-sm" placeholder="Code" aria-label="Confirmation code" />
+        <button type="button" data-withdraw-code class="h-9 px-3 rounded-lg bg-white/20 text-white text-sm font-medium press-scale">Send code</button>
+        <button type="submit" class="h-9 px-3 rounded-lg bg-white text-foreground text-sm font-medium press-scale">Withdraw</button>
+      </form>
+      <div class="text-[11px] opacity-90 mt-1" data-withdraw-code-note>We text a confirmation code to your account phone before any withdrawal.</div>
+      <div class="text-[11px] opacity-90 mt-1">Available to withdraw: {{ referral.available|ugx }}</div>
+      {% elif referral.available > 0 %}
+      <div class="text-[11px] opacity-90 mt-2">Available {{ referral.available|ugx }} · you can withdraw once you reach {{ referral.minimum|ugx }}.</div>
+      {% endif %}
+      <a target="_blank" rel="noopener noreferrer" href="https://wa.me/?text={{ 'Join 1K Saver Club with my code '|urlencode }}{{ referral.code|urlencode }}" class="mt-3 h-9 px-3 rounded-lg bg-white text-foreground text-sm font-medium w-full inline-flex items-center justify-center press-scale">Share via WhatsApp</a>
+    </div>
+  </section>
+
+  <section id="report" class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+    <div class="mb-4"><h2 class="font-semibold">Report a problem</h2><p class="text-xs text-muted-foreground mt-0.5">An agent in your area will look into it.</p></div>
+    <form data-api="{% url 'complaints:member_complaints' %}" class="space-y-2">
+      <input name="subject" required maxlength="150" class="w-full h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Subject (e.g. code not accepted)" />
+      <textarea name="description" required maxlength="2000" class="w-full min-h-[88px] rounded-lg border bg-background px-3 py-2 text-sm" placeholder="Tell us what happened…"></textarea>
+      <button type="submit" class="w-full h-10 rounded-lg bg-foreground text-background text-sm font-medium inline-flex items-center justify-center gap-1.5 press-scale"><i data-lucide="message-square-warning" class="h-4 w-4"></i> Submit report</button>
+    </form>
+    {% if complaints %}
+    <ul class="mt-4 space-y-1.5">{% for c in complaints %}<li class="text-xs flex justify-between gap-2 border-t pt-1.5"><span class="truncate">{{ c.subject }}</span><span class="shrink-0 px-1.5 rounded font-semibold {{ c.status|badge_class }}">{{ c.status }}</span></li>{% endfor %}</ul>
+    {% endif %}
+  </section>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+{% include "hub/partials/geo_scripts.html" %}
+<script src="{% static 'hub/js/pending_payment.js' %}"></script>
+<script src="{% static 'hub/js/withdraw_code.js' %}"></script>
+{{ savings_months|json_script:"savings-months" }}
+{{ savings_values|json_script:"savings-values" }}
+<script nonce="{{ csp_nonce }}">
+  document.addEventListener("DOMContentLoaded", () => {
+    if (!document.getElementById("savingsHistoryChart")) return;
+    const months = JSON.parse(document.getElementById("savings-months").textContent);
+    const values = JSON.parse(document.getElementById("savings-values").textContent);
+    makeLineChart("savingsHistoryChart", months, [{ label: "Saved", data: values }]);
+  });
+</script>
+{% endblock %}

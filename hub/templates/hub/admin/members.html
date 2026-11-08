@@ -1,0 +1,35 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Members · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Members" description="Profiles, subscriptions, savings and complaints across the network." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Total members" value=stats.total icon="users" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="With active plan" value=stats.active icon="badge-check" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="No active plan" value=stats.expired icon="users" tone="warning" %}
+  {% include "hub/partials/stat_card.html" with label="Suspended" value=stats.suspended icon="ban" tone="destructive" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="mb-4"><h2 class="font-semibold">All members</h2></div>
+<form method="get" class="flex flex-col sm:flex-row gap-2 mb-3">
+  <input name="q" value="{{ filters.q }}" maxlength="80" class="flex-1 h-10 rounded-lg border bg-background px-3 text-sm" placeholder="Search name, phone, area…" />
+  <select name="status" class="h-10 rounded-lg border bg-background px-3 text-sm"><option value="">All statuses</option><option value="active" {% if filters.status == "active" %}selected{% endif %}>Active plan</option><option value="suspended" {% if filters.status == "suspended" %}selected{% endif %}>Suspended</option></select>
+  <button class="h-10 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-medium">Filter</button>
+</form>
+<div class="overflow-x-auto -mx-1">
+  <table id="membersTable" class="w-full text-sm">
+    <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Name</th><th class="px-2 py-2 font-medium">Phone</th><th class="px-2 py-2 font-medium">Area</th><th class="px-2 py-2 font-medium">Status</th><th class="px-2 py-2 font-medium">Renewal</th><th class="px-2 py-2 font-medium">Confirmed savings</th><th class="px-2 py-2 font-medium">Claims</th><th class="px-2 py-2 font-medium">Complaints</th><th class="px-2 py-2 font-medium">Referrals</th><th class="px-2 py-2 font-medium">Last active</th><th class="px-2 py-2 font-medium text-right">Actions</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="border-t hover:bg-muted/40">
+        <td class="px-2 py-2.5"><span class="font-medium">{{ r.name }}</span></td><td class="px-2 py-2.5">{{ r.phone }}</td><td class="px-2 py-2.5">{{ r.area }}</td><td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status|badge_class }}">{{ r.status }}</span></td><td class="px-2 py-2.5">{{ r.renewal }}</td><td class="px-2 py-2.5"><span class="text-primary font-medium">{{ r.saved|ugx }}</span></td><td class="px-2 py-2.5">{{ r.claims }}</td><td class="px-2 py-2.5">{{ r.complaints }}</td><td class="px-2 py-2.5">{{ r.referrals }}</td><td class="px-2 py-2.5"><span class="text-muted-foreground">{{ r.last }}</span></td><td class="px-2 py-2.5"><div class="text-right">{% if r.suspended %}<button type="button" data-api="{% url 'accounts_api:reactivate_user' r.user_id %}" data-confirm="Reactivate this account?" class="text-xs px-2 py-1 rounded-md border">Reactivate</button>{% else %}<button type="button" data-api="{% url 'accounts_api:suspend_user' r.user_id %}" data-confirm="Suspend this account? They will be signed out and blocked." class="text-xs px-2 py-1 rounded-md border text-destructive">Suspend</button>{% endif %}</div></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="11" class="px-2 py-8 text-center text-sm text-muted-foreground">No members match.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "hub/partials/pagination.html" %}
+</section>
+{% endblock %}

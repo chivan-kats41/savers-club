@@ -1,0 +1,565 @@
+{% extends "hub/base.html" %}
+{% load hub_extras %}
+{% block title %}1K Saver Club — Find what is cheaper near you for UGX 1,000/month{% endblock %}
+{% block meta_description %}1K Saver Club helps Ugandan households discover verified nearby deals, compare local prices, buy from trusted merchants and vendors, and get items delivered by verified boda riders — all for UGX 1,000/month.{% endblock %}
+{% block extra_head %}{% include "hub/partials/geo_assets.html" %}{% endblock %}
+{% block extra_scripts %}{{ map_data|json_script:"landing-map-data" }}{% include "hub/partials/geo_scripts.html" %}{% endblock %}
+{% block body %}
+<div class="min-h-screen bg-background">
+
+  <!-- Nav -->
+  <header class="border-b sticky top-0 z-30 bg-background/90 backdrop-blur">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold">1K</div>
+        <div>
+          <div class="font-semibold leading-tight">1K Saver Club</div>
+          <div class="text-[10px] uppercase tracking-wider text-muted-foreground">Nakawa East · Kampala</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'accounts:logout' %}" class="m-0 hidden sm:block">{% csrf_token %}<button class="text-sm h-9 px-3 rounded-lg border hover:bg-muted press-scale">Sign out</button></form>
+        {% else %}
+        <a href="{% url 'accounts:login' %}" class="hidden sm:inline-flex text-sm h-9 px-3 rounded-lg border items-center hover:bg-muted press-scale">Log in</a>
+        {% endif %}
+        <a href="{% url 'apply_merchant' %}" class="hidden sm:inline-flex text-sm h-9 px-3 rounded-lg border items-center hover:bg-muted press-scale">Post an offer</a>
+        <a href="{% url 'member' %}" class="text-sm h-9 px-3.5 rounded-lg bg-primary text-primary-foreground inline-flex items-center font-medium press-scale hover:opacity-90">
+          Find deals near me <i data-lucide="arrow-right" class="h-4 w-4 ml-1.5"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="px-4 sm:px-6 py-10 sm:py-16">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
+      <div class="animate-fade-in-up">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-soft text-primary text-xs font-medium">
+          <i data-lucide="sparkles" class="h-3 w-3"></i> Now live in Nakawa East
+        </div>
+        <h1 class="mt-4 text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.05]">
+          Find what is <span class="text-primary">cheaper near you</span> — and save every month for just UGX 1,000.
+        </h1>
+        <p class="mt-4 text-muted-foreground text-base sm:text-lg max-w-xl">
+          1K Saver Club helps households discover verified nearby deals, compare local prices, buy from trusted merchants and vendors,
+          and get items delivered by verified boda riders.
+        </p>
+
+        <div class="mt-6 flex flex-wrap gap-2.5">
+          <a href="{% url 'member' %}" class="h-11 px-5 rounded-xl bg-primary text-primary-foreground inline-flex items-center text-sm font-medium press-scale hover:opacity-90">Find Deals Near Me <i data-lucide="arrow-right" class="h-4 w-4 ml-1.5"></i></a>
+          <a href="{% url 'apply_merchant' %}" class="h-11 px-5 rounded-xl border inline-flex items-center text-sm font-medium hover:bg-muted press-scale">Post an Offer</a>
+          <a href="{% url 'apply_rider' %}" class="h-11 px-5 rounded-xl border inline-flex items-center text-sm font-medium hover:bg-muted press-scale">Become a Rider</a>
+          <a href="{% url 'agent' %}" class="h-11 px-5 rounded-xl border inline-flex items-center text-sm font-medium hover:bg-muted press-scale">Become an Area Agent</a>
+        </div>
+
+        <div class="mt-7 grid grid-cols-3 gap-4 max-w-md">
+          <div><div class="text-xl sm:text-2xl font-semibold">{% if stats.plan_price %}{{ stats.plan_price|ugx }}{% else %}UGX 1,000{% endif %}</div><div class="text-xs text-muted-foreground">{{ stats.plan_label|default:"Monthly membership" }}</div></div>
+          <div><div class="text-xl sm:text-2xl font-semibold">{{ stats.launch_area_count }} area{{ stats.launch_area_count|pluralize }}</div><div class="text-xs text-muted-foreground">Launch areas</div></div>
+          <div><div class="text-xl sm:text-2xl font-semibold">{{ stats.verified_sellers }}</div><div class="text-xs text-muted-foreground">Verified sellers</div></div>
+        </div>
+      </div>
+
+      <!-- Live search demo card -->
+      <div class="relative animate-scale-in stagger-2">
+        <div class="rounded-3xl bg-gradient-to-br from-primary via-secondary to-accent p-1.5 shadow-2xl">
+          <div class="rounded-[1.3rem] bg-card p-5">
+            <div class="flex items-center gap-2 text-xs text-muted-foreground">
+              <i data-lucide="map-pin" class="h-3.5 w-3.5 text-primary"></i> Searching near <span data-origin-label>{% if geo_origin %}{{ geo_origin.label }}{% else %}you{% endif %}</span>
+            </div>
+            <div class="mt-2 h-12 rounded-xl border flex items-center gap-2 px-3">
+              <i data-lucide="search" class="h-4 w-4 text-muted-foreground"></i>
+              <span class="text-sm">soap</span>
+              <span class="ml-auto text-[11px] px-2 py-0.5 rounded bg-primary-soft text-primary font-medium">{{ stats.active_offers }} live offer{{ stats.active_offers|pluralize }}</span>
+            </div>
+            <div class="mt-3 space-y-2">
+              {% for deal in live_local_deals|slice:":3" %}
+              <div class="rounded-xl border p-3 flex items-center gap-3">
+                <div class="h-10 w-10 rounded-lg bg-muted flex items-center justify-center text-lg">{{ deal.emoji }}</div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium truncate">{{ deal.item }}</div>
+                  <div class="text-[11px] text-muted-foreground truncate">{{ deal.seller }} · {{ deal.area }} · {{ deal.distance }}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-sm font-semibold text-primary">{{ deal.member|ugx }}</div>
+                  <div class="text-[10px] line-through text-muted-foreground">{{ deal.normal|ugx }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <div class="mt-3 rounded-xl bg-primary-soft text-primary p-3 text-xs font-medium flex items-center justify-between">
+              <span>{% if stats.top_saving %}You could save up to {{ stats.top_saving|ugx }} today{% else %}New deals are posted every day{% endif %}</span>
+              <i data-lucide="arrow-right" class="h-4 w-4"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="px-4 sm:px-6 py-14 bg-muted/40 border-y">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight reveal">How 1K Saver Club Works</h2>
+      <p class="text-sm text-muted-foreground mt-1 reveal">Stop moving shop to shop. Let the platform show you who has it cheaper near you.</p>
+      <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% for step in "1234" %}
+        {% if step == "1" %}
+        <div class="rounded-2xl bg-card border p-5 reveal stagger-1 press-scale hover:shadow-md">
+          <div class="flex items-center justify-between mb-3"><div class="h-11 w-11 rounded-xl bg-primary-soft text-primary flex items-center justify-center"><i data-lucide="search" class="h-5 w-5"></i></div><span class="text-xs text-muted-foreground font-medium">Step 1</span></div>
+          <div class="font-semibold">Search nearby deals</div>
+          <p class="text-sm text-muted-foreground mt-1">Look for soap, rice, posho, vegetables, lunch, pharmacy items or any household need.</p>
+        </div>
+        {% elif step == "2" %}
+        <div class="rounded-2xl bg-card border p-5 reveal stagger-2 press-scale hover:shadow-md">
+          <div class="flex items-center justify-between mb-3"><div class="h-11 w-11 rounded-xl bg-primary-soft text-primary flex items-center justify-center"><i data-lucide="tag" class="h-5 w-5"></i></div><span class="text-xs text-muted-foreground font-medium">Step 2</span></div>
+          <div class="font-semibold">Compare price and distance</div>
+          <p class="text-sm text-muted-foreground mt-1">See who has it, member price, normal price, distance, stock and expiry.</p>
+        </div>
+        {% elif step == "3" %}
+        <div class="rounded-2xl bg-card border p-5 reveal stagger-3 press-scale hover:shadow-md">
+          <div class="flex items-center justify-between mb-3"><div class="h-11 w-11 rounded-xl bg-primary-soft text-primary flex items-center justify-center"><i data-lucide="truck" class="h-5 w-5"></i></div><span class="text-xs text-muted-foreground font-medium">Step 3</span></div>
+          <div class="font-semibold">Claim, call or get delivery</div>
+          <p class="text-sm text-muted-foreground mt-1">Walk in, call, claim a code, or request a nearby boda or shared route delivery.</p>
+        </div>
+        {% else %}
+        <div class="rounded-2xl bg-card border p-5 reveal stagger-4 press-scale hover:shadow-md">
+          <div class="flex items-center justify-between mb-3"><div class="h-11 w-11 rounded-xl bg-primary-soft text-primary flex items-center justify-center"><i data-lucide="wallet" class="h-5 w-5"></i></div><span class="text-xs text-muted-foreground font-medium">Step 4</span></div>
+          <div class="font-semibold">Save and track your benefit</div>
+          <p class="text-sm text-muted-foreground mt-1">See how much you saved this month vs the UGX 1,000 subscription.</p>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Built for local sellers -->
+  <section class="px-4 sm:px-6 py-14">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
+      <div class="reveal">
+        <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight">Built for local sellers — not only big shops</h2>
+        <p class="text-muted-foreground mt-2">
+          Verified merchants include retail shops, restaurants, pharmacies, salons, market vendors, fruit and vegetable sellers, home-based sellers,
+          school item sellers, phone &amp; data sellers, household sellers and small wholesalers.
+        </p>
+        <p class="text-sm text-muted-foreground mt-3">
+          You don't need a big shop. You need <strong class="text-foreground">real stock, clean packaging, fair prices, reliable handover</strong> for delivery,
+          and an area agent who has checked you.
+        </p>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">Retail shop</span>
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">Restaurant</span>
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">Pharmacy</span>
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">Salon</span>
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">Market vendor</span>
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">Fruit &amp; veg</span>
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">Home seller</span>
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">School items</span>
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">Phone &amp; data</span>
+          <span class="text-xs px-3 py-1.5 rounded-full bg-card border">Wholesaler</span>
+        </div>
+      </div>
+      <div class="rounded-2xl border bg-card p-5 reveal">
+        <div class="flex items-center gap-2 text-sm font-semibold"><i data-lucide="check-circle-2" class="h-4 w-4 text-primary"></i> Every merchant has a strength</div>
+        <p class="text-xs text-muted-foreground mt-1">Today's strongest sellers by area</p>
+        <ul class="mt-4 divide-y">
+          {% for m in merchant_strength_map %}
+          <li class="py-2.5 flex items-center justify-between gap-3">
+            <div class="text-sm font-medium">{{ m.area }}</div>
+            <div class="flex flex-wrap gap-1.5 justify-end">
+              {% for b in m.bestOn %}<span class="text-[11px] px-2 py-0.5 rounded-md bg-primary-soft text-primary font-medium">{{ b }}</span>{% endfor %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Local radius advertising -->
+  <section class="px-4 sm:px-6 py-14 bg-muted/40 border-y">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid lg:grid-cols-3 gap-6 items-start">
+        <div class="lg:col-span-1 reveal">
+          <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight">Local radius advertising</h2>
+          <p class="text-muted-foreground mt-2">
+            A Mutungo seller should reach Mutungo buyers first. A Kitintale offer should reach Kitintale shoppers first.
+            We keep advertising local so offers are useful, not noisy.
+          </p>
+        </div>
+        <div class="lg:col-span-2 grid sm:grid-cols-3 gap-3">
+          <div class="rounded-2xl bg-card border p-4 reveal stagger-1"><div class="font-semibold text-sm">Area-first feed</div><p class="text-xs text-muted-foreground mt-1">Offers show first to buyers in the same area as the seller.</p></div>
+          <div class="rounded-2xl bg-card border p-4 reveal stagger-2"><div class="font-semibold text-sm">Radius targeting</div><p class="text-xs text-muted-foreground mt-1">Merchants choose nearby zones, but admin keeps local relevance protected.</p></div>
+          <div class="rounded-2xl bg-card border p-4 reveal stagger-3"><div class="font-semibold text-sm">Honest visibility</div><p class="text-xs text-muted-foreground mt-1">Merchants who keep offers truthful and available get more visibility.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick categories preview -->
+  <section class="px-4 sm:px-6 py-14">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-end justify-between gap-3 mb-5">
+        <div class="reveal">
+          <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight">What are you looking for today?</h2>
+          <p class="text-sm text-muted-foreground mt-1">Tap a category to see verified sellers near you.</p>
+        </div>
+        <a href="{% url 'member' %}" class="text-sm text-primary font-medium hidden sm:inline-flex items-center press-scale">Open search <i data-lucide="arrow-right" class="h-4 w-4 ml-1"></i></a>
+      </div>
+      <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2.5">
+        {% for c in search_categories %}
+        <a href="{% url 'member' %}" class="rounded-2xl border bg-card p-4 text-center hover:shadow-md transition-shadow reveal press-scale">
+          <div class="text-2xl">{{ c.emoji }}</div>
+          <div class="text-xs font-medium mt-1.5">{{ c.label }}</div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Today's deals preview -->
+  <section class="px-4 sm:px-6 py-14 bg-muted/40 border-y" data-view-scope>
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-wrap items-end justify-between gap-3 mb-5">
+        <div class="reveal">
+          <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight" data-hot-heading>{% if geo_origin %}Hot deals · {{ geo_origin.label }}{% else %}Today's hot deals{% endif %}</h2>
+          <p class="text-sm text-muted-foreground mt-1" data-hot-sub>{% if geo_origin %}Closest first, then biggest savings and deals ending soon.{% else %}Live offers from verified sellers{% if launch_areas %} in {{ launch_areas|join:", " }}{% endif %}. Tap “Near me” to see what is close to you.{% endif %}</p>
+        </div>
+        <div class="geo-row">
+          <button type="button" class="geo-btn geo-btn-primary" data-geo-locate="landing" data-authenticated="{% if request.user.is_authenticated %}1{% else %}0{% endif %}">📍 Near me</button>
+          <div class="geo-seg" data-view-toggle><button type="button" data-view-target="list" aria-pressed="true">List</button><button type="button" data-view-target="map" aria-pressed="false">Map</button></div>
+          <a href="{% url 'member' %}" class="text-sm text-primary font-medium hidden sm:inline-flex items-center press-scale">See all <i data-lucide="arrow-right" class="h-4 w-4 ml-1"></i></a>
+        </div>
+      </div>
+      <div data-view="map" hidden>
+        <div class="geo-map geo-map-lg" data-deals-map data-source="landing-map-data" data-open-url="{% url 'member' %}"></div>
+        <p class="geo-note">Your position is shown as a blue dot. A shop that has not pinned its exact spot appears at its area's centre.</p>
+      </div>
+      <div data-view="list">
+      {% if not live_local_deals %}<div class="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">No live deals right now — check back soon.</div>{% endif %}
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3" data-hot-grid>
+        {% for deal in live_local_deals|slice:":6" %}
+        <div class="rounded-2xl border bg-card p-4 reveal press-scale hover:shadow-md">
+          <div class="flex items-start gap-3">
+            <div class="h-12 w-12 rounded-xl bg-muted flex items-center justify-center text-xl">{{ deal.emoji }}</div>
+            <div class="flex-1 min-w-0">
+              <div class="font-medium">{{ deal.item }}</div>
+              <div class="text-xs text-muted-foreground truncate">{{ deal.seller }} · {{ deal.vendorType }}</div>
+              <div class="text-xs text-muted-foreground"><i data-lucide="map-pin" class="h-3 w-3 inline mr-0.5"></i>{{ deal.area }} · {{ deal.distance }}</div>
+            </div>
+          </div>
+          <div class="mt-3 flex items-end justify-between">
+            <div>
+              <div class="text-base font-semibold text-primary">{{ deal.member|ugx }} <span class="text-xs line-through text-muted-foreground font-normal">{{ deal.normal|ugx }}</span></div>
+              <div class="text-[11px] text-primary font-medium">You save {{ deal.normal|sub:deal.member|ugx }}</div>
+            </div>
+            <div class="flex flex-wrap justify-end gap-1 max-w-[55%]">
+              {% for b in deal.badges|slice:":2" %}<span class="text-[10px] px-1.5 py-0.5 rounded bg-accent-soft text-accent font-semibold">{{ b }}</span>{% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Delivery options -->
+  <section class="px-4 sm:px-6 py-14">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight reveal">Get it your way</h2>
+      <p class="text-sm text-muted-foreground mt-1 reveal">Walk in, send a boda, or share a route with neighbours.</p>
+      <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div class="rounded-2xl border bg-card p-4 reveal stagger-1"><div class="h-10 w-10 rounded-xl bg-secondary-soft text-secondary flex items-center justify-center mb-3"><i data-lucide="shopping-basket" class="h-5 w-5"></i></div><div class="font-semibold text-sm">Walk in</div><p class="text-xs text-muted-foreground mt-1">Go to the verified seller with your claim code.</p></div>
+        <div class="rounded-2xl border bg-card p-4 reveal stagger-2"><div class="h-10 w-10 rounded-xl bg-secondary-soft text-secondary flex items-center justify-center mb-3"><i data-lucide="map-pin" class="h-5 w-5"></i></div><div class="font-semibold text-sm">Pickup point</div><p class="text-xs text-muted-foreground mt-1">Collect from a nearby agent kiosk or shop. Often free.</p></div>
+        <div class="rounded-2xl border bg-card p-4 reveal stagger-3"><div class="h-10 w-10 rounded-xl bg-secondary-soft text-secondary flex items-center justify-center mb-3"><i data-lucide="bike" class="h-5 w-5"></i></div><div class="font-semibold text-sm">Nearby boda</div><p class="text-xs text-muted-foreground mt-1">Verified rider 2-3km away. Pay local price.</p></div>
+        <div class="rounded-2xl border bg-card p-4 reveal stagger-4"><div class="h-10 w-10 rounded-xl bg-secondary-soft text-secondary flex items-center justify-center mb-3"><i data-lucide="truck" class="h-5 w-5"></i></div><div class="font-semibold text-sm">Shared route</div><p class="text-xs text-muted-foreground mt-1">Share a boda's route with neighbours and split cost.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Savings tracker -->
+  <section class="px-4 sm:px-6 py-14 bg-muted/40 border-y">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
+      <div class="reveal">
+        <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight">Pay 1K. Save more every month.</h2>
+        <p class="text-muted-foreground mt-2">
+          Your dashboard tracks subscription paid, confirmed savings, possible savings, delivery savings and your net benefit —
+          so you can see exactly how UGX 1,000 returns much more.
+        </p>
+        <a href="{% url 'member' %}" class="mt-5 inline-flex h-11 px-5 rounded-xl bg-primary text-primary-foreground items-center text-sm font-medium press-scale hover:opacity-90">
+          Open my savings dashboard <i data-lucide="arrow-right" class="h-4 w-4 ml-1.5"></i>
+        </a>
+      </div>
+      <div class="rounded-2xl bg-gradient-to-br from-primary to-secondary text-primary-foreground p-5 reveal">
+        <div class="text-xs uppercase tracking-wider opacity-80">Example month</div>
+        <div class="text-3xl font-semibold mt-1">{{ 24800|ugx }} <span class="text-sm font-normal opacity-80">saved</span></div>
+        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-xl bg-white/15 p-3"><div class="font-semibold">{{ 1000|ugx }}</div><div class="text-[11px] opacity-90">Subscription paid</div></div>
+          <div class="rounded-xl bg-white/15 p-3"><div class="font-semibold">{{ 24800|ugx }}</div><div class="text-[11px] opacity-90">Confirmed savings</div></div>
+          <div class="rounded-xl bg-white/15 p-3"><div class="font-semibold">{{ 12400|ugx }}</div><div class="text-[11px] opacity-90">Possible savings</div></div>
+          <div class="rounded-xl bg-white/15 p-3"><div class="font-semibold">{{ 3400|ugx }}</div><div class="text-[11px] opacity-90">Delivery savings</div></div>
+        </div>
+        <div class="mt-3 rounded-xl bg-white text-foreground p-3 flex items-center justify-between">
+          <span class="text-xs">Net benefit after subscription</span>
+          <span class="font-semibold text-primary">{{ 23800|ugx }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Launch areas -->
+  <section class="px-4 sm:px-6 py-14">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl font-semibold tracking-tight reveal">Launch areas — Nakawa East first</h2>
+      <p class="text-sm text-muted-foreground mt-1 reveal">We start where we can verify, deliver and earn trust block by block.</p>
+      <div class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+        {% for a in launch_areas %}
+        <div class="rounded-2xl border bg-card p-4 text-center reveal">
+          <i data-lucide="map-pin" class="h-5 w-5 mx-auto text-primary"></i>
+          <div class="text-sm font-semibold mt-1.5">{{ a }}</div>
+          <div class="text-[11px] text-muted-foreground">Verified sellers · riders · agents</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Role chooser -->
+  <section class="px-4 sm:px-6 pb-16">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-xl sm:text-2xl font-semibold tracking-tight mb-1 reveal">Open a dashboard</h2>
+      <p class="text-sm text-muted-foreground mb-6 reveal">Each role gets its own workspace. Tap one to explore the prototype.</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <a href="{% url 'member' %}" class="group rounded-2xl border bg-card p-5 hover:shadow-lg transition-shadow reveal press-scale">
+          <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-primary to-success text-white flex items-center justify-center mb-4"><i data-lucide="users" class="h-5 w-5"></i></div>
+          <div class="font-semibold flex items-center gap-1.5">I'm a Member <i data-lucide="arrow-right" class="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"></i></div>
+          <p class="text-sm text-muted-foreground mt-1.5">Pay UGX 1,000/month. Find cheaper deals near you and track your savings.</p>
+        </a>
+        <a href="{% url 'apply_merchant' %}" class="group rounded-2xl border bg-card p-5 hover:shadow-lg transition-shadow reveal press-scale">
+          <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-accent to-warning text-white flex items-center justify-center mb-4"><i data-lucide="store" class="h-5 w-5"></i></div>
+          <div class="font-semibold flex items-center gap-1.5">I'm a Merchant <i data-lucide="arrow-right" class="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"></i></div>
+          <p class="text-sm text-muted-foreground mt-1.5">Shop, vendor, restaurant, pharmacy? Post today's deal and reach nearby buyers.</p>
+        </a>
+        <a href="{% url 'apply_rider' %}" class="group rounded-2xl border bg-card p-5 hover:shadow-lg transition-shadow reveal press-scale">
+          <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-accent to-primary text-white flex items-center justify-center mb-4"><i data-lucide="bike" class="h-5 w-5"></i></div>
+          <div class="font-semibold flex items-center gap-1.5">I'm a Boda Rider <i data-lucide="arrow-right" class="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"></i></div>
+          <p class="text-sm text-muted-foreground mt-1.5">Pick up nearby jobs and earn from packages on your normal route.</p>
+        </a>
+        <a href="{% url 'agent' %}" class="group rounded-2xl border bg-card p-5 hover:shadow-lg transition-shadow reveal press-scale">
+          <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-secondary to-accent text-white flex items-center justify-center mb-4"><i data-lucide="user-check" class="h-5 w-5"></i></div>
+          <div class="font-semibold flex items-center gap-1.5">I'm an Area Agent <i data-lucide="arrow-right" class="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"></i></div>
+          <p class="text-sm text-muted-foreground mt-1.5">Verify sellers, check prices and keep your area honest. Earn commission.</p>
+        </a>
+        <a href="{% url 'admin_index' %}" class="group rounded-2xl border bg-card p-5 hover:shadow-lg transition-shadow reveal press-scale">
+          <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-secondary to-primary text-white flex items-center justify-center mb-4"><i data-lucide="shield-check" class="h-5 w-5"></i></div>
+          <div class="font-semibold flex items-center gap-1.5">Platform Admin <i data-lucide="arrow-right" class="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"></i></div>
+          <p class="text-sm text-muted-foreground mt-1.5">Run the network: launches, trust, payments, complaints, supply gaps and reports.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 1K Saver Club footer: replace your old <footer>...</footer> with everything below ===== -->
+<style>
+.kf{
+  --kf-bg:#0a1a14; --kf-border:rgba(255,255,255,.12);
+  --kf-text:#eef7f1; --kf-muted:#b4cbbd;
+  --kf-accent:#86efac; --kf-accent-strong:#bbf7d0; --kf-on-accent:#052e16;
+  background:var(--kf-bg); color:var(--kf-text); border-top:1px solid var(--kf-border);
+}
+.kf-wrap{max-width:72rem;margin:0 auto;padding:3rem 1rem 1.5rem}
+@media(min-width:640px){.kf-wrap{padding-left:1.5rem;padding-right:1.5rem}}
+
+.kf-cta{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.25rem;
+  padding:1.5rem;border-radius:1.5rem;border:1px solid rgba(134,239,172,.4);
+  background:linear-gradient(135deg,rgba(134,239,172,.18),rgba(134,239,172,.04))}
+.kf-cta h2{margin:0;font-size:1.5rem;font-weight:600;color:#fff;letter-spacing:-.01em}
+.kf-cta p{margin:.35rem 0 0;color:var(--kf-muted);font-size:.9rem}
+.kf-btns{display:flex;flex-wrap:wrap;gap:.6rem}
+.kf-btn{display:inline-flex;align-items:center;gap:.4rem;height:2.75rem;padding:0 1.25rem;
+  border-radius:.75rem;font-size:.875rem;font-weight:600;text-decoration:none;transition:all .15s}
+.kf-btn-primary{background:var(--kf-accent);color:var(--kf-on-accent)}
+.kf-btn-primary:hover{background:var(--kf-accent-strong)}
+.kf-btn-ghost{border:1px solid rgba(187,247,208,.55);color:var(--kf-accent-strong)}
+.kf-btn-ghost:hover{background:rgba(134,239,172,.14)}
+
+.kf-grid{display:grid;gap:2rem 1.25rem;margin-top:2.5rem;grid-template-columns:repeat(2,1fr)}
+.kf-logo-row{display:flex;align-items:center;gap:.65rem}
+.kf-logo{height:2.25rem;width:2.25rem;border-radius:.75rem;display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--kf-on-accent);background:linear-gradient(135deg,#bbf7d0,#4ade80)}
+.kf-logo-name{font-weight:600;line-height:1.2;color:#fff}
+.kf-logo-sub{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--kf-muted)}
+.kf-about{margin:1rem 0 0;max-width:20rem;font-size:.875rem;color:var(--kf-muted)}
+.kf h3{margin:0 0 1rem;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--kf-accent)}
+.kf ul{list-style:none;margin:0;padding:0}
+.kf li{margin:0 0 .65rem}
+.kf form{margin:0}
+.kf-link,.kf-linkbtn{color:var(--kf-muted);font-size:.875rem;text-decoration:none;transition:color .15s}
+.kf-link:hover,.kf-linkbtn:hover{color:var(--kf-accent-strong)}
+.kf-linkbtn{background:none;border:0;padding:0;cursor:pointer;font-family:inherit}
+.kf-plain{display:flex;align-items:center;gap:.4rem;font-size:.875rem;color:var(--kf-muted)}
+.kf-plain svg{color:var(--kf-accent);flex-shrink:0}
+
+.kf-row{display:flex;align-items:flex-start;gap:.5rem;font-size:.875rem;color:var(--kf-muted)}
+.kf-row svg{flex-shrink:0;margin-top:.15rem;color:var(--kf-accent)}
+.kf-row a{color:inherit;text-decoration:none}
+.kf-row a:hover{color:var(--kf-accent-strong)}
+.kf-icons{display:flex;gap:.5rem;margin-top:1rem}
+.kf-icon{height:2.25rem;width:2.25rem;border-radius:9999px;display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid rgba(134,239,172,.5);color:var(--kf-accent);transition:all .15s}
+.kf-icon:hover{background:var(--kf-accent);color:var(--kf-on-accent)}
+
+.kf-trust{display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem;margin-top:2.5rem;padding:1.1rem 0;
+  border-top:1px solid var(--kf-border);border-bottom:1px solid var(--kf-border)}
+@media(min-width:1024px){.kf-trust{grid-template-columns:repeat(4,1fr)}}
+.kf-trust-item{display:flex;align-items:center;gap:.5rem;font-size:.8125rem;color:var(--kf-text)}
+.kf-trust-item svg{color:var(--kf-accent);flex-shrink:0}
+
+.kf-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.9rem;
+  padding-top:1.25rem;font-size:.75rem;color:var(--kf-muted)}
+.kf-top{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .75rem;border-radius:.5rem;cursor:pointer;
+  border:1px solid rgba(134,239,172,.45);background:none;font-family:inherit;font-size:.75rem;
+  color:var(--kf-accent-strong);transition:background .15s}
+.kf-top:hover{background:rgba(134,239,172,.14)}
+.kf a:focus-visible,.kf button:focus-visible{outline:2px solid var(--kf-accent);outline-offset:2px;border-radius:.25rem}
+
+/* ===== Small screens (default): balanced, centered layout ===== */
+.kf-brand,.kf-areas,.kf-contact{grid-column:1/-1;text-align:center}
+.kf-brand .kf-logo-row{justify-content:center}
+.kf-about{margin-left:auto;margin-right:auto}
+.kf-areas ul{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem}
+.kf-areas li{margin:0}
+.kf-areas .kf-plain{padding:.35rem .75rem;border-radius:9999px;border:1px solid rgba(134,239,172,.35);font-size:.8125rem}
+.kf-contact ul{display:inline-block;text-align:left}
+.kf-contact .kf-icons{justify-content:center}
+.kf-cta{flex-direction:column;align-items:stretch;text-align:center}
+.kf-btns{flex-direction:column}
+.kf-btn{justify-content:center}
+.kf-bottom{flex-direction:column;justify-content:center;text-align:center}
+
+/* ===== Tablet: 4 columns under a left-aligned brand ===== */
+@media(min-width:768px){
+  .kf-grid{grid-template-columns:repeat(4,1fr)}
+  .kf-brand{grid-column:1/-1;text-align:left}
+  .kf-brand .kf-logo-row{justify-content:flex-start}
+  .kf-about{margin-left:0}
+  .kf-areas,.kf-contact{grid-column:auto;text-align:left}
+  .kf-areas ul{display:block}
+  .kf-areas li{margin:0 0 .65rem}
+  .kf-areas .kf-plain{padding:0;border:0;border-radius:0;font-size:.875rem}
+  .kf-contact ul{display:block}
+  .kf-contact .kf-icons{justify-content:flex-start}
+  .kf-cta{flex-direction:row;align-items:center;text-align:left}
+  .kf-btns{flex-direction:row}
+  .kf-bottom{flex-direction:row;justify-content:space-between;text-align:left}
+}
+
+/* ===== Desktop: single row ===== */
+@media(min-width:1024px){
+  .kf-grid{grid-template-columns:1.6fr 1fr 1fr 1fr 1.4fr}
+  .kf-brand{grid-column:auto}
+}
+</style>
+
+{# Edit your contact details here. Leave a value "" to hide it. WhatsApp: digits only. #}
+{% with kf_email="hello@yourdomain.com" kf_phone="+256700000000" kf_whatsapp="256700000000" %}
+<footer class="kf" aria-labelledby="kf-title">
+  <div class="kf-wrap">
+
+    <!-- Call to action -->
+    <div class="kf-cta">
+      <div>
+        <h2 id="kf-title">Pay 1K. Save more every month.</h2>
+        <p>Join your neighbours in Nakawa East and find what is cheaper near you.</p>
+      </div>
+      <div class="kf-btns">
+        <a href="{% url 'member' %}" class="kf-btn kf-btn-primary">Find deals near me <i data-lucide="arrow-right" class="h-4 w-4"></i></a>
+        <a href="{% url 'apply_merchant' %}" class="kf-btn kf-btn-ghost">Post an offer</a>
+      </div>
+    </div>
+
+    <!-- Link grid -->
+    <div class="kf-grid">
+      <div class="kf-brand">
+        <div class="kf-logo-row">
+          <div class="kf-logo">1K</div>
+          <div>
+            <div class="kf-logo-name">1K Saver Club</div>
+            <div class="kf-logo-sub">Nakawa East · Kampala</div>
+          </div>
+        </div>
+        <p class="kf-about">Verified nearby deals, local price comparison and trusted boda delivery for Ugandan households — for UGX 1,000 a month.</p>
+      </div>
+
+      <nav aria-label="For members">
+        <h3>For members</h3>
+        <ul>
+          <li><a class="kf-link" href="{% url 'member' %}">Find deals near me</a></li>
+          <li><a class="kf-link" href="{% url 'member' %}">My savings</a></li>
+          {% if user.is_authenticated %}
+          <li><form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit" class="kf-linkbtn">Sign out</button></form></li>
+          {% else %}
+          <li><a class="kf-link" href="{% url 'accounts:login' %}">Log in</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+
+      <nav aria-label="Work with us">
+        <h3>Work with us</h3>
+        <ul>
+          <li><a class="kf-link" href="{% url 'apply_merchant' %}">Post an offer</a></li>
+          <li><a class="kf-link" href="{% url 'apply_rider' %}">Become a rider</a></li>
+          <li><a class="kf-link" href="{% url 'agent' %}">Become an area agent</a></li>
+          <li><a class="kf-link" href="{% url 'admin_index' %}">Platform admin</a></li>
+        </ul>
+      </nav>
+
+      <div class="kf-areas">
+        <h3>Launch areas</h3>
+        <ul>
+          {% for a in launch_areas %}
+          <li class="kf-plain"><i data-lucide="map-pin" class="h-3.5 w-3.5"></i>{{ a }}</li>
+          {% empty %}
+          <li class="kf-plain"><i data-lucide="map-pin" class="h-3.5 w-3.5"></i>Nakawa East</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="kf-contact">
+        <h3>Get in touch</h3>
+        <ul>
+          <li class="kf-row"><i data-lucide="map-pin" class="h-4 w-4"></i><span>Nakawa East, Kampala, Uganda</span></li>
+          {% if kf_email %}<li class="kf-row"><i data-lucide="mail" class="h-4 w-4"></i><a href="mailto:{{ kf_email }}">{{ kf_email }}</a></li>{% endif %}
+          {% if kf_phone %}<li class="kf-row"><i data-lucide="phone" class="h-4 w-4"></i><a href="tel:{{ kf_phone }}">{{ kf_phone }}</a></li>{% endif %}
+        </ul>
+        {% if kf_whatsapp or kf_phone or kf_email %}
+        <div class="kf-icons">
+          {% if kf_whatsapp %}<a class="kf-icon" href="https://wa.me/{{ kf_whatsapp }}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><i data-lucide="message-circle" class="h-4 w-4"></i></a>{% endif %}
+          {% if kf_phone %}<a class="kf-icon" href="tel:{{ kf_phone }}" aria-label="Call us"><i data-lucide="phone" class="h-4 w-4"></i></a>{% endif %}
+          {% if kf_email %}<a class="kf-icon" href="mailto:{{ kf_email }}" aria-label="Email us"><i data-lucide="mail" class="h-4 w-4"></i></a>{% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Trust strip -->
+    <div class="kf-trust">
+      <div class="kf-trust-item"><i data-lucide="shield-check" class="h-4 w-4"></i> Verified merchants</div>
+      <div class="kf-trust-item"><i data-lucide="bike" class="h-4 w-4"></i> Verified boda riders</div>
+      <div class="kf-trust-item"><i data-lucide="user-check" class="h-4 w-4"></i> Checked by area agents</div>
+      <div class="kf-trust-item"><i data-lucide="wallet" class="h-4 w-4"></i> UGX 1,000 per month</div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="kf-bottom">
+      <div>© {% now "Y" %} 1K Saver Club. All rights reserved.</div>
+      <button type="button" class="kf-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top <i data-lucide="arrow-up" class="h-4 w-4"></i></button>
+    </div>
+
+  </div>
+</footer>
+{% endwith %}
+</div>
+{% endblock %}

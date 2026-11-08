@@ -1,0 +1,18 @@
+# Never bake secrets, local data or build junk into a Docker image (the Dockerfile does `COPY . .`).
+.env
+.env.*
+!.env.example
+db.sqlite3
+*.sqlite3
+logs/
+media/
+private_media/
+env/
+venv/
+.venv/
+.git/
+.github/
+__pycache__/
+*.pyc
+node_modules/
+*.zip

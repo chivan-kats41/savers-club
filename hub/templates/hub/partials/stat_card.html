@@ -1,0 +1,18 @@
+<div class="rounded-2xl bg-card border p-4 shadow-card reveal press-scale hover:shadow-lg">
+  <div class="flex items-start justify-between gap-3">
+    <div class="text-xs text-muted-foreground font-medium">{{ label }}</div>
+    {% if icon %}
+    <div class="h-9 w-9 rounded-xl flex items-center justify-center
+      {% if tone == 'primary' %}bg-primary-soft text-primary
+      {% elif tone == 'secondary' %}bg-secondary-soft text-secondary
+      {% elif tone == 'accent' %}bg-accent-soft text-accent
+      {% elif tone == 'warning' %}bg-warning/15 text-warning-foreground
+      {% elif tone == 'destructive' %}bg-destructive/10 text-destructive
+      {% else %}bg-muted text-foreground{% endif %}">
+      <i data-lucide="{{ icon }}" class="h-4 w-4"></i>
+    </div>
+    {% endif %}
+  </div>
+  <div class="mt-2 text-2xl font-semibold tracking-tight">{{ value }}</div>
+  {% if hint %}<div class="mt-1 text-xs text-muted-foreground flex items-center gap-1"><i data-lucide="chevron-right" class="h-3 w-3"></i>{{ hint }}</div>{% endif %}
+</div>

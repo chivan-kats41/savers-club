@@ -1,0 +1,202 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Overview · Admin · 1K Saver Club{% endblock %}
+{% block content %}
+
+{% include "hub/partials/page_header.html" with title="Platform overview" description="Live numbers from the database." %}
+
+<!-- Summary cards -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Total members" value=stats.members_total hint=stats.members_this_month|stringformat:"s"|add:" joined this month" icon="users" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Active subscriptions" value=stats.active_subs hint=stats.retention|default_if_none:"—"|stringformat:"s"|add:"% of members" icon="check-circle-2" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Verified merchants" value=stats.merchants_verified hint=stats.merchants_pending|stringformat:"s"|add:" pending review" icon="store" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Verified riders" value=stats.riders_verified hint=stats.riders_pending|stringformat:"s"|add:" pending review" icon="bike" tone="accent" %}
+  {% include "hub/partials/stat_card.html" with label="Active agents" value=stats.agents_active hint=stats.areas_uncovered|stringformat:"s"|add:" areas without coverage" icon="user-check" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Live offers" value=stats.offers_active hint=stats.offers_pending|stringformat:"s"|add:" pending approval" icon="ticket" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Confirmed savings" value=stats.confirmed|ugx_short hint="All time, from redeemed codes" icon="trending-up" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Today's payments" value=stats.pay_today|ugx hint=stats.pay_today_n|stringformat:"s"|add:" successful" icon="credit-card" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Rider commission" value=stats.commission|ugx_short hint="Shared-route, all time" icon="wallet" tone="accent" %}
+  {% include "hub/partials/stat_card.html" with label="Open complaints" value=stats.complaints_open hint=stats.complaints_escalated|stringformat:"s"|add:" escalated" icon="alert-circle" tone="warning" %}
+  {% include "hub/partials/stat_card.html" with label="Reported offers" value=stats.offers_reported hint="Need review" icon="shield-alert" tone="destructive" %}
+  {% include "hub/partials/stat_card.html" with label="Failed payments (30d)" value=stats.failed_30d hint="Subscriptions & promotions" icon="shield-alert" tone="destructive" %}
+</div>
+
+<!-- Risk alerts -->
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+  <div class="flex items-start justify-between gap-3 mb-4">
+    <div><h2 class="font-semibold">Today's risk alerts</h2><p class="text-xs text-muted-foreground mt-0.5">Things that need a human now</p></div>
+    <a href="{% url 'admin_complaints' %}" class="text-xs text-primary hover:underline shrink-0">View all</a>
+  </div>
+  <ul class="grid sm:grid-cols-2 gap-2">
+    {% for a in risk_alerts %}
+    <li class="rounded-xl border p-3 flex items-start gap-3">
+      <div class="h-9 w-9 rounded-lg flex items-center justify-center shrink-0 {% if a.severity == 'high' %}bg-destructive/10 text-destructive{% elif a.severity == 'medium' %}bg-warning/15 text-warning-foreground{% else %}bg-muted text-muted-foreground{% endif %}">
+        <i data-lucide="alert-circle" class="h-4 w-4"></i>
+      </div>
+      <div class="min-w-0"><div class="text-sm font-medium">{{ a.kind }}</div><div class="text-xs text-muted-foreground">{{ a.note }}</div></div>
+      <span class="ml-auto text-[10px] uppercase tracking-wider font-semibold shrink-0 {% if a.severity == 'high' %}text-destructive{% elif a.severity == 'medium' %}text-warning-foreground{% else %}text-muted-foreground{% endif %}">{{ a.severity }}</span>
+    </li>
+    {% empty %}
+    <li class="sm:col-span-2 rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No alerts. All clear.</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<!-- Charts row 1 -->
+<div class="grid lg:grid-cols-3 gap-4 mt-5">
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-3"><h2 class="font-semibold">Member growth &amp; renewals</h2><p class="text-xs text-muted-foreground mt-0.5">Last 10 months</p></div>
+    <div class="h-64"><canvas id="growthChart"></canvas></div>
+  </section>
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-3"><h2 class="font-semibold">Redemptions by category</h2></div>
+    <div class="h-64"><canvas id="redemptionsChart"></canvas></div>
+  </section>
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-3"><h2 class="font-semibold">Confirmed savings by category</h2></div>
+    <div class="h-64"><canvas id="savingsChart"></canvas></div>
+  </section>
+</div>
+
+<!-- Charts row 2 -->
+<div class="grid lg:grid-cols-3 gap-4 mt-5">
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-3"><h2 class="font-semibold">Shared route earnings</h2><p class="text-xs text-muted-foreground mt-0.5">Top 5 routes by gross earnings</p></div>
+    <div class="h-64"><canvas id="routeChart"></canvas></div>
+  </section>
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-3"><h2 class="font-semibold">Complaints by status</h2></div>
+    <div class="h-64"><canvas id="complaintsChart"></canvas></div>
+  </section>
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-3"><h2 class="font-semibold">Recent activity</h2><p class="text-xs text-muted-foreground mt-0.5">Live across the network</p></div>
+    <ul class="space-y-3 max-h-64 overflow-y-auto pr-1">
+      {% for a in recent_activity %}
+      <li class="flex items-start gap-3 text-sm">
+        <div class="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-semibold shrink-0">{{ a.who|slice:":2" }}</div>
+        <div class="min-w-0"><div><span class="font-medium">{{ a.who }}</span> <span class="text-muted-foreground">{{ a.what }}</span></div><div class="text-xs text-muted-foreground mt-0.5">{{ a.where }} · {{ a.when }}</div></div>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+
+<!-- Pending approvals -->
+<div class="mt-5">
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="flex items-start justify-between gap-3 mb-4">
+      <div><h2 class="font-semibold">Waiting for area agents</h2><p class="text-xs text-muted-foreground mt-0.5">Agents verify merchants, riders and offers in their areas. Anything sitting here for long means an area has no active agent.</p></div>
+      <span class="text-xs text-muted-foreground shrink-0">{{ stats.merchants_pending|add:stats.riders_pending|add:stats.offers_pending }} items</span>
+    </div>
+    <div class="grid lg:grid-cols-3 gap-4">
+      <div>
+        <div class="text-xs uppercase tracking-wider text-muted-foreground mb-2">Merchants</div>
+        <ul class="space-y-2">
+          {% for m in pending_approvals.merchants %}<li class="rounded-xl border p-3"><div class="font-medium text-sm">{{ m.name }}</div><div class="text-xs text-muted-foreground">{{ m.area }} · {{ m.category }} · {{ m.submitted }}</div></li>
+          {% empty %}<li class="text-sm text-muted-foreground">None waiting.</li>{% endfor %}
+        </ul>
+      </div>
+      <div>
+        <div class="text-xs uppercase tracking-wider text-muted-foreground mb-2">Riders</div>
+        <ul class="space-y-2">
+          {% for r in pending_approvals.riders %}<li class="rounded-xl border p-3"><div class="font-medium text-sm">{{ r.name }}</div><div class="text-xs text-muted-foreground">{{ r.stage }} · {{ r.area }} · {{ r.submitted }}</div></li>
+          {% empty %}<li class="text-sm text-muted-foreground">None waiting.</li>{% endfor %}
+        </ul>
+      </div>
+      <div>
+        <div class="text-xs uppercase tracking-wider text-muted-foreground mb-2">Offers</div>
+        <ul class="space-y-2">
+          {% for o in pending_approvals.offers %}<li class="rounded-xl border p-3"><div class="font-medium text-sm">{{ o.item }}</div><div class="text-xs text-muted-foreground">{{ o.merchant }}</div><div class="text-xs mt-1"><span class="line-through text-muted-foreground">{{ o.normal|ugx }}</span> <span class="ml-2 font-semibold text-primary">{{ o.member|ugx }}</span></div></li>
+          {% empty %}<li class="text-sm text-muted-foreground">None waiting.</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Area launch control -->
+<div class="mt-5">
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-4"><h2 class="font-semibold">Area launch control</h2><p class="text-xs text-muted-foreground mt-0.5">Stage is derived from live members, verified merchants and active agents in each area.</p></div>
+    <div class="overflow-x-auto -mx-1">
+      <table class="w-full text-sm">
+        <thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Area</th><th class="px-2 py-2 font-medium">Stage</th><th class="px-2 py-2 font-medium">Members</th><th class="px-2 py-2 font-medium">Merchants</th><th class="px-2 py-2 font-medium">Riders</th><th class="px-2 py-2 font-medium">Agents</th><th class="px-2 py-2 font-medium">Opened</th></tr></thead>
+        <tbody>
+          {% for a in area_launch_progress %}
+          <tr class="border-t">
+            <td class="px-2 py-2.5 font-medium">{{ a.area }}</td>
+            <td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ a.stage|badge_class }}">{{ a.stage }}</span></td>
+            <td class="px-2 py-2.5">{{ a.members }}</td>
+            <td class="px-2 py-2.5">{{ a.merchants }}</td>
+            <td class="px-2 py-2.5">{{ a.riders }}</td>
+            <td class="px-2 py-2.5">{{ a.agents }}</td>
+            <td class="px-2 py-2.5 text-muted-foreground">{{ a.opened }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<div class="grid lg:grid-cols-3 gap-4 mt-5">
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-4"><h2 class="font-semibold">Supply gaps</h2><p class="text-xs text-muted-foreground mt-0.5">Open member requests, fewest matching live offers first.</p></div>
+    <ul class="space-y-2">
+      {% for g in supply_gaps %}
+      <li class="rounded-xl border p-3">
+        <div class="flex items-start justify-between gap-2">
+          <div><div class="font-medium text-sm">{{ g.item }}</div><div class="text-xs text-muted-foreground">{{ g.area }} · {{ g.searches }} request{{ g.searches|pluralize }} · last offer {{ g.lastOffer }}</div></div>
+          <span class="text-[11px] px-2 py-0.5 rounded font-semibold shrink-0 {% if g.offers == 0 %}bg-destructive/10 text-destructive{% else %}bg-warning/15 text-warning-foreground{% endif %}">{{ g.offers }} offers</span>
+        </div>
+      </li>
+      {% empty %}<li class="text-sm text-muted-foreground">No open member requests.</li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-4"><h2 class="font-semibold">Price movement tracker</h2><p class="text-xs text-muted-foreground mt-0.5">Latest agent-collected price vs the one before it.</p></div>
+    <ul class="space-y-2">
+      {% for p in price_movements %}
+      <li class="rounded-xl border p-3 flex items-center justify-between gap-3">
+        <div class="min-w-0"><div class="font-medium text-sm">{{ p.item }}</div><div class="text-xs text-muted-foreground">{{ p.area }} · {{ p.from|ugx }} → {{ p.to|ugx }}</div></div>
+        <span class="text-xs font-semibold shrink-0 {% if p.direction == 'down' %}text-primary{% else %}text-destructive{% endif %}">{% if p.direction == 'down' %}▼{% else %}▲{% endif %} {{ p.change }}%</span>
+      </li>
+      {% empty %}<li class="text-sm text-muted-foreground">No price changes recorded yet.</li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card">
+    <div class="mb-4"><h2 class="font-semibold">Merchant strength map</h2><p class="text-xs text-muted-foreground mt-0.5">Where each item is cheapest today.</p></div>
+    <ul class="space-y-2">
+      {% for m in merchant_strength_map %}
+      <li class="rounded-xl border p-3">
+        <div class="font-medium text-sm">{{ m.area }}</div>
+        <div class="mt-1 flex flex-wrap gap-1">{% for b in m.bestOn %}<span class="text-[10px] px-1.5 py-0.5 rounded bg-primary-soft text-primary font-semibold">{{ b }}</span>{% endfor %}</div>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+{{ charts|json_script:"admin-charts" }}
+<script nonce="{{ csp_nonce }}">
+  document.addEventListener("DOMContentLoaded", () => {
+    const c = JSON.parse(document.getElementById("admin-charts").textContent);
+    const empty = (id, msg) => { const el = document.getElementById(id); if (el) el.parentElement.innerHTML = '<div class="h-full flex items-center justify-center text-sm text-muted-foreground">' + msg + '</div>'; };
+    makeLineChart("growthChart", c.growth_months, [
+      { label: "Members", data: c.growth_members },
+      { label: "Renewals", data: c.growth_renewals },
+    ]);
+    c.redemption_values.length ? makePieChart("redemptionsChart", c.redemption_labels, c.redemption_values) : empty("redemptionsChart", "No redemptions yet");
+    c.savings_values.length ? makeBarChart("savingsChart", c.savings_labels, c.savings_values, { multiColor: true }) : empty("savingsChart", "No savings recorded yet");
+    c.route_values.length ? makeBarChart("routeChart", c.route_labels, c.route_values, { horizontal: true }) : empty("routeChart", "No route earnings yet");
+    c.complaint_values.length ? makeBarChart("complaintsChart", c.complaint_labels, c.complaint_values, { multiColor: true }) : empty("complaintsChart", "No complaints");
+  });
+</script>
+{% endblock %}

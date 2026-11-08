@@ -1,0 +1,19 @@
+{% extends "hub/dashboard.html" %}
+{% load hub_extras %}
+{% block title %}Route Deliveries · Admin{% endblock %}
+{% block content %}
+{% include "hub/partials/page_header.html" with title="Route Deliveries" description="Shared routes created by riders and their earnings." %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+  {% include "hub/partials/stat_card.html" with label="Routes" value=routes|length icon="route" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Packages" value=totals.packages icon="package" tone="secondary" %}
+  {% include "hub/partials/stat_card.html" with label="Gross earnings" value=totals.gross|ugx icon="wallet" tone="primary" %}
+  {% include "hub/partials/stat_card.html" with label="Platform commission" value=totals.commission|ugx icon="receipt" tone="accent" %}
+</div>
+<section class="rounded-2xl bg-card border p-4 sm:p-5 shadow-card scroll-mt-20">
+<div class="mb-4"><h2 class="font-semibold">Routes</h2><p class="text-xs text-muted-foreground mt-0.5">Latest 100</p></div>
+<div class="overflow-x-auto -mx-1"><table id="routesT" class="w-full text-sm">
+<thead class="text-xs text-muted-foreground"><tr class="text-left"><th class="px-2 py-2 font-medium">Route</th><th class="px-2 py-2 font-medium">Departs</th><th class="px-2 py-2 font-medium">Rider</th><th class="px-2 py-2 font-medium">Packages</th><th class="px-2 py-2 font-medium">Gross</th><th class="px-2 py-2 font-medium">Commission</th><th class="px-2 py-2 font-medium">Status</th></tr></thead>
+<tbody>{% for r in routes %}<tr class="border-t hover:bg-muted/40"><td class="px-2 py-2.5"><span class="font-medium">{{ r.name }}</span></td><td class="px-2 py-2.5">{{ r.dispatch }}</td><td class="px-2 py-2.5">{{ r.rider }}</td><td class="px-2 py-2.5">{{ r.packages }} / {{ r.max }}</td><td class="px-2 py-2.5">{{ r.earnings|ugx }}</td><td class="px-2 py-2.5">{{ r.commission|ugx }}</td><td class="px-2 py-2.5"><span class="text-[11px] px-2 py-0.5 rounded font-semibold {{ r.status|badge_class }}">{{ r.status }}</span></td></tr>
+{% empty %}<tr><td colspan="7" class="px-2 py-8 text-center text-sm text-muted-foreground">No routes yet.</td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% endblock %}

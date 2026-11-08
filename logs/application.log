@@ -1,0 +1,741 @@
+2026-11-03 09:48:36,114 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-03 09:48:55,637 INFO django.server "GET / HTTP/1.1" 200 37705
+2026-11-03 09:48:55,997 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-03 09:48:55,999 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-03 09:48:56,252 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9069
+2026-11-03 09:48:56,279 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-03 09:48:56,313 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-03 09:48:56,380 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-03 09:48:56,446 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-03 09:48:56,790 WARNING django.request Not Found: /favicon.ico
+2026-11-03 09:48:56,793 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 14735
+2026-11-03 09:52:07,377 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-03 09:52:18,203 INFO django.server "GET / HTTP/1.1" 200 37705
+2026-11-03 09:52:21,243 INFO django.server "GET / HTTP/1.1" 200 37705
+2026-11-03 09:52:40,912 INFO django.server "GET / HTTP/1.1" 200 37705
+2026-11-03 09:52:40,969 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-03 09:52:40,970 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-03 09:52:40,974 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-03 09:52:40,979 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-03 09:52:40,982 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-03 09:52:41,026 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-03 09:52:41,033 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9069
+2026-11-03 09:52:41,089 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-03 09:52:41,430 WARNING django.request Not Found: /favicon.ico
+2026-11-03 09:52:41,431 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 14735
+2026-11-03 09:52:48,738 INFO django.server "GET /accounts/login/ HTTP/1.1" 200 10463
+2026-11-03 09:52:59,550 INFO django.server "POST /accounts/login/ HTTP/1.1" 302 0
+2026-11-03 09:52:59,723 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55286
+2026-11-03 09:53:06,080 INFO django.server "GET /member/ HTTP/1.1" 200 45367
+2026-11-03 09:53:06,325 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-03 09:53:06,326 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14443
+2026-11-03 09:53:38,496 WARNING django.request Bad Request: /api/v1/payments/initiate/
+2026-11-03 09:53:38,497 WARNING django.server "POST /api/v1/payments/initiate/ HTTP/1.1" 400 128
+2026-11-03 09:53:52,277 WARNING django.request Bad Request: /api/v1/payments/initiate/
+2026-11-03 09:53:52,278 WARNING django.server "POST /api/v1/payments/initiate/ HTTP/1.1" 400 128
+2026-11-03 09:57:02,025 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-03 09:57:27,186 INFO django.server "GET /merchant/ HTTP/1.1" 302 0
+2026-11-03 09:57:27,256 INFO django.server "GET /accounts/login/?next=/merchant/ HTTP/1.1" 200 10463
+2026-11-03 09:58:02,039 INFO django.server "POST /accounts/login/?next=/merchant/ HTTP/1.1" 200 10618
+2026-11-03 09:58:12,290 INFO django.server "POST /accounts/login/?next=/merchant/ HTTP/1.1" 302 0
+2026-11-03 09:58:12,404 INFO django.server "GET /merchant/ HTTP/1.1" 200 37711
+2026-11-03 09:59:36,128 INFO django.server "POST /accounts/logout/ HTTP/1.1" 302 0
+2026-11-03 09:59:36,224 INFO django.server "GET / HTTP/1.1" 200 37705
+2026-11-03 09:59:37,839 INFO django.server "GET /accounts/login/ HTTP/1.1" 200 10463
+2026-11-03 09:59:44,238 INFO django.server "POST /accounts/login/ HTTP/1.1" 200 10630
+2026-11-03 09:59:59,877 INFO django.server "POST /accounts/login/ HTTP/1.1" 200 10618
+2026-11-03 10:00:10,574 INFO django.server "POST /accounts/login/ HTTP/1.1" 302 0
+2026-11-03 10:00:10,729 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55286
+2026-11-03 10:00:14,157 INFO django.server "GET /member/ HTTP/1.1" 200 45367
+2026-11-03 10:00:14,339 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-03 10:00:14,341 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14443
+2026-11-03 10:00:21,694 INFO django.server "GET /merchant/ HTTP/1.1" 200 36174
+2026-11-03 10:00:25,888 INFO django.server "GET /rider/ HTTP/1.1" 200 29500
+2026-11-03 10:00:28,092 INFO django.server "GET /merchant/ HTTP/1.1" 200 36174
+2026-11-03 10:00:36,606 WARNING django.request Bad Request: /api/v1/merchant/claims/redeem/
+2026-11-03 10:00:36,607 WARNING django.server "POST /api/v1/merchant/claims/redeem/ HTTP/1.1" 400 95
+2026-11-03 10:00:41,370 INFO django.server "GET /rider/ HTTP/1.1" 200 29500
+2026-11-03 10:00:49,471 INFO django.server "GET /agent/ HTTP/1.1" 200 32734
+2026-11-03 10:02:49,622 INFO django.server "GET /agent/ HTTP/1.1" 200 32734
+2026-11-03 10:03:50,159 INFO django.server "GET /agent/ HTTP/1.1" 200 32734
+2026-11-03 10:03:52,359 INFO django.server "POST /accounts/logout/ HTTP/1.1" 302 0
+2026-11-03 10:03:52,393 INFO django.server "GET / HTTP/1.1" 200 37705
+2026-11-06 13:22:45,101 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-06 13:22:51,894 INFO django.server "GET / HTTP/1.1" 200 39686
+2026-11-06 13:22:52,364 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-06 13:22:52,395 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-06 13:22:52,566 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-06 13:22:52,594 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-06 13:22:52,610 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-06 13:22:52,675 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-06 13:22:52,689 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-06 13:22:52,711 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-06 13:22:52,838 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-06 13:22:52,974 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-06 13:22:53,033 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 29975
+2026-11-06 13:22:53,109 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-06 13:23:20,059 WARNING django.request Not Found: /favicon.ico
+2026-11-06 13:23:20,060 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-06 13:33:56,301 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-06 13:34:09,868 INFO django.server "GET / HTTP/1.1" 200 39686
+2026-11-06 13:34:12,945 INFO django.server "GET / HTTP/1.1" 200 39686
+2026-11-06 13:34:12,984 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-06 13:34:12,992 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-06 13:34:13,029 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-06 13:34:13,032 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-06 13:34:13,038 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-06 13:34:13,044 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-06 13:34:13,068 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-06 13:34:13,075 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 29975
+2026-11-06 13:34:13,080 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-06 13:34:13,093 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-06 13:34:13,094 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-06 13:34:13,133 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-06 13:34:13,235 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-06 13:34:18,765 INFO django.server "GET /accounts/login/ HTTP/1.1" 200 10463
+2026-11-06 13:34:18,899 WARNING django.request Not Found: /favicon.ico
+2026-11-06 13:34:18,900 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-06 13:34:32,298 INFO django.server "POST /accounts/login/ HTTP/1.1" 302 0
+2026-11-06 13:34:32,533 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55286
+2026-11-06 13:34:37,478 INFO django.server "GET /member/ HTTP/1.1" 200 50634
+2026-11-06 13:34:37,680 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:34:37,694 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:34:53,694 INFO django.server "PATCH /api/v1/geo/me/ HTTP/1.1" 200 256
+2026-11-06 13:34:53,902 INFO django.server "GET /member/ HTTP/1.1" 200 50641
+2026-11-06 13:34:54,063 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:34:54,069 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:34:58,038 INFO django.server "PATCH /api/v1/geo/me/ HTTP/1.1" 200 255
+2026-11-06 13:35:07,438 INFO django.server "POST /api/v1/geo/me/ping/ HTTP/1.1" 200 72
+2026-11-06 13:35:07,447 INFO django.server "POST /api/v1/geo/me/ping/ HTTP/1.1" 200 72
+2026-11-06 13:35:07,643 INFO django.server "GET /member/ HTTP/1.1" 200 50640
+2026-11-06 13:35:07,828 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:35:07,829 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:37:07,789 WARNING django.request Bad Request: /api/v1/payments/initiate/
+2026-11-06 13:37:07,791 WARNING django.server "POST /api/v1/payments/initiate/ HTTP/1.1" 400 128
+2026-11-06 13:37:17,277 INFO django.server "GET /merchant/ HTTP/1.1" 200 37930
+2026-11-06 13:37:54,030 INFO django.server "GET /rider/ HTTP/1.1" 200 31670
+2026-11-06 13:38:06,977 INFO django.server "POST /api/v1/rider/location/ HTTP/1.1" 200 42
+2026-11-06 13:38:14,710 INFO django.server "GET /agent/ HTTP/1.1" 200 32734
+2026-11-06 13:38:21,460 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55286
+2026-11-06 13:38:22,862 INFO django.server "GET /member/ HTTP/1.1" 200 50640
+2026-11-06 13:38:23,088 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:38:23,094 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:38:26,958 INFO django.server "PATCH /api/v1/geo/me/ HTTP/1.1" 200 351
+2026-11-06 13:38:27,141 INFO django.server "GET /member/ HTTP/1.1" 200 50647
+2026-11-06 13:38:27,341 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:38:27,375 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:38:31,846 INFO django.server "PATCH /api/v1/geo/me/ HTTP/1.1" 200 352
+2026-11-06 13:38:32,025 INFO django.server "GET /member/ HTTP/1.1" 200 50647
+2026-11-06 13:38:32,159 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:38:32,162 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:38:42,372 INFO django.server "POST /api/v1/geo/me/ping/ HTTP/1.1" 200 71
+2026-11-06 13:38:42,558 INFO django.server "PATCH /api/v1/geo/me/ HTTP/1.1" 200 257
+2026-11-06 13:38:42,821 INFO django.server - Broken pipe from ('127.0.0.1', 52205)
+2026-11-06 13:38:42,873 INFO django.server "GET /member/ HTTP/1.1" 200 51590
+2026-11-06 13:38:43,535 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:38:43,537 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:44:57,899 INFO django.utils.autoreload C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\geo\context.py changed, reloading.
+2026-11-06 13:45:04,458 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-06 13:47:56,596 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-06 13:48:06,688 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55286
+2026-11-06 13:48:08,826 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55286
+2026-11-06 13:48:09,193 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-06 13:48:09,197 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-06 13:48:09,231 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-06 13:48:09,392 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-06 13:48:09,447 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-06 13:48:09,451 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-06 13:48:09,511 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-06 13:48:09,719 WARNING django.request Not Found: /favicon.ico
+2026-11-06 13:48:09,724 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-06 13:48:41,965 INFO django.utils.autoreload C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\config\settings\base.py changed, reloading.
+2026-11-06 13:48:47,406 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-06 13:49:18,194 INFO django.server "GET /admin-console/merchants/ HTTP/1.1" 200 38352
+2026-11-06 13:49:20,726 INFO django.server "GET /admin-console/merchants/ HTTP/1.1" 200 38352
+2026-11-06 13:49:20,837 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-06 13:49:20,837 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-06 13:49:20,948 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-06 13:49:20,954 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-06 13:49:20,982 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-06 13:49:21,050 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-06 13:49:21,051 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-06 13:49:21,100 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-06 13:49:21,256 WARNING django.request Not Found: /favicon.ico
+2026-11-06 13:49:21,257 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-06 13:49:55,848 INFO django.server "GET /member/ HTTP/1.1" 200 51622
+2026-11-06 13:49:56,129 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:49:56,171 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:49:57,496 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55286
+2026-11-06 13:50:39,665 INFO django.server "GET /admin-console/complaints/ HTTP/1.1" 200 36605
+2026-11-06 13:50:56,613 INFO django.server "GET /merchant/ HTTP/1.1" 200 37958
+2026-11-06 13:51:20,079 INFO django.server "GET /rider/ HTTP/1.1" 200 31698
+2026-11-06 13:51:26,691 INFO django.server "POST /api/v1/rider/location/ HTTP/1.1" 200 42
+2026-11-06 13:51:32,125 INFO django.server "GET /member/ HTTP/1.1" 200 51622
+2026-11-06 13:51:32,364 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:51:32,390 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:51:55,091 INFO django.server "GET /member/ HTTP/1.1" 200 51622
+2026-11-06 13:51:55,171 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-06 13:51:55,172 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-06 13:51:55,174 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-06 13:51:55,175 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-06 13:51:55,177 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-06 13:51:55,188 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-06 13:51:55,191 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-06 13:51:55,197 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-06 13:51:55,198 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-06 13:51:55,269 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-06 13:51:55,327 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 30243
+2026-11-06 13:51:55,369 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-06 13:51:55,385 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-06 13:51:55,524 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:51:55,526 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:51:56,211 WARNING django.request Not Found: /favicon.ico
+2026-11-06 13:51:56,212 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-06 13:52:21,231 INFO django.server "POST /api/v1/geo/me/ping/ HTTP/1.1" 200 73
+2026-11-06 13:52:21,265 INFO django.server "GET /api/v1/geo/nearby-deals/?lat=0.321&lng=32.5713&limit=12 HTTP/1.1" 200 159
+2026-11-06 13:53:01,749 INFO django.server "GET /rider/ HTTP/1.1" 200 31698
+2026-11-06 13:53:01,821 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 304 0
+2026-11-06 13:53:03,021 INFO django.server "GET /merchant/ HTTP/1.1" 200 37958
+2026-11-06 13:53:04,372 INFO django.server "GET /agent/ HTTP/1.1" 200 32734
+2026-11-06 13:54:03,826 INFO django.server "GET /member/ HTTP/1.1" 200 51622
+2026-11-06 13:54:04,047 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:54:04,099 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:56:43,064 INFO django.server "GET / HTTP/1.1" 200 37606
+2026-11-06 13:56:43,145 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 304 0
+2026-11-06 13:57:15,719 INFO django.server "POST /api/v1/geo/me/ping/ HTTP/1.1" 200 73
+2026-11-06 13:57:15,747 INFO django.server "GET /api/v1/geo/nearby-deals/?lat=0.321&lng=32.5713&limit=6 HTTP/1.1" 200 159
+2026-11-06 13:57:38,699 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55286
+2026-11-06 13:57:48,680 INFO django.server "GET /member/ HTTP/1.1" 200 51622
+2026-11-06 13:57:48,910 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 13:57:48,926 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 13:58:38,338 INFO django.server "GET /rider/ HTTP/1.1" 200 31698
+2026-11-06 13:58:38,409 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 304 0
+2026-11-06 13:58:42,136 INFO django.server "GET /notifications/ HTTP/1.1" 200 22127
+2026-11-06 13:58:46,126 INFO django.server "GET / HTTP/1.1" 200 37606
+2026-11-06 13:58:49,899 INFO django.server "GET /become-a-merchant/ HTTP/1.1" 200 22184
+2026-11-06 13:58:56,017 INFO django.server "GET /merchant/ HTTP/1.1" 200 37958
+2026-11-06 13:59:21,986 INFO django.server "POST /api/v1/merchant/location/ HTTP/1.1" 200 64
+2026-11-06 14:00:15,732 INFO django.server "GET /rider/ HTTP/1.1" 200 31698
+2026-11-06 14:00:20,678 INFO django.server "POST /accounts/logout/ HTTP/1.1" 302 0
+2026-11-06 14:00:20,745 INFO django.server "GET / HTTP/1.1" 200 39714
+2026-11-06 14:00:20,842 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 304 0
+2026-11-06 14:00:22,624 INFO django.server "GET /accounts/login/ HTTP/1.1" 200 10463
+2026-11-06 14:00:24,379 INFO django.server "GET /accounts/register/ HTTP/1.1" 200 13182
+2026-11-06 14:00:59,663 INFO django.server "POST /accounts/register/ HTTP/1.1" 200 13404
+2026-11-06 14:01:35,034 INFO django.server "POST /accounts/register/ HTTP/1.1" 302 0
+2026-11-06 14:01:35,088 INFO django.server "GET /accounts/verify-phone/ HTTP/1.1" 200 10410
+2026-11-06 14:01:44,371 INFO django.server "POST /accounts/verify-phone/ HTTP/1.1" 302 0
+2026-11-06 14:01:44,524 INFO django.server "GET /member/ HTTP/1.1" 200 49469
+2026-11-06 14:01:44,762 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:01:44,811 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:02:01,165 INFO django.server "PATCH /api/v1/geo/me/ HTTP/1.1" 200 235
+2026-11-06 14:02:05,059 INFO django.server "GET /notifications/ HTTP/1.1" 200 21736
+2026-11-06 14:02:10,642 INFO django.server "POST /api/v1/notifications/2/read/ HTTP/1.1" 200 233
+2026-11-06 14:02:10,992 INFO django.server "GET /notifications/ HTTP/1.1" 200 21280
+2026-11-06 14:02:16,641 INFO django.server "GET / HTTP/1.1" 200 37606
+2026-11-06 14:02:16,713 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 304 0
+2026-11-06 14:02:20,451 INFO django.server "GET /member/ HTTP/1.1" 200 49283
+2026-11-06 14:02:20,663 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:02:20,691 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:02:54,690 INFO django.server "POST /api/v1/payments/initiate/ HTTP/1.1" 201 296
+2026-11-06 14:03:04,716 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:06,678 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:06,718 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:14,192 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:16,108 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:18,715 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:23,907 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:28,093 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:31,946 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:34,705 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:41,183 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:44,017 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:46,705 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:52,097 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:03:54,706 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:04:00,011 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:04:02,708 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:04:08,347 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:04:10,705 INFO django.server "GET /api/v1/payments/2/ HTTP/1.1" 200 269
+2026-11-06 14:04:13,261 INFO django.server "POST /api/v1/geo/me/ping/ HTTP/1.1" 200 72
+2026-11-06 14:04:13,495 INFO django.server "GET /member/ HTTP/1.1" 200 49306
+2026-11-06 14:04:13,678 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:04:13,679 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:05:00,451 INFO django.server "GET /member/ HTTP/1.1" 200 49306
+2026-11-06 14:05:00,513 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 304 0
+2026-11-06 14:05:00,603 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:05:00,617 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:05:35,915 INFO django.server "GET / HTTP/1.1" 200 37616
+2026-11-06 14:05:42,580 WARNING django.request Forbidden (Permission denied): /admin-console/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\core\handlers\exception.py", line 56, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\core\handlers\base.py", line 199, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\accounts\decorators.py", line 35, in wrapped
+    raise PermissionDenied("Admin access required.")
+django.core.exceptions.PermissionDenied: Admin access required.
+2026-11-06 14:05:42,653 WARNING django.server "GET /admin-console/ HTTP/1.1" 403 135
+2026-11-06 14:05:47,422 WARNING django.request Forbidden (Permission denied): /agent/
+Traceback (most recent call last):
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\core\handlers\exception.py", line 56, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\core\handlers\base.py", line 199, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\accounts\decorators.py", line 21, in wrapped
+    raise PermissionDenied("Your account does not have access to this page.")
+django.core.exceptions.PermissionDenied: Your account does not have access to this page.
+2026-11-06 14:05:47,425 WARNING django.server "GET /agent/ HTTP/1.1" 403 135
+2026-11-06 14:05:51,139 INFO django.server "GET /become-a-merchant/ HTTP/1.1" 200 23439
+2026-11-06 14:05:55,367 INFO django.server "GET /become-a-rider/ HTTP/1.1" 200 22105
+2026-11-06 14:06:05,545 INFO django.server "GET /member/ HTTP/1.1" 200 49306
+2026-11-06 14:06:05,736 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:06:05,756 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:06:13,232 INFO django.server "POST /accounts/logout/ HTTP/1.1" 302 0
+2026-11-06 14:06:13,272 INFO django.server "GET / HTTP/1.1" 200 39714
+2026-11-06 14:06:41,404 INFO django.server "GET /api/v1/geo/nearby-deals/?lat=0.321&lng=32.5713&limit=6 HTTP/1.1" 200 159
+2026-11-06 14:06:47,001 INFO django.server "GET /accounts/login/ HTTP/1.1" 200 10661
+2026-11-06 14:07:05,442 INFO django.server "POST /accounts/login/ HTTP/1.1" 302 0
+2026-11-06 14:07:05,562 INFO django.server "GET /member/ HTTP/1.1" 200 49306
+2026-11-06 14:07:05,751 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:07:05,760 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:07:12,495 INFO django.server "GET / HTTP/1.1" 200 37616
+2026-11-06 14:07:23,711 INFO django.server "GET /member/ HTTP/1.1" 200 49306
+2026-11-06 14:07:23,779 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 304 0
+2026-11-06 14:07:23,894 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:07:23,914 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:07:30,717 INFO django.server "PATCH /api/v1/geo/me/ HTTP/1.1" 200 357
+2026-11-06 14:07:30,897 INFO django.server "GET /member/ HTTP/1.1" 200 49314
+2026-11-06 14:07:31,056 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:07:31,061 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:07:36,663 INFO django.server "PATCH /api/v1/geo/me/ HTTP/1.1" 200 356
+2026-11-06 14:07:36,837 INFO django.server "GET /member/ HTTP/1.1" 200 49321
+2026-11-06 14:07:37,010 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:07:37,041 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:07:39,332 INFO django.server "PATCH /api/v1/notifications/preferences/ HTTP/1.1" 200 134
+2026-11-06 14:07:42,752 INFO django.server "POST /api/v1/geo/me/ping/ HTTP/1.1" 200 71
+2026-11-06 14:07:42,940 INFO django.server "GET /member/ HTTP/1.1" 200 50278
+2026-11-06 14:07:43,108 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:07:43,125 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:07:51,147 INFO django.server "POST /api/v1/geo/me/ping/ HTTP/1.1" 200 72
+2026-11-06 14:07:51,370 INFO django.server "GET /member/ HTTP/1.1" 200 50278
+2026-11-06 14:07:51,536 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:07:51,542 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-06 14:07:54,075 INFO django.server "GET / HTTP/1.1" 200 37616
+2026-11-06 14:08:07,818 INFO django.server "GET /member/ HTTP/1.1" 200 50278
+2026-11-06 14:08:07,993 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-06 14:08:07,994 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-07 22:09:15,795 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-07 22:09:22,986 INFO django.server "GET / HTTP/1.1" 200 37626
+2026-11-07 22:09:23,088 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 304 0
+2026-11-07 22:09:23,088 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 304 0
+2026-11-07 22:09:23,096 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 304 0
+2026-11-07 22:09:23,099 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 304 0
+2026-11-07 22:09:23,110 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 304 0
+2026-11-07 22:09:23,154 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 304 0
+2026-11-07 22:09:23,182 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 304 0
+2026-11-07 22:09:26,735 INFO django.server "GET /become-a-merchant/ HTTP/1.1" 200 23624
+2026-11-07 22:09:27,075 WARNING django.request Not Found: /favicon.ico
+2026-11-07 22:09:27,086 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-07 22:09:31,560 INFO django.server "GET /notifications/ HTTP/1.1" 200 22343
+2026-11-07 22:09:40,937 INFO django.server "POST /accounts/logout/ HTTP/1.1" 302 0
+2026-11-07 22:09:40,999 INFO django.server "GET / HTTP/1.1" 200 39714
+2026-11-07 22:09:51,587 INFO django.server "GET /accounts/login/ HTTP/1.1" 200 10463
+2026-11-07 22:10:01,326 INFO django.server "POST /accounts/login/ HTTP/1.1" 302 0
+2026-11-07 22:10:01,512 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55484
+2026-11-07 22:10:05,028 INFO django.server "GET /notifications/ HTTP/1.1" 200 23111
+2026-11-07 22:10:08,313 INFO django.server "POST /api/v1/notifications/read-all/ HTTP/1.1" 200 36
+2026-11-07 22:10:08,670 INFO django.server "GET /notifications/ HTTP/1.1" 200 22655
+2026-11-07 22:10:15,927 INFO django.server "GET /admin-console/ HTTP/1.1" 200 55299
+2026-11-07 22:10:17,864 INFO django.server "GET /member/ HTTP/1.1" 200 51654
+2026-11-07 22:10:17,998 INFO django.server "GET /static/hub/js/pending_payment.js HTTP/1.1" 200 2970
+2026-11-07 22:10:18,132 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-07 22:10:18,136 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-07 22:10:38,513 INFO django.server "POST /api/v1/payments/initiate/ HTTP/1.1" 201 296
+2026-11-07 22:10:46,750 INFO django.server "GET /api/v1/payments/3/ HTTP/1.1" 200 291
+2026-11-07 22:10:46,777 INFO django.server "GET /api/v1/payments/3/ HTTP/1.1" 200 291
+2026-11-07 22:11:26,394 INFO django.server "GET /merchant/ HTTP/1.1" 200 38138
+2026-11-07 22:11:31,876 INFO django.server "GET /notifications/ HTTP/1.1" 200 23716
+2026-11-07 22:11:35,471 INFO django.server "POST /api/v1/notifications/read-all/ HTTP/1.1" 200 36
+2026-11-07 22:11:35,822 INFO django.server "GET /notifications/ HTTP/1.1" 200 23260
+2026-11-07 22:11:38,699 INFO django.server "GET /merchant/ HTTP/1.1" 200 37953
+2026-11-07 22:11:44,687 INFO django.server "GET /rider/ HTTP/1.1" 200 31698
+2026-11-07 22:11:49,935 INFO django.server "GET /agent/ HTTP/1.1" 200 32734
+2026-11-07 22:12:02,501 INFO django.server "GET / HTTP/1.1" 200 37606
+2026-11-07 22:21:36,096 INFO django.server "GET /become-a-merchant/ HTTP/1.1" 200 22184
+2026-11-07 22:21:45,426 INFO django.server "GET /merchant/ HTTP/1.1" 200 37953
+2026-11-07 22:21:49,931 INFO django.server "GET /rider/ HTTP/1.1" 200 31698
+2026-11-07 22:21:52,022 INFO django.server "GET /merchant/ HTTP/1.1" 200 37953
+2026-11-07 22:22:07,229 INFO django.server "GET /agent/ HTTP/1.1" 200 32734
+2026-11-07 22:23:27,390 INFO django.server "POST /api/v1/agent/prices/ HTTP/1.1" 201 146
+2026-11-07 22:23:28,683 INFO django.server "GET /agent/ HTTP/1.1" 200 34048
+2026-11-07 22:24:33,866 INFO django.server "POST /api/v1/agent/prices/ HTTP/1.1" 201 146
+2026-11-07 22:24:35,175 INFO django.server "GET /agent/ HTTP/1.1" 200 34048
+2026-11-07 22:24:44,212 INFO django.server "GET / HTTP/1.1" 200 37606
+2026-11-07 22:25:15,849 INFO django.server "GET /member/ HTTP/1.1" 200 51654
+2026-11-07 22:25:16,025 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-07 22:25:16,029 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-07 22:25:38,715 INFO django.server "GET / HTTP/1.1" 200 37606
+2026-11-07 22:27:25,228 INFO django.server "POST /accounts/logout/ HTTP/1.1" 302 0
+2026-11-07 22:27:25,267 INFO django.server "GET / HTTP/1.1" 200 39714
+2026-11-07 22:27:59,638 INFO django.server "GET /member/ HTTP/1.1" 302 0
+2026-11-07 22:27:59,655 INFO django.server "GET /accounts/login/?next=/member/ HTTP/1.1" 200 10463
+2026-11-07 22:54:24,788 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-07 22:54:28,105 INFO django.server "GET / HTTP/1.1" 200 39714
+2026-11-07 22:54:28,179 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-07 22:54:28,180 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-07 22:54:28,392 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-07 22:54:28,410 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-07 22:54:30,862 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 22:55:06,634 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-07 22:55:11,287 INFO django.server "GET / HTTP/1.1" 200 44691
+2026-11-07 22:55:11,347 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-07 22:55:11,348 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-07 22:55:11,348 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-07 22:55:11,356 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-07 22:55:11,372 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-07 22:55:11,454 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-07 22:55:11,510 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-07 22:55:11,519 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-07 22:55:11,578 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-07 22:55:11,581 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-07 22:55:11,585 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-07 22:55:11,708 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 30243
+2026-11-07 22:55:11,772 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-07 22:55:12,205 WARNING django.request Not Found: /favicon.ico
+2026-11-07 22:55:12,207 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-07 22:59:35,658 ERROR django.request Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 594, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endwith'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\core\handlers\exception.py", line 56, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\core\handlers\base.py", line 199, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\hub\views.py", line 73, in landing
+    return render(request, "hub/landing.html", s.landing_context(request.user))
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\shortcuts.py", line 27, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\engine.py", line 186, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 157, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 199, in compile_nodelist
+    nodelist = parser.parse()
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 602, in parse
+    raise self.error(token, e)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 600, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loader_tags.py", line 307, in do_extends
+    nodelist = parser.parse()
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 602, in parse
+    raise self.error(token, e)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 600, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loader_tags.py", line 235, in do_block
+    nodelist = parser.parse(("endblock",))
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 596, in parse
+    self.invalid_block_tag(token, command, parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 651, in invalid_block_tag
+    raise self.error(
+    ...<8 lines>...
+    )
+django.template.exceptions.TemplateSyntaxError: Template: C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\hub\templates\hub\landing.html, Invalid block tag on line 463: 'endwith', expected 'endblock'. Did you forget to register or load this tag?
+2026-11-07 22:59:35,748 ERROR django.server "GET / HTTP/1.1" 500 244501
+2026-11-07 22:59:38,048 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:04:33,264 INFO django.server "GET / HTTP/1.1" 200 42890
+2026-11-07 23:04:35,304 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:04:49,781 INFO django.server "GET /admin-console/ HTTP/1.1" 302 0
+2026-11-07 23:04:49,809 INFO django.server "GET /accounts/login/?next=/admin-console/ HTTP/1.1" 200 10463
+2026-11-07 23:04:51,514 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:08:44,620 ERROR django.request Internal Server Error: /
+Traceback (most recent call last):
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 594, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endblock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\core\handlers\exception.py", line 56, in inner
+    response = get_response(request)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\core\handlers\base.py", line 199, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\hub\views.py", line 73, in landing
+    return render(request, "hub/landing.html", s.landing_context(request.user))
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\shortcuts.py", line 27, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\engine.py", line 186, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 157, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 199, in compile_nodelist
+    nodelist = parser.parse()
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 602, in parse
+    raise self.error(token, e)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 600, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\loader_tags.py", line 307, in do_extends
+    nodelist = parser.parse()
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 596, in parse
+    self.invalid_block_tag(token, command, parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\env\Lib\site-packages\django\template\base.py", line 661, in invalid_block_tag
+    raise self.error(
+    ...<3 lines>...
+    )
+django.template.exceptions.TemplateSyntaxError: Template: C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\hub\templates\hub\landing.html, Invalid block tag on line 467: 'endblock'. Did you forget to register or load this tag?
+2026-11-07 23:08:44,678 ERROR django.server "GET / HTTP/1.1" 500 236902
+2026-11-07 23:08:46,819 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:09:05,184 INFO django.server "GET / HTTP/1.1" 200 42905
+2026-11-07 23:09:06,939 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:09:25,898 INFO django.server "GET / HTTP/1.1" 200 47274
+2026-11-07 23:09:27,691 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:10:03,359 INFO django.server "GET /member/ HTTP/1.1" 302 0
+2026-11-07 23:10:03,385 INFO django.server "GET /accounts/login/?next=/member/ HTTP/1.1" 200 10463
+2026-11-07 23:10:05,092 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:10:15,112 INFO django.server "GET /become-a-merchant/ HTTP/1.1" 302 0
+2026-11-07 23:10:15,122 INFO django.server "GET /accounts/login/?next=/become-a-merchant/ HTTP/1.1" 200 10463
+2026-11-07 23:10:16,768 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:12:46,618 INFO django.server "GET / HTTP/1.1" 200 42905
+2026-11-07 23:12:48,606 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:13:10,904 INFO django.server "GET / HTTP/1.1" 200 47989
+2026-11-07 23:13:10,970 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-07 23:13:10,976 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-07 23:13:10,982 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-07 23:13:10,983 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-07 23:13:10,985 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-07 23:13:10,986 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-07 23:13:10,990 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-07 23:13:10,996 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-07 23:13:11,005 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-07 23:13:11,011 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-07 23:13:11,014 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-07 23:13:11,018 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 30243
+2026-11-07 23:13:11,107 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-07 23:13:11,546 WARNING django.request Not Found: /favicon.ico
+2026-11-07 23:13:11,548 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-07 23:13:59,408 INFO django.server "GET /become-a-merchant/ HTTP/1.1" 302 0
+2026-11-07 23:13:59,428 INFO django.server "GET /accounts/login/?next=/become-a-merchant/ HTTP/1.1" 200 10463
+2026-11-07 23:14:01,043 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:17:14,527 INFO django.server "GET / HTTP/1.1" 200 49504
+2026-11-07 23:17:16,377 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:17:17,065 INFO django.server "GET / HTTP/1.1" 200 49504
+2026-11-07 23:17:17,126 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-07 23:17:17,127 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-07 23:17:17,128 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-07 23:17:17,129 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-07 23:17:17,130 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-07 23:17:17,133 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-07 23:17:17,138 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-07 23:17:17,140 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-07 23:17:17,151 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-07 23:17:17,163 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-07 23:17:17,164 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 30243
+2026-11-07 23:17:17,165 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-07 23:17:17,250 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-07 23:17:17,743 WARNING django.request Not Found: /favicon.ico
+2026-11-07 23:17:17,743 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-07 23:18:28,401 INFO django.server "GET / HTTP/1.1" 200 49504
+2026-11-07 23:18:29,705 INFO django.server "GET / HTTP/1.1" 200 49504
+2026-11-07 23:18:30,161 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:18:31,538 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:18:41,443 INFO django.server "GET / HTTP/1.1" 200 49504
+2026-11-07 23:18:41,498 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-07 23:18:41,506 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-07 23:18:41,507 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-07 23:18:41,508 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-07 23:18:41,511 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-07 23:18:41,512 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-07 23:18:41,521 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-07 23:18:41,522 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-07 23:18:41,523 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-07 23:18:41,529 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-07 23:18:41,544 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 30243
+2026-11-07 23:18:41,559 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-07 23:18:41,624 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-07 23:18:42,091 WARNING django.request Not Found: /favicon.ico
+2026-11-07 23:18:42,092 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-07 23:19:31,523 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-07 23:19:38,493 INFO django.server "GET / HTTP/1.1" 200 49505
+2026-11-07 23:19:40,250 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:19:41,515 INFO django.server "GET / HTTP/1.1" 200 49505
+2026-11-07 23:19:41,565 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-07 23:19:41,576 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-07 23:19:41,578 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-07 23:19:41,593 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-07 23:19:41,594 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-07 23:19:41,595 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-07 23:19:41,598 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-07 23:19:41,605 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 30243
+2026-11-07 23:19:41,611 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-07 23:19:41,621 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-07 23:19:41,655 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-07 23:19:41,658 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-07 23:19:41,731 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-07 23:19:42,249 WARNING django.request Not Found: /favicon.ico
+2026-11-07 23:19:42,250 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-07 23:20:29,547 INFO django.server "GET / HTTP/1.1" 200 49505
+2026-11-07 23:20:29,610 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-07 23:20:29,614 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-07 23:20:29,614 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-07 23:20:29,615 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-07 23:20:29,617 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-07 23:20:29,618 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-07 23:20:29,626 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-07 23:20:29,628 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-07 23:20:29,634 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-07 23:20:29,639 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-07 23:20:29,677 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 30243
+2026-11-07 23:20:29,679 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-07 23:20:29,728 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-07 23:20:30,094 WARNING django.request Not Found: /favicon.ico
+2026-11-07 23:20:30,096 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-07 23:20:47,352 INFO django.server "GET /member/ HTTP/1.1" 302 0
+2026-11-07 23:20:47,368 INFO django.server "GET /accounts/login/?next=/member/ HTTP/1.1" 200 10463
+2026-11-07 23:20:48,977 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:20:55,359 INFO django.server "GET /admin-console/ HTTP/1.1" 302 0
+2026-11-07 23:20:55,371 INFO django.server "GET /accounts/login/?next=/admin-console/ HTTP/1.1" 200 10463
+2026-11-07 23:20:57,024 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:21:07,983 INFO django.server "GET /accounts/login/ HTTP/1.1" 200 10463
+2026-11-07 23:21:09,639 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:22:53,568 INFO django.server "GET /become-a-merchant/ HTTP/1.1" 302 0
+2026-11-07 23:22:53,586 INFO django.server "GET /accounts/login/?next=/become-a-merchant/ HTTP/1.1" 200 10463
+2026-11-07 23:22:55,684 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-07 23:23:05,046 INFO django.server "GET /become-a-merchant/ HTTP/1.1" 302 0
+2026-11-07 23:23:05,060 INFO django.server "GET /accounts/login/?next=/become-a-merchant/ HTTP/1.1" 200 10463
+2026-11-07 23:23:07,649 INFO django.server "GET /sw.js HTTP/1.1" 200 1443
+2026-11-08 21:55:48,234 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-08 21:55:56,976 INFO django.server "GET / HTTP/1.1" 200 39714
+2026-11-08 21:55:57,033 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 304 0
+2026-11-08 21:55:57,039 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 304 0
+2026-11-08 21:55:57,058 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 304 0
+2026-11-08 21:55:57,063 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 304 0
+2026-11-08 21:55:57,068 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 304 0
+2026-11-08 21:55:57,087 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 304 0
+2026-11-08 21:55:57,111 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 304 0
+2026-11-08 21:55:57,652 WARNING django.request Not Found: /favicon.ico
+2026-11-08 21:55:57,662 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-08 21:56:00,558 INFO django.server "GET / HTTP/1.1" 200 39714
+2026-11-08 21:56:00,957 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-08 21:56:00,979 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-08 21:56:00,984 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-08 21:56:01,057 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-08 21:56:01,059 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-08 21:56:01,114 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-08 21:56:01,127 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-08 21:56:01,128 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-08 21:56:01,237 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 30243
+2026-11-08 21:56:01,239 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-08 21:56:01,294 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-08 21:56:01,386 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-08 21:56:01,821 WARNING django.request Not Found: /favicon.ico
+2026-11-08 21:56:01,822 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-08 21:56:50,967 INFO django.utils.autoreload C:\Users\Administrator\OneDrive\Desktop\savings_hub_django5\config\settings\base.py changed, reloading.
+2026-11-08 21:56:54,221 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-08 21:56:59,181 INFO django.server "GET / HTTP/1.1" 200 39714
+2026-11-08 21:57:02,934 INFO django.server "GET / HTTP/1.1" 200 39714
+2026-11-08 21:57:02,972 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-08 21:57:03,001 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-08 21:57:03,010 INFO django.server "GET /static/hub/css/geo.css HTTP/1.1" 200 3135
+2026-11-08 21:57:03,018 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-08 21:57:03,025 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-08 21:57:03,030 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-08 21:57:03,040 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.css HTTP/1.1" 200 14806
+2026-11-08 21:57:03,050 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-08 21:57:03,061 INFO django.server "GET /static/hub/vendor/leaflet/leaflet.js HTTP/1.1" 200 147517
+2026-11-08 21:57:03,065 INFO django.server "GET /static/hub/js/push.js HTTP/1.1" 200 4275
+2026-11-08 21:57:03,066 INFO django.server "GET /static/hub/js/geo.js HTTP/1.1" 200 30243
+2026-11-08 21:57:03,071 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-08 21:57:03,306 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-08 21:57:03,500 WARNING django.request Not Found: /favicon.ico
+2026-11-08 21:57:03,502 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-08 21:57:30,613 INFO django.server "GET /accounts/login/ HTTP/1.1" 200 10617
+2026-11-08 21:57:47,914 INFO django.server "POST /accounts/login/ HTTP/1.1" 302 0
+2026-11-08 21:57:48,125 INFO django.server "GET /admin-console/ HTTP/1.1" 200 56247
+2026-11-08 21:57:51,058 INFO django.server "GET /member/ HTTP/1.1" 200 51983
+2026-11-08 21:57:51,163 INFO django.server "GET /static/hub/js/withdraw_code.js HTTP/1.1" 200 1726
+2026-11-08 21:57:51,166 INFO django.server "GET /static/hub/js/pending_payment.js HTTP/1.1" 304 0
+2026-11-08 21:57:51,299 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-08 21:57:51,301 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-08 21:58:03,510 INFO django.server "GET /merchant/ HTTP/1.1" 200 38221
+2026-11-08 21:58:06,314 INFO django.server "GET /accounts/account/ HTTP/1.1" 200 10889
+2026-11-08 21:58:48,256 INFO django.server "POST /accounts/account/ HTTP/1.1" 302 0
+2026-11-08 21:58:48,271 INFO django.server "GET /accounts/account/ HTTP/1.1" 200 11127
+2026-11-08 21:58:52,805 INFO django.server "GET / HTTP/1.1" 200 37606
+2026-11-08 21:58:59,658 INFO django.server "GET /member/ HTTP/1.1" 200 51983
+2026-11-08 21:58:59,837 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-08 21:58:59,874 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-08 21:59:05,623 INFO django.server "GET /merchant/ HTTP/1.1" 200 38221
+2026-11-08 21:59:11,037 INFO django.server "GET /rider/ HTTP/1.1" 200 32584
+2026-11-08 21:59:13,206 INFO django.server "GET /agent/ HTTP/1.1" 200 34316
+2026-11-08 22:07:01,027 INFO django.utils.autoreload Watching for file changes with StatReloader
+2026-11-08 22:07:09,845 INFO django.server "GET /agent/ HTTP/1.1" 200 34316
+2026-11-08 22:07:09,888 INFO django.server "GET /static/hub/css/fonts.css HTTP/1.1" 200 255
+2026-11-08 22:07:09,892 INFO django.server "GET /static/hub/css/tailwind.css HTTP/1.1" 200 24854
+2026-11-08 22:07:09,908 INFO django.server "GET /static/hub/js/api.js HTTP/1.1" 200 11021
+2026-11-08 22:07:09,927 INFO django.server "GET /static/hub/js/app.js HTTP/1.1" 200 9164
+2026-11-08 22:07:09,934 INFO django.server "GET /static/hub/vendor/lucide-0.468.0.min.js HTTP/1.1" 200 357758
+2026-11-08 22:07:09,934 INFO django.server "GET /static/hub/vendor/chart-4.4.7.umd.js HTTP/1.1" 200 205578
+2026-11-08 22:07:09,935 INFO django.server "GET /static/hub/css/theme.css HTTP/1.1" 200 7348
+2026-11-08 22:07:10,034 INFO django.server "GET /static/hub/fonts/inter-latin-wght-normal.woff2 HTTP/1.1" 200 48444
+2026-11-08 22:07:10,202 WARNING django.request Not Found: /favicon.ico
+2026-11-08 22:07:10,203 WARNING django.server "GET /favicon.ico HTTP/1.1" 404 15163
+2026-11-08 22:07:13,248 INFO django.server "GET /accounts/account/ HTTP/1.1" 200 10889
+2026-11-08 22:07:16,071 INFO django.server "GET / HTTP/1.1" 200 47577
+2026-11-08 22:07:25,556 INFO django.server "GET /become-a-merchant/ HTTP/1.1" 200 22452
+2026-11-08 22:07:28,939 INFO django.server "GET /merchant/ HTTP/1.1" 200 38221
+2026-11-08 22:07:30,334 INFO django.server "GET /agent/ HTTP/1.1" 200 34316
+2026-11-08 22:07:32,328 INFO django.server "GET /merchant/ HTTP/1.1" 200 38221
+2026-11-08 22:07:38,443 INFO django.server "GET /member/ HTTP/1.1" 200 51983
+2026-11-08 22:07:38,680 WARNING django.request Not Found: /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg
+2026-11-08 22:07:38,697 WARNING django.server "GET /media/offers/2026/10/f24dace434e66a402d5fc9ae.jpg HTTP/1.1" 404 14871
+2026-11-08 22:07:57,591 INFO django.server "GET / HTTP/1.1" 200 47577

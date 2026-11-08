@@ -1,0 +1,34 @@
+/* Map, location and drop-off UI. Self-contained (the Tailwind file is prebuilt, so new utilities are not assumed). */
+.geo-map { height: 20rem; width: 100%; border-radius: 0.75rem; border: 1px solid var(--border, #e5e7eb); overflow: hidden; position: relative; z-index: 0; }
+.geo-map.geo-map-sm { height: 14rem; }
+.geo-map.geo-map-lg { height: 26rem; }
+.geo-wrap { position: relative; }
+.geo-list { position: absolute; left: 0; right: 0; top: 100%; z-index: 500; margin-top: 2px; max-height: 14rem; overflow-y: auto;
+  background: var(--popover, #fff); color: var(--popover-foreground, #1f2733); border: 1px solid var(--border, #e5e7eb);
+  border-radius: 0.6rem; box-shadow: 0 8px 24px rgba(0,0,0,.12); list-style: none; margin-left: 0; padding: 0.25rem; }
+.geo-list[hidden] { display: none; }
+.geo-list li button { width: 100%; text-align: left; font-size: 0.8rem; padding: 0.45rem 0.6rem; border-radius: 0.4rem; background: transparent; border: 0; color: inherit; cursor: pointer; }
+.geo-list li button:hover, .geo-list li button:focus { background: var(--muted, #f3f4f6); outline: none; }
+.geo-list .geo-sub { display: block; font-size: 0.68rem; opacity: .65; }
+.geo-pin { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--primary, #16a34a); color: #fff; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.35); font-size: 16px; line-height: 1; }
+.geo-pin.geo-pin-me { width: 18px; height: 18px; background: #2563eb; box-shadow: 0 0 0 6px rgba(37,99,235,.25); }
+.geo-pin.geo-pin-rider { background: #f59e0b; }
+.geo-pin.geo-pin-drop { background: #7c3aed; }
+.geo-pin.geo-pin-shop { background: #0ea5e9; }
+.geo-pop strong { display: block; font-size: 0.85rem; }
+.geo-pop span { display: block; font-size: 0.75rem; opacity: .8; }
+.geo-seg { display: inline-flex; border: 1px solid var(--border, #e5e7eb); border-radius: 0.6rem; overflow: hidden; }
+.geo-seg button { font-size: 0.75rem; padding: 0.35rem 0.8rem; background: transparent; border: 0; cursor: pointer; color: inherit; }
+.geo-seg button[aria-pressed="true"] { background: var(--primary, #16a34a); color: var(--primary-foreground, #fff); }
+.geo-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.geo-btn { font-size: 0.75rem; padding: 0.4rem 0.75rem; border-radius: 0.6rem; border: 1px solid var(--border, #e5e7eb); background: transparent; color: inherit; cursor: pointer; }
+.geo-btn.geo-btn-primary { background: var(--primary, #16a34a); color: var(--primary-foreground, #fff); border-color: transparent; }
+.geo-btn[disabled] { opacity: .55; cursor: default; }
+.geo-note { font-size: 0.7rem; opacity: .75; margin-top: 0.25rem; }
+.geo-panel[hidden], .geo-map[hidden], [data-view][hidden] { display: none; }
+.geo-trail { list-style: none; margin: 0; padding: 0; }
+.geo-trail li { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; padding: 0.4rem 0; border-top: 1px solid var(--border, #e5e7eb); }
+.geo-trail li:first-child { border-top: 0; }
+.geo-trail .geo-grow { flex: 1; min-width: 0; }
+.geo-trail .geo-sub { font-size: 0.68rem; opacity: .65; }
